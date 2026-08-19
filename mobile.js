@@ -9,26 +9,30 @@
   const style = document.createElement('style');
   style.textContent = `
     @media(max-width:${MOBILE_MAX}px){
-      .topbar{min-height:58px!important;padding:9px 12px!important;display:grid!important;grid-template-columns:1fr auto;align-items:center!important;gap:8px!important}
-      .topbar>div:first-child h1{font-size:18px!important;line-height:1!important;margin:0!important}
+      body{background:#f4f4f4!important}
+      .topbar{min-height:66px!important;padding:8px 12px!important;display:grid!important;grid-template-columns:1fr auto;align-items:center!important;gap:8px!important;background:#231f20!important;border-bottom:3px solid #ed1c24!important}
+      .topbar>div:first-child{display:flex!important;align-items:center!important;gap:10px!important;min-width:0}
+      .topbar>div:first-child h1{font-size:16px!important;line-height:1!important;margin:0!important;color:#fff!important;white-space:nowrap}
       .topbar>div:first-child p{display:none!important}
+      .mobileBrandLogo{width:84px;height:52px;object-fit:contain;flex:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.22))}
       .topbar .actions{margin:0!important;display:flex!important;justify-content:flex-end!important;gap:5px!important;flex-wrap:nowrap!important}
-      .topbar .liveBadge,.topbar .roleBadge{font-size:9px!important;padding:5px 7px!important;white-space:nowrap}
+      .topbar .liveBadge{font-size:9px!important;padding:5px 7px!important;white-space:nowrap;background:#fff!important;color:#231f20!important;border:1px solid #fff!important}
+      .topbar .roleBadge{font-size:9px!important;padding:5px 7px!important;white-space:nowrap;background:#ed1c24!important;color:#fff!important;border-color:#ed1c24!important}
       #signout{display:none!important}
-      .mobileMenuButton{min-width:36px!important;width:36px!important;height:36px!important;min-height:36px!important;padding:0!important;border:1px solid rgba(255,255,255,.28)!important;background:rgba(255,255,255,.1)!important;color:#fff!important;font-size:22px!important;line-height:1!important}
-      .mobileMenuPanel{position:absolute;right:10px;top:52px;z-index:60;background:#fff;border:1px solid #d5dde5;border-radius:9px;padding:6px;box-shadow:0 10px 28px rgba(15,23,42,.2)}
+      .mobileMenuButton{min-width:36px!important;width:36px!important;height:36px!important;min-height:36px!important;padding:0!important;border:1px solid rgba(255,255,255,.35)!important;background:#231f20!important;color:#fff!important;font-size:22px!important;line-height:1!important}
+      .mobileMenuPanel{position:absolute;right:10px;top:58px;z-index:60;background:#fff;border:1px solid #d5dde5;border-radius:9px;padding:6px;box-shadow:0 10px 28px rgba(0,0,0,.22)}
       .mobileMenuPanel button{min-width:110px;color:#111827;background:#fff}
 
-      .toolbar{padding:7px 10px 9px!important}
+      .toolbar{padding:7px 10px 9px!important;background:#fff!important;border-bottom:1px solid #ddd!important}
       .toolbar>.actions:first-child{display:flex!important;justify-content:center!important;align-items:center!important;gap:7px!important}
-      .toolbar>.actions:first-child button{width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;padding:0!important;font-size:20px!important}
+      .toolbar>.actions:first-child button{width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;padding:0!important;font-size:20px!important;border-color:#d7d7d7!important;color:#ed1c24!important;background:#fff!important}
       .toolbar>.actions:last-child{height:0!important;margin:0!important;overflow:visible!important;display:block!important}
       .toolbar .mobileHideOnPhone{display:none!important}
-      .mobileDateNavLabel{flex:1;text-align:center;font-size:12px;font-weight:900;color:#475569;letter-spacing:.15px;white-space:nowrap}
+      .mobileDateNavLabel{flex:1;text-align:center;font-size:12px;font-weight:900;color:#444;letter-spacing:.15px;white-space:nowrap}
       .mobileViewTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:7px 0 0;width:100%}
-      .mobileViewTabs button{min-height:40px;border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:8px;font-weight:800}
-      .mobileViewTabs button.active{background:#06243a;color:#fff;border-color:#06243a}
-      .mobileFab{position:fixed!important;right:18px!important;bottom:24px!important;z-index:80!important;width:58px!important;height:58px!important;min-height:58px!important;border-radius:50%!important;padding:0!important;background:#06243a!important;color:#fff!important;border:2px solid #fff!important;box-shadow:0 8px 22px rgba(15,23,42,.3)!important;font-size:30px!important;line-height:1!important;overflow:hidden!important}
+      .mobileViewTabs button{min-height:40px;border:1px solid #d4d4d4;background:#fff;color:#333;border-radius:8px;font-weight:800}
+      .mobileViewTabs button.active{background:#ed1c24;color:#fff;border-color:#ed1c24}
+      .mobileFab{position:fixed!important;right:18px!important;bottom:24px!important;z-index:80!important;width:58px!important;height:58px!important;min-height:58px!important;border-radius:50%!important;padding:0!important;background:#ed1c24!important;color:#fff!important;border:3px solid #fff!important;box-shadow:0 8px 22px rgba(0,0,0,.30)!important;font-size:30px!important;line-height:1!important;overflow:hidden!important}
 
       .cell:before{content:attr(data-pretty-date)!important}
       .cell.mobileHidden,.crewName.mobileHidden{display:none!important}
@@ -37,7 +41,7 @@
       .incoming{order:2;margin-top:10px;margin-bottom:78px!important}
       .incoming.mobileCollapsed .incomingBody{display:none}
       .incoming.mobileCollapsed{min-height:0!important}
-      .incomingHead{cursor:pointer}
+      .incomingHead{cursor:pointer;background:#231f20!important;color:#fff!important;border-top:3px solid #ed1c24!important}
       .incomingHead .mobileIncomingCount{font-size:11px!important;opacity:.88;margin-top:3px}
       .incoming.mobileCollapsed .incomingHead{border-radius:10px!important}
       .incoming:not(.mobileCollapsed) .incomingHead{border-radius:10px 10px 0 0!important}
@@ -48,12 +52,20 @@
       .jobCard{padding:10px 11px!important}
       .jobCard h3{font-size:13px!important}
       .jobCard p{font-size:11.5px!important}
+      .missDigDates{font-weight:800!important;color:#555!important}
       .crewName.mobileEmptyCrew{padding:8px 12px!important}
       .cell.mobileEmptyCell{min-height:38px!important;padding:8px 48px 8px 12px!important;border-radius:0 0 10px 10px!important}
       .cell.mobileEmptyCell:before{display:none!important}
       .mobileEmptyLabel{font-size:11px;font-weight:700;color:#64748b}
       .cell.mobileEmptyCell .addCell{top:5px!important}
       footer{margin-bottom:76px!important}
+
+      .loginPage{background:#231f20!important;min-height:100vh!important;padding:24px 16px!important}
+      .loginCard{border-top:5px solid #ed1c24!important;box-shadow:0 18px 45px rgba(0,0,0,.35)!important}
+      .loginCard .logo{width:auto!important;height:auto!important;background:transparent!important;margin:0 auto 10px!important;border-radius:0!important}
+      .mobileLoginLogo{display:block;width:220px;max-width:78vw;height:auto;margin:0 auto 10px}
+      .loginCard h1{color:#231f20!important}
+      .loginCard .primary{background:#ed1c24!important;border-color:#ed1c24!important}
     }
   `;
   document.head.appendChild(style);
@@ -71,11 +83,27 @@
     return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
   }
 
+  function brandLogin(){
+    const logo=document.querySelector('.loginCard .logo');
+    if(!logo || logo.querySelector('.mobileLoginLogo')) return;
+    logo.innerHTML='<img class="mobileLoginLogo" src="/dangelo-logo.svg" alt="D’Angelo Brothers Inc.">';
+    const title=document.querySelector('.loginCard h1');
+    if(title) title.textContent='Dispatch';
+  }
+
   function compactHeader(){
     const topbar=document.querySelector('.topbar');
     if(!topbar) return;
+    const left=topbar.querySelector('div:first-child');
     const title=topbar.querySelector('h1');
-    if(title) title.textContent='D’Angelo Dispatch';
+    if(left && !left.querySelector('.mobileBrandLogo')){
+      const logo=document.createElement('img');
+      logo.className='mobileBrandLogo';
+      logo.src='/dangelo-logo.svg';
+      logo.alt='D’Angelo Brothers Inc.';
+      left.insertBefore(logo,title||left.firstChild);
+    }
+    if(title) title.textContent='Dispatch';
     const actions=topbar.querySelector('.actions');
     const signout=document.getElementById('signout');
     if(!actions||!signout) return;
@@ -237,6 +265,7 @@
     if(enhancing || !isMobile()) return;
     enhancing=true;
     try{
+      brandLogin();
       compactHeader();
       compactToolbar();
       compactIncoming();
