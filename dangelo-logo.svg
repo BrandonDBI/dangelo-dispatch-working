@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 480" role="img" aria-label="D'Angelo Brothers Inc.">
+  <rect width="680" height="480" fill="none"/>
+  <circle cx="340" cy="240" r="202" fill="#231f20"/>
+  <circle cx="340" cy="240" r="217" fill="none" stroke="#231f20" stroke-width="16"/>
+  <circle cx="340" cy="240" r="201" fill="none" stroke="#fff" stroke-width="8"/>
+  <g font-family="Arial Black,Arial,sans-serif" font-weight="900" text-anchor="middle" paint-order="stroke" stroke="#fff" stroke-width="15" stroke-linejoin="round">
+    <text x="340" y="190" font-size="96" fill="#ed1c24">D’ANGELO</text>
+    <text x="340" y="294" font-size="92" fill="#ed1c24">BROTHERS</text>
+    <text x="190" y="393" font-size="88" fill="#ed1c24">INC.</text>
+  </g>
+  <path d="M316 366 H558" stroke="#fff" stroke-width="31" stroke-linecap="square"/>
+  <path d="M316 366 H558" stroke="#ed1c24" stroke-width="18" stroke-linecap="square"/>
+</svg>
