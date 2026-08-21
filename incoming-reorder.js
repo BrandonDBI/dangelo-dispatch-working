@@ -5,8 +5,7 @@
   const BASE = String(cfg.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
   const KEY = String(cfg.SUPABASE_ANON_KEY || '');
   let draggedIncomingId = null;
-  let syncTimer = null;
-  let syncing = false;
+  let desiredOrder = [];
 
   const style = document.createElement('style');
   style.textContent = `
@@ -48,38 +47,18 @@
     return text ? JSON.parse(text) : null;
   }
 
-  function scheduleSync(){
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(syncIncomingOrder, 120);
-  }
-
-  async function syncIncomingOrder(){
-    if(syncing || !document.querySelector('.incomingBody') || !BASE || !KEY) return;
-    syncing = true;
-    try {
-      const jobs = await request('/rest/v1/jobs?select=id,incoming_sort_order,created_at&start_date=is.null&order=incoming_sort_order.asc.nullslast,created_at.asc,id.asc');
-      const body = document.querySelector('.incomingBody');
-      if(!body) return;
-      const currentCards = [...body.querySelectorAll('.jobCard')];
-      const currentIds = currentCards.map(card => Number(card.dataset.jobId));
-      const desiredIds = (jobs || []).map(job => Number(job.id)).filter(id => currentIds.includes(id));
-      const orderChanged = currentIds.length === desiredIds.length && currentIds.some((id, index) => id !== desiredIds[index]);
-      if(orderChanged){
-        const cards = new Map(currentCards.map(card => [Number(card.dataset.jobId), card]));
-        desiredIds.forEach(id => {
-          const card = cards.get(id);
-          if(card) body.appendChild(card);
-        });
-      }
-      enhanceIncomingCards(body);
-    } catch(err) {
-      console.error('Incoming job order sync failed', err);
-    } finally {
-      syncing = false;
-    }
+  function applyDesiredOrder(body){
+    if(!body || !desiredOrder.length) return;
+    const cards = new Map([...body.querySelectorAll('.jobCard')].map(card => [Number(card.dataset.jobId), card]));
+    desiredOrder.forEach(id => {
+      const card = cards.get(id);
+      if(card) body.appendChild(card);
+    });
   }
 
   function enhanceIncomingCards(body){
+    if(!body) return;
+    applyDesiredOrder(body);
     if(!isSupervisor()) return;
     body.querySelectorAll('.jobCard').forEach(card => {
       if(card.querySelector('.incomingDragGrip')) return;
@@ -136,6 +115,7 @@
     if(!isSupervisor()) return;
     const ids = [...body.querySelectorAll('.jobCard')].map(card => Number(card.dataset.jobId));
     if(!ids.length) return;
+    desiredOrder = ids;
     body.classList.add('incomingSortSaving');
     try {
       await Promise.all(ids.map((id, index) => request(`/rest/v1/jobs?id=eq.${id}`, {
@@ -145,9 +125,19 @@
       })));
     } catch(err) {
       console.error('Incoming job order save failed', err);
-      scheduleSync();
     } finally {
       body.classList.remove('incomingSortSaving');
+    }
+  }
+
+  async function loadSavedOrder(){
+    if(!BASE || !KEY) return;
+    try {
+      const jobs = await request('/rest/v1/jobs?select=id&start_date=is.null&order=incoming_sort_order.asc.nullslast,created_at.asc,id.asc');
+      desiredOrder = (jobs || []).map(job => Number(job.id));
+      enhanceIncomingCards(document.querySelector('.incomingBody'));
+    } catch(err) {
+      console.error('Incoming job order load failed', err);
     }
   }
 
@@ -191,8 +181,7 @@
   const observer = new MutationObserver(() => {
     const body = document.querySelector('.incomingBody');
     if(body) enhanceIncomingCards(body);
-    scheduleSync();
   });
   observer.observe(document.getElementById('app') || document.body, { childList: true, subtree: true });
-  scheduleSync();
+  loadSavedOrder();
 })();
