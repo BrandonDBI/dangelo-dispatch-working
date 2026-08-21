@@ -49,6 +49,7 @@
 
   function applyDesiredOrder(body){
     if(!body || !desiredOrder.length) return;
+    if(body.querySelector('.incomingDragging')) return;
     const currentCards = [...body.querySelectorAll('.jobCard')];
     const currentIds = currentCards.map(card => Number(card.dataset.jobId));
     const desiredIds = desiredOrder.filter(id => currentIds.includes(id));
