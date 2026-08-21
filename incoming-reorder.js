@@ -50,7 +50,7 @@
 
   function scheduleSync(){
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(syncIncomingOrder, 90);
+    syncTimer = setTimeout(syncIncomingOrder, 120);
   }
 
   async function syncIncomingOrder(){
@@ -60,11 +60,17 @@
       const jobs = await request('/rest/v1/jobs?select=id,incoming_sort_order,created_at&start_date=is.null&order=incoming_sort_order.asc.nullslast,created_at.asc,id.asc');
       const body = document.querySelector('.incomingBody');
       if(!body) return;
-      const cards = new Map([...body.querySelectorAll('.jobCard')].map(card => [Number(card.dataset.jobId), card]));
-      (jobs || []).forEach(job => {
-        const card = cards.get(Number(job.id));
-        if(card) body.appendChild(card);
-      });
+      const currentCards = [...body.querySelectorAll('.jobCard')];
+      const currentIds = currentCards.map(card => Number(card.dataset.jobId));
+      const desiredIds = (jobs || []).map(job => Number(job.id)).filter(id => currentIds.includes(id));
+      const orderChanged = currentIds.length === desiredIds.length && currentIds.some((id, index) => id !== desiredIds[index]);
+      if(orderChanged){
+        const cards = new Map(currentCards.map(card => [Number(card.dataset.jobId), card]));
+        desiredIds.forEach(id => {
+          const card = cards.get(id);
+          if(card) body.appendChild(card);
+        });
+      }
       enhanceIncomingCards(body);
     } catch(err) {
       console.error('Incoming job order sync failed', err);
@@ -182,7 +188,11 @@
     draggedIncomingId = null;
   }, true);
 
-  const observer = new MutationObserver(() => scheduleSync());
+  const observer = new MutationObserver(() => {
+    const body = document.querySelector('.incomingBody');
+    if(body) enhanceIncomingCards(body);
+    scheduleSync();
+  });
   observer.observe(document.getElementById('app') || document.body, { childList: true, subtree: true });
   scheduleSync();
 })();
