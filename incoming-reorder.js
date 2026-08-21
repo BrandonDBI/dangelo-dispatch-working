@@ -6,6 +6,7 @@
   const KEY = String(cfg.SUPABASE_ANON_KEY || '');
   let draggedIncomingId = null;
   let desiredOrder = [];
+  let savingOrder = false;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -123,6 +124,7 @@
     const ids = [...body.querySelectorAll('.jobCard')].map(card => Number(card.dataset.jobId));
     if(!ids.length) return;
     desiredOrder = ids;
+    savingOrder = true;
     body.classList.add('incomingSortSaving');
     try {
       await Promise.all(ids.map((id, index) => request(`/rest/v1/jobs?id=eq.${id}`, {
@@ -133,12 +135,15 @@
     } catch(err) {
       console.error('Incoming job order save failed', err);
     } finally {
+      savingOrder = false;
       body.classList.remove('incomingSortSaving');
     }
   }
 
   async function loadSavedOrder(){
-    if(!BASE || !KEY) return;
+    if(!BASE || !KEY || savingOrder || draggedIncomingId) return;
+    const body = document.querySelector('.incomingBody');
+    if(body?.querySelector('.incomingDragging')) return;
     try {
       const jobs = await request('/rest/v1/jobs?select=id&start_date=is.null&order=incoming_sort_order.asc.nullslast,created_at.asc,id.asc');
       desiredOrder = (jobs || []).map(job => Number(job.id));
@@ -190,5 +195,11 @@
     if(body) enhanceIncomingCards(body);
   });
   observer.observe(document.getElementById('app') || document.body, { childList: true, subtree: true });
+
   loadSavedOrder();
+  setInterval(() => { if(!document.hidden) loadSavedOrder(); }, 5000);
+  window.addEventListener('focus', loadSavedOrder);
+  document.addEventListener('visibilitychange', () => {
+    if(!document.hidden) loadSavedOrder();
+  });
 })();
