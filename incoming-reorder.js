@@ -49,8 +49,14 @@
 
   function applyDesiredOrder(body){
     if(!body || !desiredOrder.length) return;
-    const cards = new Map([...body.querySelectorAll('.jobCard')].map(card => [Number(card.dataset.jobId), card]));
-    desiredOrder.forEach(id => {
+    const currentCards = [...body.querySelectorAll('.jobCard')];
+    const currentIds = currentCards.map(card => Number(card.dataset.jobId));
+    const desiredIds = desiredOrder.filter(id => currentIds.includes(id));
+    if(currentIds.length !== desiredIds.length) return;
+    const changed = currentIds.some((id, index) => id !== desiredIds[index]);
+    if(!changed) return;
+    const cards = new Map(currentCards.map(card => [Number(card.dataset.jobId), card]));
+    desiredIds.forEach(id => {
       const card = cards.get(id);
       if(card) body.appendChild(card);
     });
