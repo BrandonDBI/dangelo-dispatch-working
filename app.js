@@ -9,7 +9,7 @@
   const state = {
     session: JSON.parse(localStorage.getItem('dangelo_session') || 'null'),
     role: 'viewer', crews: [], jobs: [], weekStart: mondayOf(new Date()), showWeekend: true,
-    draft: null, poller: null, message: ''
+    draft: null, poller: null, message: '', dataSignature: ''
   };
 
   function configured() {
@@ -54,9 +54,14 @@
       request('/rest/v1/crews?select=*&order=sort_order.asc'),
       request('/rest/v1/jobs?select=*&order=created_at.asc')
     ]);
-    state.crews=crews||[]; state.jobs=jobs||[]; state.message='';
+    const nextCrews=crews||[]; const nextJobs=jobs||[];
+    const nextSignature=JSON.stringify([nextCrews,nextJobs]);
+    const changed=nextSignature!==state.dataSignature;
+    state.dataSignature=nextSignature;
+    state.crews=nextCrews; state.jobs=nextJobs; state.message='';
+    return changed;
   }
-  function startPolling(){ stopPolling(); state.poller=setInterval(async()=>{ if(!state.draft){ try{await loadData();renderBoardOnly();}catch(e){state.message=e.message;renderBoardOnly();} } },3000); }
+  function startPolling(){ stopPolling(); state.poller=setInterval(async()=>{ if(!state.draft){ try{const changed=await loadData();if(changed)renderBoardOnly();}catch(e){state.message=e.message;renderBoardOnly();} } },3000); }
   function stopPolling(){ if(state.poller) clearInterval(state.poller); state.poller=null; }
 
   function render(){
@@ -92,6 +97,9 @@
   }
   function renderBoardOnly(){
     const board=document.getElementById('board'); if(!board)return;
+    const previousScroller=board.querySelector('.scroller');
+    const previousScrollLeft=previousScroller?.scrollLeft||0;
+    const previousScrollTop=previousScroller?.scrollTop||0;
     const msg=document.getElementById('message'); if(msg) msg.innerHTML=state.message?`<div class="message">${esc(state.message)}</div>`:'';
     const days=Array.from({length:state.showWeekend?7:5},(_,i)=>addDays(state.weekStart,i));
     const incoming=state.jobs.filter(j=>!j.start_date);
@@ -105,6 +113,8 @@
     });
     html+=`</div></div></section><footer><span class="legend emergency">Emergency</span><span class="legend pressing">Pressing</span><span class="legend non">Non-Emergency</span><span class="dragHint">Drag jobs to move between days or crews</span></footer>`;
     board.innerHTML=html; bindBoard();
+    const nextScroller=board.querySelector('.scroller');
+    if(nextScroller){nextScroller.scrollLeft=previousScrollLeft;nextScroller.scrollTop=previousScrollTop;}
   }
   function occurs(job,date){ return job.start_date&&job.end_date&&date>=job.start_date&&date<=job.end_date; }
   function jobCardHtml(job){
