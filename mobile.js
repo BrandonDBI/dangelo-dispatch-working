@@ -2,9 +2,14 @@
   'use strict';
 
   const MOBILE_MAX = 700;
+  const cfg = window.DANGELO_CONFIG || {};
+  const BASE = String(cfg.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
+  const KEY = String(cfg.SUPABASE_ANON_KEY || '');
   let mobileView = 'today';
   let incomingOpen = false;
   let enhancing = false;
+  let timeOffSyncBusy = false;
+  let timeOffSyncTimer = null;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -58,6 +63,7 @@
       .cell.mobileEmptyCell:before{display:none!important}
       .mobileEmptyLabel{font-size:11px;font-weight:700;color:#64748b}
       .cell.mobileEmptyCell .addCell{top:5px!important}
+      .scheduleTimeOffMarker{display:block!important;width:100%!important;position:relative!important;visibility:visible!important;opacity:1!important;clear:both!important}
       footer{margin-bottom:76px!important}
 
       .loginPage{background:#231f20!important;min-height:100vh!important;padding:24px 16px!important}
@@ -71,6 +77,9 @@
   document.head.appendChild(style);
 
   function isMobile(){ return window.innerWidth <= MOBILE_MAX; }
+  function esc(value){
+    return String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+  }
   function isoLocal(d){
     const y=d.getFullYear();
     const m=String(d.getMonth()+1).padStart(2,'0');
@@ -81,6 +90,57 @@
   function prettyDate(dateString){
     const d=new Date(`${dateString}T00:00:00`);
     return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+  }
+  function overlaps(entry,date){ return entry.start_date<=date && entry.end_date>=date; }
+
+  function queueMobileTimeOffSync(){
+    if(!isMobile()) return;
+    clearTimeout(timeOffSyncTimer);
+    timeOffSyncTimer=setTimeout(syncMobileTimeOffMarkers,80);
+  }
+
+  async function syncMobileTimeOffMarkers(){
+    if(!isMobile() || timeOffSyncBusy || !BASE || !KEY) return;
+    const cells=Array.from(document.querySelectorAll('.dropCell[data-crew][data-date]'));
+    if(!cells.length) return;
+    const dates=cells.map(c=>c.dataset.date).filter(Boolean).sort();
+    if(!dates.length) return;
+    const start=dates[0], end=dates[dates.length-1];
+    timeOffSyncBusy=true;
+    try{
+      if(window.DANGELO_AUTH?.ensureFreshSession){
+        try{ await window.DANGELO_AUTH.ensureFreshSession(); }catch{}
+      }
+      const res=await fetch(`${BASE}/rest/v1/time_off_entries?select=id,employee_name,crew_id,start_date,end_date,note&crew_id=not.is.null&start_date=lte.${end}&end_date=gte.${start}`,{
+        headers:{apikey:KEY,'Content-Type':'application/json'}
+      });
+      if(!res.ok) return;
+      const offs=await res.json();
+      const desired=[];
+      cells.forEach(cell=>{
+        const crewId=Number(cell.dataset.crew), date=cell.dataset.date;
+        (offs||[]).filter(entry=>Number(entry.crew_id)===crewId && overlaps(entry,date)).forEach(entry=>desired.push(`${entry.id}|${crewId}|${date}`));
+      });
+      const actual=Array.from(document.querySelectorAll('.dropCell .scheduleTimeOffMarker[data-mobile-timeoff-key]')).map(el=>el.dataset.mobileTimeoffKey).sort();
+      desired.sort();
+      if(actual.length===desired.length && actual.every((key,i)=>key===desired[i])) return;
+
+      cells.forEach(cell=>{
+        cell.querySelectorAll('.scheduleTimeOffMarker').forEach(el=>el.remove());
+        const crewId=Number(cell.dataset.crew), date=cell.dataset.date;
+        (offs||[]).filter(entry=>Number(entry.crew_id)===crewId && overlaps(entry,date)).forEach(entry=>{
+          const marker=document.createElement('div');
+          marker.className='scheduleTimeOffMarker';
+          marker.dataset.mobileTimeoffKey=`${entry.id}|${crewId}|${date}`;
+          marker.innerHTML=`<strong>${esc(entry.employee_name||'Employee')} — OFF</strong>${entry.note?`<span>${esc(entry.note)}</span>`:''}`;
+          const addButton=cell.querySelector('.addCell');
+          if(addButton) cell.insertBefore(marker,addButton); else cell.appendChild(marker);
+        });
+      });
+      markEmptyCrews();
+    }catch{}finally{
+      timeOffSyncBusy=false;
+    }
   }
 
   function brandLogin(){
@@ -142,7 +202,7 @@
     tabs.className='mobileViewTabs';
     tabs.innerHTML=`<button data-mobile-view="today">Today</button><button data-mobile-view="tomorrow">Tomorrow</button><button data-mobile-view="week">Week</button>`;
     tabs.querySelectorAll('button').forEach(btn=>{
-      btn.onclick=()=>{ mobileView=btn.dataset.mobileView; applyMobileView(); };
+      btn.onclick=()=>{ mobileView=btn.dataset.mobileView; applyMobileView(); queueMobileTimeOffSync(); };
     });
     toolbar.appendChild(tabs);
   }
@@ -259,6 +319,7 @@
     });
     updateNavLabel();
     markEmptyCrews();
+    queueMobileTimeOffSync();
   }
 
   function enhance(){
@@ -275,6 +336,10 @@
 
   const observer=new MutationObserver(()=>{ if(isMobile()) requestAnimationFrame(enhance); });
   observer.observe(document.getElementById('app'),{childList:true,subtree:true});
-  window.addEventListener('resize',()=>{ if(isMobile()) enhance(); });
+  window.addEventListener('resize',()=>{ if(isMobile()){ enhance(); queueMobileTimeOffSync(); } });
+  window.addEventListener('pageshow',queueMobileTimeOffSync);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) queueMobileTimeOffSync(); });
+  setInterval(queueMobileTimeOffSync,3000);
   enhance();
+  queueMobileTimeOffSync();
 })();
