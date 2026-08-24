@@ -21,9 +21,21 @@
   <div id="app"></div>
   <script src="config.js"></script>
   <script src="auth-persistence.js"></script>
-  <script src="app.js"></script>
-  <script src="mobile.js"></script>
-  <script src="incoming-reorder.js"></script>
+  <script>
+    (async () => {
+      try { await window.DANGELO_AUTH_READY; } catch {}
+      const scripts = ['app.js','mobile.js','incoming-reorder.js'];
+      for (const src of scripts) {
+        await new Promise(resolve => {
+          const s = document.createElement('script');
+          s.src = src;
+          s.onload = resolve;
+          s.onerror = resolve;
+          document.body.appendChild(s);
+        });
+      }
+    })();
+  </script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
