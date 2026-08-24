@@ -43,7 +43,7 @@
   async function refreshSession(force = false) {
     if (refreshPromise) return refreshPromise;
     const session = getStoredSession();
-    if (!session?.refresh_token) throw new Error('Session refresh unavailable');
+    if (!session?.refresh_token) return session;
     if (!force && !tokenExpiresSoon(session)) return session;
 
     refreshPromise = nativeFetch(`${BASE}/auth/v1/token?grant_type=refresh_token`, {
@@ -76,6 +76,8 @@
     ensureFreshSession,
     refreshSession: () => refreshSession(true)
   };
+
+  window.DANGELO_AUTH_READY = ensureFreshSession().catch(() => getStoredSession());
 
   window.fetch = async function(input, init = {}) {
     const url = typeof input === 'string' ? input : input?.url;
