@@ -222,7 +222,7 @@
         if(node.classList.contains('cell') && !node.classList.contains('mobileHidden')) visibleCells.push(node);
         node=node.nextElementSibling;
       }
-      if(visibleCells.length===1 && !visibleCells[0].querySelector('.jobCard')){
+      if(visibleCells.length===1 && !visibleCells[0].querySelector('.jobCard,.scheduleTimeOffMarker')){
         const cell=visibleCells[0];
         name.classList.add('mobileEmptyCrew');
         cell.classList.add('mobileEmptyCell');
