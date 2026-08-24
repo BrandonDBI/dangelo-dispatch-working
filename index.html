@@ -7,15 +7,16 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Dispatch" />
-  <meta name="application-name" content="D’Angelo Dispatch" />
-  <title>D’Angelo Dispatch</title>
+  <meta name="apple-mobile-web-app-title" content="Schedule" />
+  <meta name="application-name" content="D’Angelo Schedule" />
+  <title>D’Angelo Schedule</title>
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="mobile-polish.css" />
+  <link rel="stylesheet" href="time-off.css" />
 </head>
 <body>
   <div id="app"></div>
@@ -24,7 +25,7 @@
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js','mobile.js','incoming-reorder.js'];
+      const scripts = ['app.js','mobile.js','incoming-reorder.js','time-off.js'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
