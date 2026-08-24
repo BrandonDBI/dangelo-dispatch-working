@@ -8,7 +8,7 @@
 
   const state = {
     session: JSON.parse(localStorage.getItem('dangelo_session') || 'null'),
-    role: 'viewer', crews: [], jobs: [], weekStart: mondayOf(new Date()), showWeekend: true,
+    role: 'viewer', crews: [], jobs: [], weekStart: mondayOf(new Date()), showWeekend: false,
     draft: null, poller: null, message: '', dataSignature: ''
   };
 
