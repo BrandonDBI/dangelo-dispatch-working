@@ -36,9 +36,11 @@
   }
 
   async function login(email,password,signup=false){
+    email = String(email || '').trim();
     const endpoint = signup ? '/auth/v1/signup' : '/auth/v1/token?grant_type=password';
     const data = await request(endpoint,{method:'POST',body:JSON.stringify({email,password})});
     if (signup && !data.access_token) return {needsConfirmation:true};
+    localStorage.setItem('dangelo_last_email',email);
     state.session = data; localStorage.setItem('dangelo_session',JSON.stringify(data));
     await loadRole(); await loadData(); render(); startPolling(); return {};
   }
@@ -66,7 +68,8 @@
     app.innerHTML=`<main class="loginPage"><div class="loginCard"><div class="logo">D</div><h1>Configuration needed</h1><p>Open <b>config.js</b> in GitHub and paste your Supabase Project URL and publishable/anon key.</p><div class="message">This app intentionally uses no Vercel environment variables and no secret service-role key.</div></div></main>`;
   }
   function renderLogin(){
-    app.innerHTML=`<main class="loginPage"><form id="loginForm" class="loginCard"><div class="logo">D</div><h1>D’Angelo Schedule</h1><p>Crew-first dispatch board</p><label>Email<input id="email" type="email" value="brandon@dangelo-brothers.com" required></label><label>Password<input id="password" type="password" minlength="6" required></label><div id="loginMessage"></div><button class="primary wide" type="submit">Sign in</button><button class="linkButton" id="signupButton" type="button">Create first account</button></form></main>`;
+    const rememberedEmail = localStorage.getItem('dangelo_last_email') || '';
+    app.innerHTML=`<main class="loginPage"><form id="loginForm" class="loginCard"><div class="logo">D</div><h1>D’Angelo Schedule</h1><p>Crew-first dispatch board</p><label>Email<input id="email" type="email" value="${esc(rememberedEmail)}" autocomplete="username" required></label><label>Password<input id="password" type="password" minlength="6" autocomplete="current-password" required></label><div id="loginMessage"></div><button class="primary wide" type="submit">Sign in</button><button class="linkButton" id="signupButton" type="button">Create first account</button></form></main>`;
     document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();await doAuth(false)};
     document.getElementById('signupButton').onclick=async()=>doAuth(true);
     async function doAuth(signup){
