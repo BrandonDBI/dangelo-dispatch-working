@@ -30,7 +30,10 @@
       name.classList.toggle('mobileHidden',!visible);
     });
     const label=document.querySelector('.mobileDateNavLabel');
-    if(label)label.textContent=selectedDate===todayIso()?`TODAY · ${pretty(selectedDate)}`:pretty(selectedDate);
+    if(label){
+      const text=selectedDate===todayIso()?`TODAY · ${pretty(selectedDate)}`:pretty(selectedDate);
+      if(label.textContent!==text)label.textContent=text;
+    }
   }
 
   function bindArrow(id,dir){
