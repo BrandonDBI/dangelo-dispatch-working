@@ -6,6 +6,7 @@
   const BASE = String(cfg.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
   const KEY = String(cfg.SUPABASE_ANON_KEY || '');
   let mobileView = 'today';
+  let selectedDate = null;
   let incomingOpen = false;
   let enhancing = false;
   let timeOffSyncBusy = false;
@@ -87,8 +88,18 @@
     return `${y}-${m}-${day}`;
   }
   function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+  function parseDate(dateString){ return new Date(`${dateString}T00:00:00`); }
+  function boardDates(){ return [...new Set(Array.from(document.querySelectorAll('.cell[data-date]')).map(c=>c.dataset.date).filter(Boolean))].sort(); }
+  function weekendShown(){ return boardDates().some(date=>{ const day=parseDate(date).getDay(); return day===0 || day===6; }); }
+  function adjacentDate(dateString,dir){
+    let d=addDays(parseDate(dateString),dir);
+    if(!weekendShown()){
+      while(d.getDay()===0 || d.getDay()===6) d=addDays(d,dir);
+    }
+    return isoLocal(d);
+  }
   function prettyDate(dateString){
-    const d=new Date(`${dateString}T00:00:00`);
+    const d=parseDate(dateString);
     return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
   }
   function overlaps(entry,date){ return entry.start_date<=date && entry.end_date>=date; }
@@ -202,9 +213,37 @@
     tabs.className='mobileViewTabs';
     tabs.innerHTML=`<button data-mobile-view="today">Today</button><button data-mobile-view="tomorrow">Tomorrow</button><button data-mobile-view="week">Week</button>`;
     tabs.querySelectorAll('button').forEach(btn=>{
-      btn.onclick=()=>{ mobileView=btn.dataset.mobileView; applyMobileView(); queueMobileTimeOffSync(); };
+      btn.onclick=()=>{
+        mobileView=btn.dataset.mobileView;
+        if(mobileView==='today') selectedDate=isoLocal(new Date());
+        applyMobileView();
+        queueMobileTimeOffSync();
+      };
     });
     toolbar.appendChild(tabs);
+  }
+
+  function bindDayArrow(id,dir){
+    const btn=document.getElementById(id);
+    if(!btn || btn.dataset.mobileDayArrowBound==='1') return;
+    const coreHandler=btn.onclick;
+    btn.dataset.mobileDayArrowBound='1';
+    btn.onclick=e=>{
+      if(!isMobile() || mobileView==='week'){
+        return coreHandler?.call(btn,e);
+      }
+      e?.preventDefault?.();
+      if(!selectedDate) selectedDate=isoLocal(new Date());
+      const target=adjacentDate(selectedDate,dir);
+      const dates=boardDates();
+      selectedDate=target;
+      if(dates.includes(target)){
+        applyMobileView();
+        return;
+      }
+      coreHandler?.call(btn,e);
+      requestAnimationFrame(applyMobileView);
+    };
   }
 
   function compactToolbar(){
@@ -218,6 +257,8 @@
       const next=document.getElementById('next');
       if(next) first.insertBefore(label,next);
     }
+    bindDayArrow('prev',-1);
+    bindDayArrow('next',1);
     const weekend=document.getElementById('weekend');
     if(weekend) weekend.classList.add('mobileHideOnPhone');
     const today=document.getElementById('today');
@@ -237,11 +278,15 @@
     const label=document.querySelector('.mobileDateNavLabel');
     if(!label) return;
     const today=new Date(); today.setHours(0,0,0,0);
-    if(mobileView==='today') label.textContent=`TODAY · ${prettyDate(isoLocal(today))}`;
-    else if(mobileView==='tomorrow') label.textContent=`TOMORROW · ${prettyDate(isoLocal(addDays(today,1)))}`;
-    else {
-      const monday=new Date(today); monday.setDate(today.getDate()-((today.getDay()+6)%7));
-      label.textContent=`WEEK OF ${monday.toLocaleDateString('en-US',{month:'short',day:'numeric'}).toUpperCase()}`;
+    if(mobileView!=='week'){
+      const date=selectedDate || isoLocal(today);
+      const text=date===isoLocal(today)?`TODAY · ${prettyDate(date)}`:prettyDate(date);
+      if(label.textContent!==text) label.textContent=text;
+    }else{
+      const dates=boardDates();
+      const first=dates[0];
+      const text=first?`WEEK OF ${parseDate(first).toLocaleDateString('en-US',{month:'short',day:'numeric'}).toUpperCase()}`:'WEEK';
+      if(label.textContent!==text) label.textContent=text;
     }
   }
 
@@ -297,10 +342,11 @@
   function applyMobileView(){
     if(!isMobile()) return;
     const tabs=document.querySelectorAll('[data-mobile-view]');
-    tabs.forEach(btn=>btn.classList.toggle('active',btn.dataset.mobileView===mobileView));
+    tabs.forEach(btn=>btn.classList.toggle('active',mobileView==='week'?btn.dataset.mobileView==='week':btn.dataset.mobileView==='today'));
 
     const today=new Date(); today.setHours(0,0,0,0);
-    const wanted=mobileView==='today'?isoLocal(today):mobileView==='tomorrow'?isoLocal(addDays(today,1)):null;
+    if(mobileView!=='week' && !selectedDate) selectedDate=isoLocal(today);
+    const wanted=mobileView==='week'?null:selectedDate;
 
     document.querySelectorAll('.cell[data-date]').forEach(cell=>{
       cell.dataset.prettyDate=prettyDate(cell.dataset.date);
