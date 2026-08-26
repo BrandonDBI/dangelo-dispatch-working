@@ -6,6 +6,7 @@
   const KEY = String(cfg.SUPABASE_ANON_KEY || '');
   const periods = new Map();
   let loadTimer = null;
+  let editingJobId = null;
 
   function authHeaders(){
     let session = null;
@@ -22,8 +23,8 @@
       ...options,
       headers: {...authHeaders(), ...(options.headers || {})}
     });
-    if(!res.ok) throw new Error(await res.text() || `Request failed (${res.status})`);
     const text = await res.text();
+    if(!res.ok) throw new Error(text || `Request failed (${res.status})`);
     return text ? JSON.parse(text) : null;
   }
 
@@ -64,18 +65,7 @@
     if(!modal || !save || document.getElementById('f_schedule_period')) return;
 
     const title = modal.querySelector('.modalTitle h2')?.textContent || '';
-    if(title !== 'Edit job') return;
-
-    const backdrop = document.getElementById('backdrop');
-    const sourceCardId = Number(document.querySelector('.jobCard:hover')?.dataset.jobId) || null;
-    let jobId = sourceCardId;
-
-    if(!jobId){
-      const name = document.getElementById('f_job_name')?.value || '';
-      const matching = [...document.querySelectorAll('.jobCard')].find(card => card.querySelector('h3')?.textContent === name.toUpperCase());
-      if(matching) jobId = Number(matching.dataset.jobId);
-    }
-    if(!jobId) return;
+    if(title !== 'Edit job' || !editingJobId) return;
 
     const crewRow = document.getElementById('f_crew_id')?.closest('.three');
     if(!crewRow) return;
@@ -86,36 +76,34 @@
     crewRow.insertAdjacentElement('afterend', label);
 
     const select = document.getElementById('f_schedule_period');
-    const existing = periods.get(jobId);
+    const existing = periods.get(editingJobId);
     select.value = existing === 'AM' || existing === 'PM' ? existing : '__NO_CHANGE__';
 
-    save.addEventListener('click', async e => {
+    save.addEventListener('click', () => {
       const choice = select.value;
-      if(choice === '__NO_CHANGE__') return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      save.disabled = true;
-      try {
-        const next = choice === 'ALL_DAY' ? null : choice;
-        await request(`/rest/v1/jobs?id=eq.${jobId}`, {
-          method:'PATCH',
-          headers:{Prefer:'return=minimal'},
-          body:JSON.stringify({schedule_period:next})
-        });
-        periods.set(jobId,next);
-        const originalSave = save.cloneNode(true);
-        save.replaceWith(originalSave);
-        originalSave.click();
-      } catch(err){
-        save.disabled = false;
-        const box = document.getElementById('modalMessage');
-        if(box) box.innerHTML = `<div class="message">Could not save AM/PM setting.</div>`;
-        console.error('AM/PM save failed',err);
-      }
+      const jobId = editingJobId;
+      if(choice === '__NO_CHANGE__' || !jobId) return;
+      const next = choice === 'ALL_DAY' ? null : choice;
+      setTimeout(async () => {
+        try {
+          await request(`/rest/v1/jobs?id=eq.${jobId}`, {
+            method:'PATCH',
+            headers:{Prefer:'return=minimal'},
+            body:JSON.stringify({schedule_period:next})
+          });
+          periods.set(jobId,next);
+          sortBoard();
+        } catch(err){
+          console.error('AM/PM save failed',err);
+        }
+      },250);
     }, true);
-
-    if(backdrop) backdrop.dataset.halfDayJobId = String(jobId);
   }
+
+  document.addEventListener('click', e => {
+    const card = e.target.closest?.('.jobCard[data-job-id]');
+    if(card) editingJobId = Number(card.dataset.jobId);
+  }, true);
 
   const observer = new MutationObserver(() => {
     clearTimeout(loadTimer);
