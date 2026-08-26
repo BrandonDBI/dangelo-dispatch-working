@@ -14,18 +14,18 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=43" />
-  <link rel="stylesheet" href="mobile-polish.css?v=43" />
-  <link rel="stylesheet" href="time-off.css?v=43" />
+  <link rel="stylesheet" href="styles.css?v=44" />
+  <link rel="stylesheet" href="mobile-polish.css?v=44" />
+  <link rel="stylesheet" href="time-off.css?v=44" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=43"></script>
-  <script src="auth-persistence.js?v=43"></script>
+  <script src="config.js?v=44"></script>
+  <script src="auth-persistence.js?v=44"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=43','mobile.js?v=43','incoming-reorder.js?v=43','half-day.js?v=43','single-day.js?v=43','undo-move.js?v=43','instant-timeoff.js?v=43','time-off.js?v=43','supervisor-tabs.js?v=43','holidays.js?v=43'];
+      const scripts = ['app.js?v=44','mobile.js?v=44','mobile-day-nav.js?v=44','incoming-reorder.js?v=44','half-day.js?v=44','single-day.js?v=44','undo-move.js?v=44','instant-timeoff.js?v=44','time-off.js?v=44','supervisor-tabs.js?v=44','holidays.js?v=44'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -40,7 +40,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=43').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=44').catch(() => {});
       });
     }
   </script>
