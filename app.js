@@ -87,11 +87,22 @@
     const end=addDays(state.weekStart,6);
     return `<main><header class="topbar"><div><h1>D’Angelo Schedule</h1><p>Crew-first dispatch board</p></div><div class="actions"><span class="liveBadge">● Live</span><span class="roleBadge">${esc(state.role)}</span><button id="signout">Sign out</button></div></header><section class="toolbar"><div class="actions"><button id="prev">‹</button><button id="today">Today</button><button id="next">›</button><strong>${fmtShort(state.weekStart)} – ${fmtShort(end)}, ${end.getFullYear()}</strong></div><div class="actions"><button id="weekend">${state.showWeekend?'Hide Weekend':'Show Weekend'}</button>${state.role==='supervisor'?'<button class="primary" id="newIncoming">+ New incoming job</button>':''}</div></section><div id="message"></div><div id="board"></div><div id="modalRoot"></div></main>`;
   }
+  function updateWeekRange(){
+    const range=document.querySelector('.toolbar>.actions:first-child strong');
+    if(!range)return;
+    const end=addDays(state.weekStart,6);
+    range.textContent=`${fmtShort(state.weekStart)} – ${fmtShort(end)}, ${end.getFullYear()}`;
+  }
+  function changeWeek(days){
+    state.weekStart=addDays(state.weekStart,days);
+    updateWeekRange();
+    renderBoardOnly();
+  }
   function bindShell(){
     document.getElementById('signout').onclick=logout;
-    document.getElementById('prev').onclick=()=>{state.weekStart=addDays(state.weekStart,-7);render()};
-    document.getElementById('next').onclick=()=>{state.weekStart=addDays(state.weekStart,7);render()};
-    document.getElementById('today').onclick=()=>{state.weekStart=mondayOf(new Date());render()};
+    document.getElementById('prev').onclick=()=>changeWeek(-7);
+    document.getElementById('next').onclick=()=>changeWeek(7);
+    document.getElementById('today').onclick=()=>{state.weekStart=mondayOf(new Date());updateWeekRange();renderBoardOnly()};
     document.getElementById('weekend').onclick=()=>{state.showWeekend=!state.showWeekend;render()};
     const ni=document.getElementById('newIncoming'); if(ni) ni.onclick=()=>openModal(blankDraft());
   }
