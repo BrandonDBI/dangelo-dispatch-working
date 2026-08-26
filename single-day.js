@@ -8,7 +8,6 @@
   const exclusions = new Set();
   let guardJobId = null;
   let guardUntil = 0;
-  let applyTimer = null;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -147,10 +146,7 @@
   window.addEventListener('blur',closeMenu);
   window.addEventListener('resize',closeMenu);
 
-  const observer=new MutationObserver(()=>{
-    clearTimeout(applyTimer);
-    applyTimer=setTimeout(applyExclusions,30);
-  });
+  const observer=new MutationObserver(applyExclusions);
   observer.observe(document.getElementById('app')||document.body,{childList:true,subtree:true});
 
   loadData();
