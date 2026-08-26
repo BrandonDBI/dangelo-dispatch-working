@@ -242,7 +242,7 @@
         return;
       }
       coreHandler?.call(btn,e);
-      requestAnimationFrame(applyMobileView);
+      applyMobileView();
     };
   }
 
