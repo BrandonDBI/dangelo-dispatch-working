@@ -7,13 +7,6 @@
   function isoDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
   function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
 
-  function observedDate(d){
-    const day=d.getDay();
-    if(day===6) return addDays(d,-1);
-    if(day===0) return addDays(d,1);
-    return d;
-  }
-
   function nthWeekday(year,month,weekday,n){
     const d=new Date(year,month,1);
     const offset=(weekday-d.getDay()+7)%7;
@@ -28,26 +21,24 @@
     return d;
   }
 
-  function federalHolidays(year){
-    const fixed=(month,day,name)=>({date:observedDate(new Date(year,month,day)),name});
+  function companyHolidays(year){
+    const fixed=(month,day,name)=>({date:new Date(year,month,day),name});
+    const thanksgiving=nthWeekday(year,10,4,4);
     return [
       fixed(0,1,"NEW YEAR'S DAY"),
-      {date:nthWeekday(year,0,1,3),name:'MARTIN LUTHER KING JR. DAY'},
-      {date:nthWeekday(year,1,1,3),name:"PRESIDENTS' DAY"},
       {date:lastWeekday(year,4,1),name:'MEMORIAL DAY'},
-      fixed(5,19,'JUNETEENTH'),
       fixed(6,4,'INDEPENDENCE DAY'),
       {date:nthWeekday(year,8,1,1),name:'LABOR DAY'},
-      {date:nthWeekday(year,9,1,2),name:'COLUMBUS DAY'},
-      fixed(10,11,'VETERANS DAY'),
-      {date:nthWeekday(year,10,4,4),name:'THANKSGIVING DAY'},
+      {date:thanksgiving,name:'THANKSGIVING DAY'},
+      {date:addDays(thanksgiving,1),name:'DAY AFTER THANKSGIVING'},
+      fixed(11,24,'CHRISTMAS EVE'),
       fixed(11,25,'CHRISTMAS DAY')
     ];
   }
 
   function holidayFor(dateString){
     const year=Number(dateString.slice(0,4));
-    const matches=[...federalHolidays(year-1),...federalHolidays(year),...federalHolidays(year+1)];
+    const matches=[...companyHolidays(year-1),...companyHolidays(year),...companyHolidays(year+1)];
     return matches.find(h=>isoDate(h.date)===dateString) || null;
   }
 
@@ -60,7 +51,7 @@
       if(!holiday) return;
       const marker=document.createElement('div');
       marker.className='scheduleHolidayMarker';
-      marker.innerHTML=`<strong>${holiday.name}</strong><span>FEDERAL HOLIDAY</span>`;
+      marker.innerHTML=`<strong>${holiday.name}</strong><span>HOLIDAY</span>`;
       const firstJob=cell.querySelector('.jobCard');
       if(firstJob) cell.insertBefore(marker,firstJob);
       else {
