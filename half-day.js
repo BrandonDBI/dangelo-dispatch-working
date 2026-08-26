@@ -38,6 +38,9 @@
       return {card,index,rank};
     }).sort((a,b) => a.rank - b.rank || a.index - b.index);
 
+    const alreadyCorrect = ranked.every((item,index) => item.card === cards[index]);
+    if(alreadyCorrect) return;
+
     const anchor = cards[cards.length - 1].nextSibling;
     ranked.forEach(item => cell.insertBefore(item.card, anchor));
   }
