@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  let timer = null;
+  let queued = false;
 
   function pad(n){ return String(n).padStart(2,'0'); }
   function isoDate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -43,6 +43,7 @@
   }
 
   function sync(){
+    queued=false;
     const cells=Array.from(document.querySelectorAll('.dropCell[data-date]'));
     if(!cells.length) return;
     cells.forEach(cell=>{
@@ -64,8 +65,13 @@
     });
   }
 
-  function queue(){ clearTimeout(timer); timer=setTimeout(sync,80); }
-  const observer=new MutationObserver(()=>requestAnimationFrame(queue));
+  function queue(){
+    if(queued) return;
+    queued=true;
+    requestAnimationFrame(sync);
+  }
+
+  const observer=new MutationObserver(queue);
   const app=document.getElementById('app');
   if(app) observer.observe(app,{childList:true,subtree:true});
   document.addEventListener('visibilitychange',()=>{ if(!document.hidden) queue(); });
