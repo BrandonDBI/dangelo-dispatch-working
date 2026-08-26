@@ -128,12 +128,20 @@
 
     const menu=document.createElement('div');
     menu.className='singleDayMenu';
-    menu.style.left=`${Math.max(8,Math.min(e.clientX,window.innerWidth-220))}px`;
-    menu.style.top=`${Math.max(8,Math.min(e.clientY,window.innerHeight-70))}px`;
     menu.innerHTML=`<button type="button">Remove ${fmtDate(date)} only</button>`;
+    document.body.appendChild(menu);
+
+    const rect=card.getBoundingClientRect();
+    const menuWidth=Math.max(205,menu.offsetWidth||205);
+    const menuHeight=Math.max(48,menu.offsetHeight||48);
+    let left=Math.max(8,Math.min(rect.left+8,window.innerWidth-menuWidth-8));
+    let top=e.clientY+8;
+    if(top+menuHeight>window.innerHeight-8) top=Math.max(8,e.clientY-menuHeight-8);
+    menu.style.left=`${left}px`;
+    menu.style.top=`${top}px`;
+
     const button=menu.querySelector('button');
     button.onclick=()=>removeDate(jobId,date,button);
-    document.body.appendChild(menu);
   },true);
 
   window.addEventListener('blur',closeMenu);
