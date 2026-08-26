@@ -6,15 +6,17 @@
   const KEY = String(cfg.SUPABASE_ANON_KEY || '');
   let savedOrders = new Map();
   let saving = false;
+  let activeSort = null;
 
   const style = document.createElement('style');
   style.textContent = `
     .dropCell .jobCard{position:relative}
-    .dropCell .jobCard.scheduleSorting{opacity:.52;outline:2px dashed #64748b;outline-offset:2px}
-    .scheduleDragGrip{float:right;width:28px;height:28px;min-height:28px;padding:0;margin:-2px -2px 4px 7px;border:0;background:transparent;color:#64748b;font-size:19px;line-height:1;cursor:grab;touch-action:none;user-select:none}
-    .scheduleDragGrip:active{cursor:grabbing}
+    .dropCell .jobCard.scheduleSorting{opacity:.58;outline:2px dashed #64748b;outline-offset:2px;z-index:5}
+    .scheduleDragGrip{float:right;width:30px;height:30px;min-height:30px;padding:0;margin:-2px -2px 4px 7px;border:1px solid #cbd5e1;border-radius:5px;background:#fff;color:#475569;font-size:19px;line-height:1;cursor:grab;touch-action:none;user-select:none;position:relative;z-index:10}
+    .scheduleDragGrip:hover{background:#f1f5f9}
+    .scheduleDragGrip:active{cursor:grabbing;background:#e2e8f0}
     .dropCell.scheduleSortSaving:after{content:'Saving order…';display:block;padding:3px 5px;color:#64748b;font-size:9px;font-weight:700}
-    @media(max-width:700px){.scheduleDragGrip{width:36px;height:36px;min-height:36px;margin:-4px -4px 4px 8px;font-size:22px}}
+    @media(max-width:700px){.scheduleDragGrip{width:38px;height:38px;min-height:38px;margin:-4px -4px 4px 8px;font-size:22px}}
   `;
   document.head.appendChild(style);
 
@@ -50,21 +52,20 @@
   }
 
   function applySavedOrder(cell){
-    if(!cell || cell.querySelector('.scheduleSorting')) return;
+    if(!cell || activeSort?.cell === cell) return;
     const cards = jobCards(cell);
     if(cards.length < 2) return;
     const sorted = [...cards].sort((a,b) => {
-      const aId = Number(a.dataset.jobId), bId = Number(b.dataset.jobId);
-      const aOrder = savedOrders.get(aId), bOrder = savedOrders.get(bId);
+      const aOrder = savedOrders.get(Number(a.dataset.jobId));
+      const bOrder = savedOrders.get(Number(b.dataset.jobId));
       if(aOrder == null && bOrder == null) return 0;
       if(aOrder == null) return 1;
       if(bOrder == null) return -1;
       return aOrder - bOrder;
     });
-    const changed = cards.some((card,i) => card !== sorted[i]);
-    if(!changed) return;
-    const firstNonJob = [...cell.children].find(el => !el.classList?.contains('jobCard')) || null;
-    sorted.forEach(card => cell.insertBefore(card, firstNonJob));
+    if(!cards.some((card,i) => card !== sorted[i])) return;
+    const anchor = cards[cards.length - 1].nextSibling;
+    sorted.forEach(card => cell.insertBefore(card, anchor));
   }
 
   function enhanceCell(cell){
@@ -76,55 +77,90 @@
       const grip = document.createElement('button');
       grip.type = 'button';
       grip.className = 'scheduleDragGrip';
-      grip.setAttribute('aria-label','Drag to reorder job within this day');
-      grip.title = 'Drag to reorder within this day';
-      grip.textContent = '⠿';
+      grip.setAttribute('aria-label','Drag to reorder this job within the same day');
+      grip.title = 'Drag to reorder within this cell';
+      grip.textContent = '↕';
       card.insertBefore(grip, card.firstChild);
-      bindPointerReorder(grip, card, cell);
+
+      grip.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      grip.addEventListener('pointerdown', e => startSort(e, grip, card, cell));
     });
   }
 
-  function bindPointerReorder(grip, card, cell){
-    let active = false;
-    let moved = false;
+  function startSort(e, grip, card, cell){
+    if(!isSupervisor()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
 
-    grip.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-    });
+    const wasDraggable = card.draggable;
+    card.draggable = false;
+    card.setAttribute('draggable','false');
+    card.classList.add('scheduleSorting');
+    activeSort = { grip, card, cell, pointerId:e.pointerId, moved:false, wasDraggable };
 
-    grip.addEventListener('pointerdown', e => {
-      if(!isSupervisor()) return;
-      active = true;
-      moved = false;
-      e.preventDefault();
-      e.stopPropagation();
-      card.classList.add('scheduleSorting');
-      grip.setPointerCapture(e.pointerId);
-    });
-
-    grip.addEventListener('pointermove', e => {
-      if(!active) return;
-      e.preventDefault();
-      const target = document.elementFromPoint(e.clientX,e.clientY)?.closest('.dropCell .jobCard');
-      if(!target || target === card || target.parentElement !== cell) return;
-      const rect = target.getBoundingClientRect();
-      const before = e.clientY < rect.top + rect.height / 2;
-      cell.insertBefore(card, before ? target : target.nextSibling);
-      moved = true;
-    });
-
-    const finish = async e => {
-      if(!active) return;
-      active = false;
-      card.classList.remove('scheduleSorting');
-      try { grip.releasePointerCapture(e.pointerId); } catch {}
-      if(moved) await saveCellOrder(cell);
-    };
-
-    grip.addEventListener('pointerup', finish);
-    grip.addEventListener('pointercancel', finish);
+    try { grip.setPointerCapture(e.pointerId); } catch {}
   }
+
+  function moveSort(e){
+    if(!activeSort || e.pointerId !== activeSort.pointerId) return;
+    e.preventDefault();
+    const {card,cell} = activeSort;
+    const candidates = jobCards(cell).filter(x => x !== card);
+    if(!candidates.length) return;
+
+    let target = null;
+    for(const candidate of candidates){
+      const r = candidate.getBoundingClientRect();
+      if(e.clientY >= r.top && e.clientY <= r.bottom){ target = candidate; break; }
+    }
+
+    if(target){
+      const r = target.getBoundingClientRect();
+      const before = e.clientY < r.top + r.height/2;
+      const nextPosition = before ? target : target.nextSibling;
+      if(nextPosition !== card && card.nextSibling !== nextPosition){
+        cell.insertBefore(card,nextPosition);
+        activeSort.moved = true;
+      }
+      return;
+    }
+
+    const first = candidates[0].getBoundingClientRect();
+    const last = candidates[candidates.length-1].getBoundingClientRect();
+    if(e.clientY < first.top){
+      cell.insertBefore(card,candidates[0]);
+      activeSort.moved = true;
+    } else if(e.clientY > last.bottom){
+      cell.insertBefore(card,candidates[candidates.length-1].nextSibling);
+      activeSort.moved = true;
+    }
+  }
+
+  async function finishSort(e){
+    if(!activeSort || (e.pointerId != null && e.pointerId !== activeSort.pointerId)) return;
+    const sort = activeSort;
+    activeSort = null;
+    sort.card.classList.remove('scheduleSorting');
+    sort.card.draggable = sort.wasDraggable;
+    sort.card.setAttribute('draggable', String(sort.wasDraggable));
+    try { sort.grip.releasePointerCapture(sort.pointerId); } catch {}
+    if(sort.moved) await saveCellOrder(sort.cell);
+  }
+
+  document.addEventListener('pointermove', moveSort, {capture:true, passive:false});
+  document.addEventListener('pointerup', finishSort, true);
+  document.addEventListener('pointercancel', finishSort, true);
+
+  document.addEventListener('dragstart', e => {
+    if(activeSort){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  }, true);
 
   async function saveCellOrder(cell){
     if(!isSupervisor() || saving) return;
@@ -148,7 +184,7 @@
   }
 
   async function loadSavedOrders(){
-    if(!BASE || !KEY || saving) return;
+    if(!BASE || !KEY || saving || activeSort) return;
     try {
       const jobs = await request('/rest/v1/jobs?select=id,incoming_sort_order&start_date=not.is.null');
       savedOrders = new Map((jobs || []).filter(j => j.incoming_sort_order != null).map(j => [Number(j.id),Number(j.incoming_sort_order)]));
@@ -159,6 +195,7 @@
   }
 
   const observer = new MutationObserver(() => {
+    if(activeSort) return;
     document.querySelectorAll('.dropCell[data-date]').forEach(enhanceCell);
   });
   observer.observe(document.getElementById('app') || document.body,{childList:true,subtree:true});
