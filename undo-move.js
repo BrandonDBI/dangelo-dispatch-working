@@ -132,7 +132,7 @@
       }else{
         await request(`/rest/v1/jobs?id=eq.${item.entity_id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(cleanJobPayload(item.before_data))});
       }
-      window.location.reload();
+      closeActivity();
     }catch(err){console.error('Activity restore failed',err);button.disabled=false;alert('Could not restore this activity.');}
   }
 
