@@ -1,5 +1,5 @@
-const CACHE='dangelo-dispatch-v53';
-const CORE=['/','/index.html','/styles.css','/mobile-polish.css','/time-off.css','/config.js','/auth-persistence.js','/app.js','/mobile.js','/mobile-view-buttons.js','/incoming-reorder.js','/half-day.js','/single-day.js','/undo-move.js','/instant-timeoff.js','/time-off.js','/supervisor-tabs.js','/holidays.js','/manifest.webmanifest','/dangelo-logo.svg','/dangelo-app-icon.svg','/icon-192.png','/icon-512.png','/apple-touch-icon.png'];
+const CACHE='dangelo-dispatch-v54';
+const CORE=['/','/index.html','/styles.css','/mobile-polish.css','/time-off.css','/config.js','/auth-persistence.js','/app.js','/mobile.js','/mobile-view-buttons.js','/incoming-reorder.js','/half-day.js','/single-day.js','/undo-move.js','/job-search.js','/instant-timeoff.js','/time-off.js','/supervisor-tabs.js','/holidays.js','/manifest.webmanifest','/dangelo-logo.svg','/dangelo-app-icon.svg','/icon-192.png','/icon-512.png','/apple-touch-icon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
 });
