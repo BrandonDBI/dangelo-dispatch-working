@@ -102,15 +102,35 @@
     }, true);
   }
 
+  function enhanceModalImmediately(){
+    // The app creates the modal during the click handler. Run on the next
+    // animation frame so Schedule Period is present as soon as that first
+    // modal render reaches the screen, instead of waiting on data loading.
+    requestAnimationFrame(() => {
+      enhanceModal();
+      // One extra frame is a cheap fallback for slower/mobile DOM updates.
+      if(!document.getElementById('f_schedule_period')) requestAnimationFrame(enhanceModal);
+    });
+  }
+
   document.addEventListener('click', e => {
     const card = e.target.closest?.('.jobCard[data-job-id]');
-    if(card) editingJobId = Number(card.dataset.jobId);
-    if(e.target.closest?.('#newIncoming,#incomingAdd,[data-add-crew]')) editingJobId = null;
+    if(card){
+      editingJobId = Number(card.dataset.jobId);
+      enhanceModalImmediately();
+    }
+    if(e.target.closest?.('#newIncoming,#incomingAdd,[data-add-crew]')){
+      editingJobId = null;
+      enhanceModalImmediately();
+    }
   }, true);
 
   const observer = new MutationObserver(() => {
+    // Do the UI enhancement synchronously with the DOM mutation. Keep the
+    // tiny debounce only for board sorting, which can involve many cards.
+    enhanceModal();
     clearTimeout(loadTimer);
-    loadTimer = setTimeout(() => { sortBoard(); enhanceModal(); },60);
+    loadTimer = setTimeout(sortBoard,60);
   });
   observer.observe(document.getElementById('app') || document.body,{childList:true,subtree:true});
 
