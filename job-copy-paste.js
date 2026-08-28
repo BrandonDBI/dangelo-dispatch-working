@@ -37,6 +37,14 @@
     return body;
   }
 
+  function esc(value) {
+    return String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+  }
+
+  function fmtCardDate(s) {
+    return s ? new Date(`${s}T00:00:00`).toLocaleDateString('en-US',{month:'numeric',day:'numeric',year:'2-digit'}) : '';
+  }
+
   function closeMenu() {
     if (menu) menu.remove();
     menu = null;
@@ -126,6 +134,29 @@
     return d.toISOString().slice(0, 10);
   }
 
+  function optimisticCard(job) {
+    const missDigDates=(job.miss_dig_ready||job.miss_dig_expires)?`<p class="missDigDates">${job.miss_dig_ready?`Ready: ${esc(fmtCardDate(job.miss_dig_ready))}`:''}${job.miss_dig_ready&&job.miss_dig_expires?' · ':''}${job.miss_dig_expires?`Expires: ${esc(fmtCardDate(job.miss_dig_expires))}`:''}</p>`:'';
+    const wrap=document.createElement('div');
+    wrap.innerHTML=`<article class="jobCard ${esc(job.priority||'non_emergency')}" data-optimistic-paste="1" style="opacity:.88"><h3>${esc(job.job_name)}</h3>${job.address?`<p>${esc(job.address)}</p>`:''}${job.miss_dig_number?`<p>Miss Dig: ${esc(job.miss_dig_number)}</p>${missDigDates}`:''}${!job.miss_dig_number?missDigDates:''}${job.job_number?`<p>D’Angelo Job #: ${esc(job.job_number)}</p>`:''}${job.notes?`<p class="notes">${esc(job.notes)}</p>`:''}</article>`;
+    return wrap.firstElementChild;
+  }
+
+  function showOptimisticPaste(job, crewId, date) {
+    const card=optimisticCard(job);
+    if(date){
+      const cell=document.querySelector(`.dropCell[data-crew="${CSS.escape(String(crewId))}"][data-date="${CSS.escape(date)}"]`);
+      if(!cell) return null;
+      const addButton=cell.querySelector('.addCell');
+      if(addButton) cell.insertBefore(card,addButton); else cell.appendChild(card);
+      return card;
+    }
+    const body=document.querySelector('#incomingDrop .incomingBody');
+    if(!body) return null;
+    const empty=body.querySelector('.empty'); if(empty) empty.remove();
+    body.appendChild(card);
+    return card;
+  }
+
   async function pasteInto(crewId, date) {
     if (!copiedJob) return showToast('Copy a job first');
     const copy = cleanCopy(copiedJob);
@@ -139,12 +170,20 @@
       copy.start_date = null;
       copy.end_date = null;
     }
-    await request('/rest/v1/jobs', {
-      method: 'POST',
-      headers: { Prefer: 'return=minimal' },
-      body: JSON.stringify(copy)
-    });
+
+    const optimistic=showOptimisticPaste(copy,crewId,date);
     showToast(`Pasted: ${copy.job_name || 'job'}`);
+
+    try {
+      await request('/rest/v1/jobs', {
+        method: 'POST',
+        headers: { Prefer: 'return=minimal' },
+        body: JSON.stringify(copy)
+      });
+    } catch (err) {
+      optimistic?.remove();
+      throw err;
+    }
   }
 
   function markContextGesture(e) {
@@ -161,7 +200,7 @@
     if (!isSupervisor()) return;
 
     const jobCard = e.target.closest('.jobCard');
-    if (jobCard) {
+    if (jobCard && !jobCard.hasAttribute('data-optimistic-paste')) {
       e.preventDefault();
       e.stopPropagation();
       guardUntil = Date.now() + 1200;
