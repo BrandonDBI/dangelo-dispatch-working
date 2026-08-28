@@ -6,6 +6,7 @@
   const KEY = String(cfg.SUPABASE_ANON_KEY || '');
   let copiedJob = null;
   let menu = null;
+  let guardUntil = 0;
 
   function isSupervisor() {
     return document.querySelector('.roleBadge')?.textContent?.trim().toLowerCase() === 'supervisor';
@@ -66,7 +67,7 @@
     menu = document.createElement('div');
     menu.className = 'jobCopyPasteMenu';
     Object.assign(menu.style, {
-      position: 'fixed', left: `${x}px`, top: `${y}px`, zIndex: '10000',
+      position: 'fixed', left: `${x}px`, top: `${y}px`, zIndex: '12001',
       minWidth: '170px', background: '#fff', border: '1px solid #d9d9d9',
       borderRadius: '8px', boxShadow: '0 10px 30px rgba(0,0,0,.18)',
       padding: '5px', fontFamily: 'inherit'
@@ -78,11 +79,13 @@
       Object.assign(button.style, {
         display: 'block', width: '100%', border: '0', background: 'transparent',
         textAlign: 'left', padding: '9px 10px', borderRadius: '6px',
-        fontSize: '14px', cursor: 'pointer', color: '#231f20'
+        fontSize: '14px', fontWeight: '700', cursor: 'pointer', color: '#231f20'
       });
       button.onmouseenter = () => { button.style.background = '#f2f2f2'; };
       button.onmouseleave = () => { button.style.background = 'transparent'; };
-      button.onclick = async () => {
+      button.onclick = async e => {
+        e.preventDefault();
+        e.stopPropagation();
         closeMenu();
         try { await item.action(); } catch (err) { showToast(err.message || 'Could not complete action'); }
       };
@@ -144,6 +147,16 @@
     showToast(`Pasted: ${copy.job_name || 'job'}`);
   }
 
+  function markContextGesture(e) {
+    if (!isSupervisor()) return;
+    const target = e.target.closest?.('.jobCard, .dropCell, #incomingDrop');
+    if (!target) return;
+    if (e.button === 2 || (e.button === 0 && e.ctrlKey)) guardUntil = Date.now() + 1200;
+  }
+
+  document.addEventListener('pointerdown', markContextGesture, true);
+  document.addEventListener('mousedown', markContextGesture, true);
+
   document.addEventListener('contextmenu', e => {
     if (!isSupervisor()) return;
 
@@ -151,6 +164,7 @@
     if (jobCard) {
       e.preventDefault();
       e.stopPropagation();
+      guardUntil = Date.now() + 1200;
       const id = jobCard.dataset.jobId;
       showMenu(e.clientX, e.clientY, [
         { label: 'Copy job', action: () => copyJobById(id) }
@@ -162,6 +176,7 @@
     if (cell && copiedJob) {
       e.preventDefault();
       e.stopPropagation();
+      guardUntil = Date.now() + 1200;
       showMenu(e.clientX, e.clientY, [
         { label: 'Paste job here', action: () => pasteInto(cell.dataset.crew, cell.dataset.date) }
       ]);
@@ -172,12 +187,23 @@
     if (incoming && copiedJob) {
       e.preventDefault();
       e.stopPropagation();
+      guardUntil = Date.now() + 1200;
       showMenu(e.clientX, e.clientY, [
         { label: 'Paste job to Incoming', action: () => pasteInto(null, null) }
       ]);
     }
   }, true);
 
-  document.addEventListener('click', closeMenu, true);
+  document.addEventListener('click', e => {
+    if (e.target.closest?.('.jobCopyPasteMenu')) return;
+    if (Date.now() < guardUntil) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return;
+    }
+    closeMenu();
+  }, true);
+
   window.addEventListener('blur', closeMenu);
+  window.addEventListener('resize', closeMenu);
 })();
