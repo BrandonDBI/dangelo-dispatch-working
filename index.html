@@ -14,18 +14,18 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=55" />
-  <link rel="stylesheet" href="mobile-polish.css?v=55" />
-  <link rel="stylesheet" href="time-off.css?v=55" />
+  <link rel="stylesheet" href="styles.css?v=56" />
+  <link rel="stylesheet" href="mobile-polish.css?v=56" />
+  <link rel="stylesheet" href="time-off.css?v=56" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=55"></script>
-  <script src="auth-persistence.js?v=55"></script>
+  <script src="config.js?v=56"></script>
+  <script src="auth-persistence.js?v=56"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=55','mobile.js?v=55','mobile-view-buttons.js?v=55','incoming-reorder.js?v=55','half-day.js?v=55','single-day.js?v=55','undo-move.js?v=55','job-search.js?v=55','job-copy-paste.js?v=55','instant-timeoff.js?v=55','time-off.js?v=55','supervisor-tabs.js?v=55','holidays.js?v=55'];
+      const scripts = ['app.js?v=56','mobile.js?v=56','mobile-instant-nav.js?v=56','mobile-view-buttons.js?v=56','incoming-reorder.js?v=56','half-day.js?v=56','single-day.js?v=56','undo-move.js?v=56','job-search.js?v=56','job-copy-paste.js?v=56','instant-timeoff.js?v=56','time-off.js?v=56','supervisor-tabs.js?v=56','holidays.js?v=56'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -40,10 +40,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=55').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=56').catch(() => {});
       });
     }
   </script>
-  <!-- v55 job copy/paste -->
+  <!-- v56 instant mobile navigation -->
 </body>
 </html>
