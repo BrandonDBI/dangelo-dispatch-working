@@ -14,18 +14,18 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=57" />
-  <link rel="stylesheet" href="mobile-polish.css?v=57" />
-  <link rel="stylesheet" href="time-off.css?v=57" />
+  <link rel="stylesheet" href="styles.css?v=58" />
+  <link rel="stylesheet" href="mobile-polish.css?v=58" />
+  <link rel="stylesheet" href="time-off.css?v=58" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=57"></script>
-  <script src="auth-persistence.js?v=57"></script>
+  <script src="config.js?v=58"></script>
+  <script src="auth-persistence.js?v=58"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=57','mobile.js?v=57','mobile-instant-nav.js?v=57','mobile-view-buttons.js?v=57','incoming-reorder.js?v=57','half-day.js?v=57','single-day.js?v=57','undo-move.js?v=57','job-search.js?v=57','job-copy-paste.js?v=57','instant-timeoff.js?v=57','time-off.js?v=57','supervisor-tabs.js?v=57','holidays.js?v=57'];
+      const scripts = ['app.js?v=58','mobile.js?v=58','mobile-instant-nav.js?v=58','mobile-view-buttons.js?v=58','incoming-reorder.js?v=58','half-day.js?v=58','single-day.js?v=58','undo-move.js?v=58','job-search.js?v=58','job-copy-paste.js?v=58','instant-timeoff.js?v=58','time-off.js?v=58','supervisor-tabs.js?v=58','holidays.js?v=58'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -40,10 +40,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=57').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=58').catch(() => {});
       });
     }
   </script>
-  <!-- v57 larger mobile touch targets -->
+  <!-- v58 return Day view to today after week browsing -->
 </body>
 </html>
