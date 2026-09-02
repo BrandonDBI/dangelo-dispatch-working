@@ -8,4 +8,27 @@
   .dispatchLayout{background:#eef0f2!important}
   .mobileViewTabs button.active{background:#ed1c24!important;color:#fff!important;border-color:#ed1c24!important}
   .mobileFab{background:#ed1c24!important}
+
+  /* Make mobile date navigation much easier to hit without changing the visual style. */
+  .toolbar>.actions:first-child{position:relative!important;overflow:visible!important;touch-action:manipulation!important}
+  #prev,#next{
+    position:relative!important;
+    z-index:8!important;
+    width:52px!important;
+    min-width:52px!important;
+    height:48px!important;
+    min-height:48px!important;
+    margin:-5px 0!important;
+    touch-action:manipulation!important;
+    -webkit-tap-highlight-color:transparent!important;
+    user-select:none!important;
+    -webkit-user-select:none!important;
+  }
+  #prev:active,#next:active{transform:scale(.94)!important}
+  .mobileDateNavLabel{pointer-events:none!important}
+  .mobileViewTabs button{
+    min-height:46px!important;
+    touch-action:manipulation!important;
+    -webkit-tap-highlight-color:transparent!important;
+  }
 }
