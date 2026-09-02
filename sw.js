@@ -1,4 +1,4 @@
-const CACHE='dangelo-dispatch-v57';
+const CACHE='dangelo-dispatch-v58';
 const CORE=['/','/index.html','/styles.css','/mobile-polish.css','/time-off.css','/config.js','/auth-persistence.js','/app.js','/mobile.js','/mobile-instant-nav.js','/mobile-view-buttons.js','/incoming-reorder.js','/half-day.js','/single-day.js','/undo-move.js','/job-search.js','/instant-timeoff.js','/time-off.js','/supervisor-tabs.js','/holidays.js','/manifest.webmanifest','/dangelo-logo.svg','/dangelo-app-icon.svg','/icon-192.png','/icon-512.png','/apple-touch-icon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
