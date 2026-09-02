@@ -57,7 +57,16 @@
     const today=isoLocal(new Date());
     label.textContent=date===today ? `TODAY · ${prettyDate(date)}` : prettyDate(date);
   }
-  function previewDay(date){
+  function scrollScheduleTop(){
+    requestAnimationFrame(()=>{
+      const board=document.getElementById('board');
+      const top=board ? Math.max(0,board.getBoundingClientRect().top + window.scrollY - 6) : 0;
+      window.scrollTo({top,behavior:'auto'});
+      const scroller=document.querySelector('.scroller');
+      if(scroller) scroller.scrollTop=0;
+    });
+  }
+  function previewDay(date,scroll=false){
     if(!date) return;
     document.querySelectorAll('.cell[data-date]').forEach(cell=>{
       cell.classList.toggle('mobileHidden',cell.dataset.date!==date);
@@ -66,6 +75,7 @@
     setTabs('day');
     setLabel(date,'day');
     lastPreviewAt=performance.now();
+    if(scroll) scrollScheduleTop();
   }
   function previewWeek(){
     document.querySelectorAll('.cell[data-date]').forEach(cell=>cell.classList.remove('mobileHidden'));
@@ -80,11 +90,22 @@
 
     const tab=e.target.closest?.('[data-mobile-view]');
     if(tab){
-      if(tab.dataset.mobileView==='week') previewWeek();
-      else {
+      if(tab.dataset.mobileView==='week'){
+        previewWeek();
+      } else {
+        const weekButton=document.querySelector('[data-mobile-view="week"]');
+        const comingFromWeek=weekButton?.classList.contains('active');
+
+        // Day always means the current day. If the user browsed to another week,
+        // first return the underlying board to the current week so the normal
+        // mobile Day handler has a real "today" cell to reveal.
+        if(comingFromWeek){
+          document.getElementById('today')?.click();
+        }
+
         const dates=boardDates();
         const today=isoLocal(new Date());
-        previewDay(visibleDate() || (dates.includes(today)?today:dates[0]));
+        previewDay(dates.includes(today) ? today : (visibleDate() || dates[0]), true);
       }
       return;
     }
