@@ -24,7 +24,7 @@
   }
 
   const app=document.getElementById('app');
-  if(app)new MutationObserver(queue).observe(app,{childList:true,subtree:true});
+  if(app)new MutationObserver(mutations=>{if(mutations.some(m=>m.target.id==='app'||[...m.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('.toolbar')||n.querySelector?.('.toolbar')))))queue();}).observe(app,{childList:true,subtree:true});
   window.addEventListener('resize',queue);
   queue();
 })();
