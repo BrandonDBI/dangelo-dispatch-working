@@ -380,7 +380,17 @@
     } finally { enhancing=false; }
   }
 
-  const observer=new MutationObserver(()=>{ if(isMobile()) requestAnimationFrame(enhance); });
+  // React only to core board/shell replacements, not our own DOM decorations.
+  let queued=false;
+  const observer=new MutationObserver(mutations=>{
+    if(!isMobile() || queued) return;
+    if(!mutations.some(m=>m.target.id==='app' || m.target.id==='board' ||
+      [...m.addedNodes].some(n=>n.nodeType===1 &&
+        (n.matches?.('.dispatchLayout,.topbar,.loginPage') ||
+         n.querySelector?.('.dispatchLayout,.topbar,.loginPage'))))) return;
+    queued=true;
+    requestAnimationFrame(()=>{queued=false;enhance();});
+  });
   observer.observe(document.getElementById('app'),{childList:true,subtree:true});
   window.addEventListener('resize',()=>{ if(isMobile()){ enhance(); queueMobileTimeOffSync(); } });
   window.addEventListener('pageshow',queueMobileTimeOffSync);
