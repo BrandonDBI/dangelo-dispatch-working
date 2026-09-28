@@ -14,21 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=66" />
-  <link rel="stylesheet" href="mobile-polish.css?v=66" />
-  <link rel="stylesheet" href="time-off.css?v=66" />
-  <link rel="stylesheet" href="restoration.css?v=66" />
-  <style>#appTabsBoot{display:none}#app>main:not(.loginPage)~#appTabsBoot{display:flex}</style>
+  <link rel="stylesheet" href="styles.css?v=67" />
+  <link rel="stylesheet" href="mobile-polish.css?v=67" />
+  <link rel="stylesheet" href="time-off.css?v=67" />
+  <link rel="stylesheet" href="restoration.css?v=67" />
 </head>
 <body>
   <div id="app"></div>
-  <div id="appTabsBoot" class="appTabs appTabsBoot" aria-hidden="true"><button class="appTab active" type="button">Schedule</button><button class="appTab" type="button">Time Off</button><button class="appTab" type="button">Restoration</button></div>
-  <script src="config.js?v=66"></script>
-  <script src="auth-persistence.js?v=66"></script>
+  <script src="config.js?v=67"></script>
+  <script src="auth-persistence.js?v=67"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=66','mobile.js?v=66','mobile-instant-nav.js?v=66','mobile-view-buttons.js?v=66','incoming-reorder.js?v=66','half-day.js?v=66','single-day.js?v=66','undo-move.js?v=66','job-search.js?v=66','job-copy-paste.js?v=66','instant-timeoff.js?v=66','time-off.js?v=66','restoration.js?v=66','supervisor-tabs.js?v=66','holidays.js?v=66'];
+      const scripts = ['app.js?v=67','time-off.js?v=67','restoration.js?v=67','supervisor-tabs.js?v=67','mobile.js?v=67','mobile-instant-nav.js?v=67','mobile-view-buttons.js?v=67','incoming-reorder.js?v=67','half-day.js?v=67','single-day.js?v=67','undo-move.js?v=67','job-search.js?v=67','job-copy-paste.js?v=67','instant-timeoff.js?v=67','holidays.js?v=67'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -43,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=66').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=67').catch(() => {});
       });
     }
   </script>
-  <!-- v66 restoration projects -->
+  <!-- v67 immediate app shell -->
 </body>
 </html>

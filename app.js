@@ -160,7 +160,11 @@
   }
 
   async function boot(){
-    if(state.session?.access_token){ try{await loadRole();await loadData();startPolling()}catch{localStorage.removeItem('dangelo_session');state.session=null} }
+    if(state.session?.access_token){
+      render();
+      try{await loadRole();await loadData();render();startPolling()}catch{localStorage.removeItem('dangelo_session');state.session=null;render()}
+      return;
+    }
     render();
   }
   boot();
