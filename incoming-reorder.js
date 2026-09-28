@@ -84,12 +84,35 @@
   function bindPointerReorder(grip, card, body){
     let active = false;
     let moved = false;
+    let pointerId = null;
+
+    const move = e => {
+      if(!active || (pointerId !== null && e.pointerId !== pointerId)) return;
+      e.preventDefault();
+      const others = [...body.querySelectorAll('.jobCard')].filter(item => item !== card);
+      if(!others.length) return;
+      const next = others.find(item => e.clientY < item.getBoundingClientRect().top + item.getBoundingClientRect().height / 2);
+      const before = card.nextElementSibling;
+      if(next){
+        if(next !== before){
+          body.insertBefore(card, next);
+          moved = true;
+        }
+      } else if(card !== body.lastElementChild){
+        body.appendChild(card);
+        moved = true;
+      }
+    };
+
     const finish = async e => {
-      if(!active) return;
+      if(!active || (pointerId !== null && e.pointerId !== pointerId)) return;
       active = false;
+      pointerId = null;
+      document.removeEventListener('pointermove', move, true);
+      document.removeEventListener('pointerup', finish, true);
+      document.removeEventListener('pointercancel', finish, true);
       card.classList.remove('incomingDragging');
       card.setAttribute('draggable', isSupervisor() ? 'true' : 'false');
-      try { grip.releasePointerCapture(e.pointerId); } catch {}
       if(moved) await saveDomOrder(body);
     };
 
@@ -97,28 +120,20 @@
       e.preventDefault();
       e.stopPropagation();
     });
+
     grip.addEventListener('pointerdown', e => {
       if(!isSupervisor()) return;
       active = true;
       moved = false;
+      pointerId = e.pointerId;
       card.setAttribute('draggable', 'false');
+      card.classList.add('incomingDragging');
+      document.addEventListener('pointermove', move, {capture:true, passive:false});
+      document.addEventListener('pointerup', finish, true);
+      document.addEventListener('pointercancel', finish, true);
       e.preventDefault();
       e.stopPropagation();
-      card.classList.add('incomingDragging');
-      grip.setPointerCapture(e.pointerId);
     });
-    grip.addEventListener('pointermove', e => {
-      if(!active) return;
-      e.preventDefault();
-      const others = [...body.querySelectorAll('.jobCard')].filter(item => item !== card);
-      if(!others.length) return;
-      const next = others.find(item => e.clientY < item.getBoundingClientRect().top + item.getBoundingClientRect().height / 2);
-      if(next) body.insertBefore(card, next);
-      else body.appendChild(card);
-      moved = true;
-    });
-    grip.addEventListener('pointerup', finish);
-    grip.addEventListener('pointercancel', finish);
   }
 
   async function saveDomOrder(body){

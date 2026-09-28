@@ -14,18 +14,18 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=59" />
-  <link rel="stylesheet" href="mobile-polish.css?v=59" />
-  <link rel="stylesheet" href="time-off.css?v=59" />
+  <link rel="stylesheet" href="styles.css?v=60" />
+  <link rel="stylesheet" href="mobile-polish.css?v=60" />
+  <link rel="stylesheet" href="time-off.css?v=60" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=59"></script>
-  <script src="auth-persistence.js?v=59"></script>
+  <script src="config.js?v=60"></script>
+  <script src="auth-persistence.js?v=60"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=59','mobile.js?v=59','mobile-instant-nav.js?v=59','mobile-view-buttons.js?v=59','incoming-reorder.js?v=59','half-day.js?v=59','single-day.js?v=59','undo-move.js?v=59','job-search.js?v=59','job-copy-paste.js?v=59','instant-timeoff.js?v=59','time-off.js?v=59','supervisor-tabs.js?v=59','holidays.js?v=59'];
+      const scripts = ['app.js?v=60','mobile.js?v=60','mobile-instant-nav.js?v=60','mobile-view-buttons.js?v=60','incoming-reorder.js?v=60','half-day.js?v=60','single-day.js?v=60','undo-move.js?v=60','job-search.js?v=60','job-copy-paste.js?v=60','instant-timeoff.js?v=60','time-off.js?v=60','supervisor-tabs.js?v=60','holidays.js?v=60'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -40,10 +40,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=59').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=60').catch(() => {});
       });
     }
   </script>
-  <!-- v59 fix desktop incoming job reorder -->
+  <!-- v60 robust document-level incoming reorder -->
 </body>
 </html>
