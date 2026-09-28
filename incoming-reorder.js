@@ -110,11 +110,11 @@
     grip.addEventListener('pointermove', e => {
       if(!active) return;
       e.preventDefault();
-      const under = document.elementFromPoint(e.clientX, e.clientY)?.closest('.incomingBody .jobCard');
-      if(!under || under === card || under.parentElement !== body) return;
-      const rect = under.getBoundingClientRect();
-      const before = e.clientY < rect.top + rect.height / 2;
-      body.insertBefore(card, before ? under : under.nextSibling);
+      const others = [...body.querySelectorAll('.jobCard')].filter(item => item !== card);
+      if(!others.length) return;
+      const next = others.find(item => e.clientY < item.getBoundingClientRect().top + item.getBoundingClientRect().height / 2);
+      if(next) body.insertBefore(card, next);
+      else body.appendChild(card);
       moved = true;
     });
     grip.addEventListener('pointerup', finish);
