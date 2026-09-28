@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=80" />
-  <link rel="stylesheet" href="mobile-polish.css?v=80" />
-  <link rel="stylesheet" href="time-off.css?v=80" />
-  <link rel="stylesheet" href="restoration.css?v=80" />
+  <link rel="stylesheet" href="styles.css?v=81" />
+  <link rel="stylesheet" href="mobile-polish.css?v=81" />
+  <link rel="stylesheet" href="time-off.css?v=81" />
+  <link rel="stylesheet" href="restoration.css?v=81" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=80"></script>
-  <script src="auth-persistence.js?v=80"></script>
+  <script src="config.js?v=81"></script>
+  <script src="auth-persistence.js?v=81"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=80','time-off.js?v=80','restoration.js?v=80','supervisor-tabs.js?v=80','mobile.js?v=80','mobile-instant-nav.js?v=80','mobile-view-buttons.js?v=80','incoming-reorder.js?v=80','half-day.js?v=80','single-day.js?v=80','undo-move.js?v=80','job-search.js?v=80','job-copy-paste.js?v=80','instant-timeoff.js?v=80','holidays.js?v=80'];
+      const scripts = ['app.js?v=81','time-off.js?v=81','restoration.js?v=81','supervisor-tabs.js?v=81','mobile.js?v=81','mobile-instant-nav.js?v=81','mobile-view-buttons.js?v=81','incoming-reorder.js?v=81','half-day.js?v=81','single-day.js?v=81','undo-move.js?v=81','job-search.js?v=81','job-copy-paste.js?v=81','instant-timeoff.js?v=81','holidays.js?v=81'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=80').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=81').catch(() => {});
       });
     }
   </script>
-  <!-- v80 restoration csv importer -->
+  <!-- v81 restoration migration complete -->
 </body>
 </html>
