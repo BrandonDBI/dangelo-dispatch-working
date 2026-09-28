@@ -14,18 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=64" />
-  <link rel="stylesheet" href="mobile-polish.css?v=64" />
-  <link rel="stylesheet" href="time-off.css?v=64" />\n  <link rel="stylesheet" href="restoration.css?v=64" />
+  <link rel="stylesheet" href="styles.css?v=65" />
+  <link rel="stylesheet" href="mobile-polish.css?v=65" />
+  <link rel="stylesheet" href="time-off.css?v=65" />
+  <link rel="stylesheet" href="restoration.css?v=65" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=64"></script>
-  <script src="auth-persistence.js?v=64"></script>
+  <script src="config.js?v=65"></script>
+  <script src="auth-persistence.js?v=65"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=64','mobile.js?v=64','mobile-instant-nav.js?v=64','mobile-view-buttons.js?v=64','incoming-reorder.js?v=64','half-day.js?v=64','single-day.js?v=64','undo-move.js?v=64','job-search.js?v=64','job-copy-paste.js?v=64','instant-timeoff.js?v=64','time-off.js?v=64','restoration.js?v=64','supervisor-tabs.js?v=64','holidays.js?v=64'];
+      const scripts = ['app.js?v=65','mobile.js?v=65','mobile-instant-nav.js?v=65','mobile-view-buttons.js?v=65','incoming-reorder.js?v=65','half-day.js?v=65','single-day.js?v=65','undo-move.js?v=65','job-search.js?v=65','job-copy-paste.js?v=65','instant-timeoff.js?v=65','time-off.js?v=65','restoration.js?v=65','supervisor-tabs.js?v=65','holidays.js?v=65'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -40,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=64').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=65').catch(() => {});
       });
     }
   </script>
-  <!-- v64 restoration v1 -->
+  <!-- v65 remove stray newline text -->
 </body>
 </html>
