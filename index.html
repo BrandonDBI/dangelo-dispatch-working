@@ -18,9 +18,11 @@
   <link rel="stylesheet" href="mobile-polish.css?v=66" />
   <link rel="stylesheet" href="time-off.css?v=66" />
   <link rel="stylesheet" href="restoration.css?v=66" />
+  <style>#appTabsBoot{display:none}#app>main:not(.loginPage)~#appTabsBoot{display:flex}</style>
 </head>
 <body>
   <div id="app"></div>
+  <div id="appTabsBoot" class="appTabs appTabsBoot" aria-hidden="true"><button class="appTab active" type="button">Schedule</button><button class="appTab" type="button">Time Off</button><button class="appTab" type="button">Restoration</button></div>
   <script src="config.js?v=66"></script>
   <script src="auth-persistence.js?v=66"></script>
   <script>
