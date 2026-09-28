@@ -14,6 +14,8 @@
     .incomingBody .jobCard.incomingDragging{opacity:.52;outline:2px dashed #64748b;outline-offset:2px}
     .incomingDragGrip{float:right;width:30px;height:30px;min-height:30px;padding:0;margin:-2px -2px 4px 7px;border:0;background:transparent;color:#64748b;font-size:20px;line-height:1;cursor:grab;touch-action:none;user-select:none}
     .incomingDragGrip:active{cursor:grabbing}
+    .incomingBody .jobCard.incomingScheduleDragging{opacity:.58;cursor:grabbing}
+    .dropCell.incomingScheduleTarget{outline:3px solid #2563eb;outline-offset:-3px;background:#eff6ff}
     .incomingSortSaving:after{content:'Saving order…';display:block;padding:4px 7px 8px;color:#64748b;font-size:10px;font-weight:700}
     @media(max-width:700px){
       .incomingDragGrip{width:38px;height:38px;min-height:38px;margin:-4px -4px 4px 8px;font-size:23px}
@@ -137,6 +139,52 @@
       e.stopPropagation();
     });
   }
+
+  // Incoming cards use a dedicated mouse drag so sidebar sorting and schedule
+  // placement cannot compete for the browser's native drag lifecycle.
+  let scheduleDrag = null;
+
+  document.addEventListener('pointerdown', e => {
+    if(!isSupervisor() || e.button !== 0 || e.target.closest?.('.incomingDragGrip')) return;
+    const card = e.target.closest?.('.incomingBody .jobCard');
+    if(!card) return;
+    scheduleDrag = { card, id: Number(card.dataset.jobId), pointerId: e.pointerId, x: e.clientX, y: e.clientY, active: false };
+  }, true);
+
+  document.addEventListener('pointermove', e => {
+    if(!scheduleDrag || e.pointerId !== scheduleDrag.pointerId) return;
+    if(!scheduleDrag.active){
+      if(Math.hypot(e.clientX - scheduleDrag.x, e.clientY - scheduleDrag.y) < 6) return;
+      scheduleDrag.active = true;
+      scheduleDrag.card.classList.add('incomingScheduleDragging');
+    }
+    e.preventDefault();
+    document.querySelectorAll('.dropCell.incomingScheduleTarget').forEach(x => x.classList.remove('incomingScheduleTarget'));
+    const target = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.dropCell');
+    if(target) target.classList.add('incomingScheduleTarget');
+  }, {capture:true, passive:false});
+
+  document.addEventListener('pointerup', e => {
+    if(!scheduleDrag || e.pointerId !== scheduleDrag.pointerId) return;
+    const drag = scheduleDrag;
+    scheduleDrag = null;
+    document.querySelectorAll('.dropCell.incomingScheduleTarget').forEach(x => x.classList.remove('incomingScheduleTarget'));
+    drag.card.classList.remove('incomingScheduleDragging');
+    if(!drag.active) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const target = document.elementFromPoint(e.clientX, e.clientY)?.closest?.('.dropCell');
+    if(!target) return;
+    const dt = new DataTransfer();
+    dt.setData('job-id', String(drag.id));
+    target.dispatchEvent(new DragEvent('drop', {bubbles:true, cancelable:true, dataTransfer:dt}));
+  }, true);
+
+  document.addEventListener('pointercancel', () => {
+    if(scheduleDrag) scheduleDrag.card.classList.remove('incomingScheduleDragging');
+    scheduleDrag = null;
+    document.querySelectorAll('.dropCell.incomingScheduleTarget').forEach(x => x.classList.remove('incomingScheduleTarget'));
+  }, true);
 
   async function saveDomOrder(body){
     if(!isSupervisor()) return;
