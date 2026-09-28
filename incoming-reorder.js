@@ -113,6 +113,7 @@
       document.removeEventListener('pointercancel', finish, true);
       card.classList.remove('incomingDragging');
       card.setAttribute('draggable', isSupervisor() ? 'true' : 'false');
+      if(isSupervisor()) card.draggable = true;
       if(moved) await saveDomOrder(body);
     };
 
@@ -127,6 +128,7 @@
       moved = false;
       pointerId = e.pointerId;
       card.setAttribute('draggable', 'false');
+      card.draggable = false;
       card.classList.add('incomingDragging');
       document.addEventListener('pointermove', move, {capture:true, passive:false});
       document.addEventListener('pointerup', finish, true);
