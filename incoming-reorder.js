@@ -88,6 +88,7 @@
       if(!active) return;
       active = false;
       card.classList.remove('incomingDragging');
+      card.setAttribute('draggable', isSupervisor() ? 'true' : 'false');
       try { grip.releasePointerCapture(e.pointerId); } catch {}
       if(moved) await saveDomOrder(body);
     };
@@ -100,6 +101,7 @@
       if(!isSupervisor()) return;
       active = true;
       moved = false;
+      card.setAttribute('draggable', 'false');
       e.preventDefault();
       e.stopPropagation();
       card.classList.add('incomingDragging');
