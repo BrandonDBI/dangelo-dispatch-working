@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=78" />
-  <link rel="stylesheet" href="mobile-polish.css?v=78" />
-  <link rel="stylesheet" href="time-off.css?v=78" />
-  <link rel="stylesheet" href="restoration.css?v=78" />
+  <link rel="stylesheet" href="styles.css?v=79" />
+  <link rel="stylesheet" href="mobile-polish.css?v=79" />
+  <link rel="stylesheet" href="time-off.css?v=79" />
+  <link rel="stylesheet" href="restoration.css?v=79" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=78"></script>
-  <script src="auth-persistence.js?v=78"></script>
+  <script src="config.js?v=79"></script>
+  <script src="auth-persistence.js?v=79"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=78','time-off.js?v=78','restoration.js?v=78','supervisor-tabs.js?v=78','mobile.js?v=78','mobile-instant-nav.js?v=78','mobile-view-buttons.js?v=78','incoming-reorder.js?v=78','half-day.js?v=78','single-day.js?v=78','undo-move.js?v=78','job-search.js?v=78','job-copy-paste.js?v=78','instant-timeoff.js?v=78','holidays.js?v=78'];
+      const scripts = ['app.js?v=79','time-off.js?v=79','restoration.js?v=79','supervisor-tabs.js?v=79','mobile.js?v=79','mobile-instant-nav.js?v=79','mobile-view-buttons.js?v=79','incoming-reorder.js?v=79','half-day.js?v=79','single-day.js?v=79','undo-move.js?v=79','job-search.js?v=79','job-copy-paste.js?v=79','instant-timeoff.js?v=79','holidays.js?v=79'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=78').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=79').catch(() => {});
       });
     }
   </script>
-  <!-- v78 revert restoration dimensions -->
+  <!-- v79 restoration requirements -->
 </body>
 </html>
