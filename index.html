@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=68" />
-  <link rel="stylesheet" href="mobile-polish.css?v=68" />
-  <link rel="stylesheet" href="time-off.css?v=68" />
-  <link rel="stylesheet" href="restoration.css?v=68" />
+  <link rel="stylesheet" href="styles.css?v=69" />
+  <link rel="stylesheet" href="mobile-polish.css?v=69" />
+  <link rel="stylesheet" href="time-off.css?v=69" />
+  <link rel="stylesheet" href="restoration.css?v=69" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=68"></script>
-  <script src="auth-persistence.js?v=68"></script>
+  <script src="config.js?v=69"></script>
+  <script src="auth-persistence.js?v=69"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=68','time-off.js?v=68','restoration.js?v=68','supervisor-tabs.js?v=68','mobile.js?v=68','mobile-instant-nav.js?v=68','mobile-view-buttons.js?v=68','incoming-reorder.js?v=68','half-day.js?v=68','single-day.js?v=68','undo-move.js?v=68','job-search.js?v=68','job-copy-paste.js?v=68','instant-timeoff.js?v=68','holidays.js?v=68'];
+      const scripts = ['app.js?v=69','time-off.js?v=69','restoration.js?v=69','supervisor-tabs.js?v=69','mobile.js?v=69','mobile-instant-nav.js?v=69','mobile-view-buttons.js?v=69','incoming-reorder.js?v=69','half-day.js?v=69','single-day.js?v=69','undo-move.js?v=69','job-search.js?v=69','job-copy-paste.js?v=69','instant-timeoff.js?v=69','holidays.js?v=69'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=68').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=69').catch(() => {});
       });
     }
   </script>
-  <!-- v68 stable app shell -->
+  <!-- v69 atomic navigation -->
 </body>
 </html>
