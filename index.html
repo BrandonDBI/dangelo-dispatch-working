@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=70" />
-  <link rel="stylesheet" href="mobile-polish.css?v=70" />
-  <link rel="stylesheet" href="time-off.css?v=70" />
-  <link rel="stylesheet" href="restoration.css?v=70" />
+  <link rel="stylesheet" href="styles.css?v=71" />
+  <link rel="stylesheet" href="mobile-polish.css?v=71" />
+  <link rel="stylesheet" href="time-off.css?v=71" />
+  <link rel="stylesheet" href="restoration.css?v=71" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=70"></script>
-  <script src="auth-persistence.js?v=70"></script>
+  <script src="config.js?v=71"></script>
+  <script src="auth-persistence.js?v=71"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=70','time-off.js?v=70','restoration.js?v=70','supervisor-tabs.js?v=70','mobile.js?v=70','mobile-instant-nav.js?v=70','mobile-view-buttons.js?v=70','incoming-reorder.js?v=70','half-day.js?v=70','single-day.js?v=70','undo-move.js?v=70','job-search.js?v=70','job-copy-paste.js?v=70','instant-timeoff.js?v=70','holidays.js?v=70'];
+      const scripts = ['app.js?v=71','time-off.js?v=71','restoration.js?v=71','supervisor-tabs.js?v=71','mobile.js?v=71','mobile-instant-nav.js?v=71','mobile-view-buttons.js?v=71','incoming-reorder.js?v=71','half-day.js?v=71','single-day.js?v=71','undo-move.js?v=71','job-search.js?v=71','job-copy-paste.js?v=71','instant-timeoff.js?v=71','holidays.js?v=71'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=70').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=71').catch(() => {});
       });
     }
   </script>
-  <!-- v70 stable role-gated navigation -->
+  <!-- v71 restoration re-entry fix -->
 </body>
 </html>
