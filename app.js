@@ -85,7 +85,7 @@
   }
   function shellHtml(){
     const end=addDays(state.weekStart,6);
-    return `<main><header class="topbar"><div><h1>D’Angelo Schedule</h1><p>Crew-first dispatch board</p></div><div class="actions"><span class="liveBadge">● Live</span><span class="roleBadge">${esc(state.role)}</span><button id="signout">Sign out</button></div></header><section class="toolbar"><div class="actions"><button id="prev">‹</button><button id="today">Today</button><button id="next">›</button><strong>${fmtShort(state.weekStart)} – ${fmtShort(end)}, ${end.getFullYear()}</strong></div><div class="actions"><button id="weekend">${state.showWeekend?'Hide Weekend':'Show Weekend'}</button>${state.role==='supervisor'?'<button class="primary" id="newIncoming">+ New incoming job</button>':''}</div></section><div id="message"></div><div id="board"></div><div id="modalRoot"></div></main>`;
+    return `<main><header class="topbar"><div><h1>D’Angelo Schedule</h1><p>Crew-first dispatch board</p></div><div class="actions"><span class="liveBadge">● Live</span><span class="roleBadge" data-role-ready="0">${esc(state.role)}</span><button id="signout">Sign out</button></div></header><section class="toolbar"><div class="actions"><button id="prev">‹</button><button id="today">Today</button><button id="next">›</button><strong>${fmtShort(state.weekStart)} – ${fmtShort(end)}, ${end.getFullYear()}</strong></div><div class="actions"><button id="weekend">${state.showWeekend?'Hide Weekend':'Show Weekend'}</button>${state.role==='supervisor'?'<button class="primary" id="newIncoming">+ New incoming job</button>':''}</div></section><div id="message"></div><div id="board"></div><div id="modalRoot"></div></main>`;
   }
   function updateWeekRange(){
     const range=document.querySelector('.toolbar>.actions:first-child strong');
@@ -162,7 +162,7 @@
   async function boot(){
     if(state.session?.access_token){
       render();
-      try{await loadRole();await loadData();const roleBadge=document.querySelector('.roleBadge');if(roleBadge)roleBadge.textContent=state.role;renderBoardOnly();startPolling()}catch{localStorage.removeItem('dangelo_session');state.session=null;render()}
+      try{await loadRole();await loadData();const roleBadge=document.querySelector('.roleBadge');if(roleBadge){roleBadge.textContent=state.role;roleBadge.dataset.roleReady='1';}renderBoardOnly();startPolling()}catch{localStorage.removeItem('dangelo_session');state.session=null;render()}
       return;
     }
     render();
