@@ -87,37 +87,18 @@
 
   document.addEventListener('pointerdown',e=>{
     if(!isMobile()) return;
-
     const tab=e.target.closest?.('[data-mobile-view]');
     if(tab){
+      // The main mobile controller owns Day/Week state. This helper only gives
+      // instant visual feedback; never click controls or change weeks itself.
       if(tab.dataset.mobileView==='week'){
         previewWeek();
-      } else {
-        const weekButton=document.querySelector('[data-mobile-view="week"]');
-        const comingFromWeek=weekButton?.classList.contains('active');
-
-        // Day always means the current day. If the user browsed to another week,
-        // first return the underlying board to the current week so the normal
-        // mobile Day handler has a real "today" cell to reveal.
-        if(comingFromWeek){
-          // Move the underlying board to the current week without letting the
-          // Week-mode arrow wrapper interfere, then force the Day presentation.
-          document.getElementById('today')?.click();
-        }
-
-        const showToday=()=>{
-          const dates=boardDates();
-          const today=isoLocal(new Date());
-          previewDay(dates.includes(today) ? today : (dates[0]||today), true);
-          // The main mobile controller owns the final click state; invoke the
-          // actual Day button after the board is stable.
-          if(tab.dataset.mobileView!=='week' && !tab.classList.contains('active')) tab.click();
-        };
-        requestAnimationFrame(()=>requestAnimationFrame(showToday));
+      }else{
+        const dates=boardDates(),today=isoLocal(new Date());
+        previewDay(dates.includes(today)?today:(dates[0]||today),true);
       }
       return;
     }
-
     const arrow=e.target.closest?.('#prev,#next');
     if(!arrow) return;
     const weekButton=document.querySelector('[data-mobile-view="week"]');
