@@ -100,12 +100,20 @@
         // first return the underlying board to the current week so the normal
         // mobile Day handler has a real "today" cell to reveal.
         if(comingFromWeek){
+          // Move the underlying board to the current week without letting the
+          // Week-mode arrow wrapper interfere, then force the Day presentation.
           document.getElementById('today')?.click();
         }
 
-        const dates=boardDates();
-        const today=isoLocal(new Date());
-        previewDay(dates.includes(today) ? today : (visibleDate() || dates[0]), true);
+        const showToday=()=>{
+          const dates=boardDates();
+          const today=isoLocal(new Date());
+          previewDay(dates.includes(today) ? today : (dates[0]||today), true);
+          // The main mobile controller owns the final click state; invoke the
+          // actual Day button after the board is stable.
+          if(tab.dataset.mobileView!=='week' && !tab.classList.contains('active')) tab.click();
+        };
+        requestAnimationFrame(()=>requestAnimationFrame(showToday));
       }
       return;
     }
