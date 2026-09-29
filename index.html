@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=96" />
-  <link rel="stylesheet" href="mobile-polish.css?v=96" />
-  <link rel="stylesheet" href="time-off.css?v=96" />
-  <link rel="stylesheet" href="restoration.css?v=96" />
+  <link rel="stylesheet" href="styles.css?v=97" />
+  <link rel="stylesheet" href="mobile-polish.css?v=97" />
+  <link rel="stylesheet" href="time-off.css?v=97" />
+  <link rel="stylesheet" href="restoration.css?v=97" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=96"></script>
-  <script src="auth-persistence.js?v=96"></script>
+  <script src="config.js?v=97"></script>
+  <script src="auth-persistence.js?v=97"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=96','time-off.js?v=96','restoration.js?v=96','supervisor-tabs.js?v=96','mobile.js?v=96','mobile-instant-nav.js?v=96','mobile-view-buttons.js?v=96','incoming-reorder.js?v=96','half-day.js?v=96','single-day.js?v=96','undo-move.js?v=96','job-search.js?v=96','job-copy-paste.js?v=96','instant-timeoff.js?v=96','holidays.js?v=96'];
+      const scripts = ['app.js?v=97','time-off.js?v=97','restoration.js?v=97','supervisor-tabs.js?v=97','mobile.js?v=97','mobile-instant-nav.js?v=97','mobile-view-buttons.js?v=97','incoming-reorder.js?v=97','half-day.js?v=97','single-day.js?v=97','undo-move.js?v=97','job-search.js?v=97','job-copy-paste.js?v=97','instant-timeoff.js?v=97','holidays.js?v=97'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=96').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=97').catch(() => {});
       });
     }
   </script>
-  <!-- v96 dynamic route target label -->
+  <!-- v97 standalone restoration projects -->
 </body>
 </html>
