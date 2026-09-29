@@ -10,7 +10,7 @@ module.exports = async function handler(req,res){
     
     const geocoded=[];
     const geocode=async c=>{
-      if(Number.isFinite(Number(c.latitude))&&Number.isFinite(Number(c.longitude))) return {...c,latitude:Number(c.latitude),longitude:Number(c.longitude)};
+      const lat=Number(c.latitude),lng=Number(c.longitude);if(c.latitude!=null&&c.longitude!=null&&Number.isFinite(lat)&&Number.isFinite(lng)&&!(lat===0&&lng===0)) return {...c,latitude:lat,longitude:lng};
       const u='https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURIComponent(c.address)+'&region=us&key='+encodeURIComponent(key);
       const r=await fetch(u),j=await r.json(),g=j.results&&j.results[0];
       if(!r.ok||!g) return null;
