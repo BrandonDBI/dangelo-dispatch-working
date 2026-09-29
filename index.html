@@ -14,20 +14,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=126" />
-  <link rel="stylesheet" href="mobile-polish.css?v=126" />
-  <link rel="stylesheet" href="time-off.css?v=126" />
-  <link rel="stylesheet" href="restoration.css?v=126" />
+  <link rel="stylesheet" href="styles.css?v=127" />
+  <link rel="stylesheet" href="mobile-polish.css?v=127" />
+  <link rel="stylesheet" href="time-off.css?v=127" />
+  <link rel="stylesheet" href="restoration.css?v=127" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=126"></script>
+  <script src="config.js?v=127"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth-persistence.js?v=126"></script>
+  <script src="auth-persistence.js?v=127"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=126','time-off.js?v=126','restoration.js?v=126','supervisor-tabs.js?v=126','mobile.js?v=126','mobile-instant-nav.js?v=126','mobile-view-buttons.js?v=126','incoming-reorder.js?v=126','half-day.js?v=126','single-day.js?v=126','undo-move.js?v=126','job-search.js?v=126','job-copy-paste.js?v=126','instant-timeoff.js?v=126','holidays.js?v=126'];
+      const scripts = ['app.js?v=127','time-off.js?v=127','restoration.js?v=127','supervisor-tabs.js?v=127','mobile.js?v=127','mobile-instant-nav.js?v=127','mobile-view-buttons.js?v=127','incoming-reorder.js?v=127','half-day.js?v=127','single-day.js?v=127','undo-move.js?v=127','job-search.js?v=127','job-copy-paste.js?v=127','instant-timeoff.js?v=127','holidays.js?v=127'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -42,10 +42,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=126').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=127').catch(() => {});
       });
     }
   </script>
-  <!-- v126 authoritative mobile date cursor -->
+  <!-- v127 restoration viewer field permissions -->
 </body>
 </html>
