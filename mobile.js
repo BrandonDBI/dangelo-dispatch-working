@@ -230,14 +230,21 @@
     btn.dataset.mobileDayArrowBound='1';
     btn.onclick=e=>{
       if(!isMobile()) return coreHandler?.call(btn,e);
+      e?.preventDefault?.();
       if(mobileView==='week'){
-        e?.preventDefault?.();
+        // Let the core schedule move exactly one week, then explicitly restore
+        // the mobile week presentation after the board has been replaced.
         coreHandler?.call(btn,e);
         mobileView='week';
-        requestAnimationFrame(()=>{mobileView='week';applyMobileView();});
+        selectedDate=null;
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          mobileView='week';
+          document.querySelectorAll('.cell[data-date]').forEach(cell=>cell.classList.remove('mobileHidden'));
+          document.querySelectorAll('.crewName').forEach(name=>name.classList.remove('mobileHidden'));
+          applyMobileView();
+        }));
         return;
       }
-      e?.preventDefault?.();
       if(!selectedDate) selectedDate=isoLocal(new Date());
       const target=adjacentDate(selectedDate,dir);
       const dates=boardDates();
@@ -247,7 +254,7 @@
         return;
       }
       coreHandler?.call(btn,e);
-      applyMobileView();
+      requestAnimationFrame(()=>applyMobileView());
     };
   }
 
