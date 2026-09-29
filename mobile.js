@@ -229,8 +229,13 @@
     const coreHandler=btn.onclick;
     btn.dataset.mobileDayArrowBound='1';
     btn.onclick=e=>{
-      if(!isMobile() || mobileView==='week'){
-        return coreHandler?.call(btn,e);
+      if(!isMobile()) return coreHandler?.call(btn,e);
+      if(mobileView==='week'){
+        e?.preventDefault?.();
+        coreHandler?.call(btn,e);
+        mobileView='week';
+        requestAnimationFrame(()=>{mobileView='week';applyMobileView();});
+        return;
       }
       e?.preventDefault?.();
       if(!selectedDate) selectedDate=isoLocal(new Date());
