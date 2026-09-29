@@ -9,3 +9,11 @@
 .routePlannerHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .routePlannerHead .restX{margin:0 0 0 auto}
 .routePlannerHead+.routeAuto{margin-top:0}
+
+/* Restoration projects modal */
+.restProjectCreate{margin-top:16px}
+.restProjectCreateRow{display:flex;gap:8px;align-items:stretch;margin-top:6px}
+.restProjectCreateRow input{flex:1;min-width:0}
+.restProjectCreateRow button{white-space:nowrap;padding-left:18px;padding-right:18px}
+.restProjectExisting{margin-top:18px;padding-top:14px;border-top:1px solid #e3e7ed}
+.restProjectExisting .restProjectRows{margin-top:8px}
