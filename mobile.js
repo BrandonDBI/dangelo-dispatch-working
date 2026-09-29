@@ -262,11 +262,12 @@
         return;
       }
 
-      // Day mode: derive every move from the date actually visible on screen.
-      // This prevents stale private state from sending navigation backward.
+      // Day navigation has one authoritative cursor: selectedDate.
+      // Move that cursor exactly one workday, then either filter the existing
+      // board or ask app.js to load the week containing that exact date.
       mobileView='today';
-      const current=visibleMobileDate() || selectedDate || isoLocal(new Date());
-      const target=adjacentDate(current,dir);
+      if(!selectedDate) selectedDate=visibleMobileDate()||isoLocal(new Date());
+      const target=adjacentDate(selectedDate,dir);
       selectedDate=target;
 
       if(boardDates().includes(target)){
@@ -274,11 +275,15 @@
         return;
       }
 
-      // Crossing a work-week boundary. The core board needs the week containing
-      // the exact target date; after its synchronous redraw, filter to target.
+      const onReady=ev=>{
+        if(ev.detail?.date!==target) return;
+        window.removeEventListener('dispatch:date-board-ready',onReady);
+        mobileView='today';
+        selectedDate=target;
+        applyMobileView();
+      };
+      window.addEventListener('dispatch:date-board-ready',onReady);
       window.dispatchEvent(new CustomEvent('dispatch:navigate-date',{detail:{date:target}}));
-      selectedDate=target;
-      applyMobileView();
     };
   }
   function visibleMobileDate(){return document.querySelector('.cell[data-date]:not(.mobileHidden)')?.dataset.date||null}
