@@ -103,9 +103,10 @@
   window.addEventListener('dispatch:navigate-date',e=>{
     const value=e.detail?.date;
     if(!/^\d{4}-\d{2}-\d{2}$/.test(value||'')) return;
-    state.weekStart=mondayOf(new Date(value+'T00:00:00'));
+    state.weekStart=mondayOf(new Date(value+'T12:00:00'));
     updateWeekRange();
     renderBoardOnly();
+    window.dispatchEvent(new CustomEvent('dispatch:date-board-ready',{detail:{date:value}}));
   });
   function bindShell(){
     document.getElementById('signout').onclick=logout;
