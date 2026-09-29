@@ -14,20 +14,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=124" />
-  <link rel="stylesheet" href="mobile-polish.css?v=124" />
-  <link rel="stylesheet" href="time-off.css?v=124" />
-  <link rel="stylesheet" href="restoration.css?v=124" />
+  <link rel="stylesheet" href="styles.css?v=125" />
+  <link rel="stylesheet" href="mobile-polish.css?v=125" />
+  <link rel="stylesheet" href="time-off.css?v=125" />
+  <link rel="stylesheet" href="restoration.css?v=125" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=124"></script>
+  <script src="config.js?v=125"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth-persistence.js?v=124"></script>
+  <script src="auth-persistence.js?v=125"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=124','time-off.js?v=124','restoration.js?v=124','supervisor-tabs.js?v=124','mobile.js?v=124','mobile-instant-nav.js?v=124','mobile-view-buttons.js?v=124','incoming-reorder.js?v=124','half-day.js?v=124','single-day.js?v=124','undo-move.js?v=124','job-search.js?v=124','job-copy-paste.js?v=124','instant-timeoff.js?v=124','holidays.js?v=124'];
+      const scripts = ['app.js?v=125','time-off.js?v=125','restoration.js?v=125','supervisor-tabs.js?v=125','mobile.js?v=125','mobile-instant-nav.js?v=125','mobile-view-buttons.js?v=125','incoming-reorder.js?v=125','half-day.js?v=125','single-day.js?v=125','undo-move.js?v=125','job-search.js?v=125','job-copy-paste.js?v=125','instant-timeoff.js?v=125','holidays.js?v=125'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -42,10 +42,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=124').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=125').catch(() => {});
       });
     }
   </script>
-  <!-- v124 exact-date mobile day navigation -->
+  <!-- v125 visible-date mobile navigation -->
 </body>
 </html>
