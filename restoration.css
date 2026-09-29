@@ -24,3 +24,6 @@
 .restEditorOptions .restCheck input{width:auto;margin:0}
 .restEditorActions{margin-top:12px}
 @media(max-width:760px){.restEditorOptions{grid-template-columns:1fr 1fr}.restEditorOptions .restCheck{padding-bottom:0}}
+
+/* Restoration workflow: readiness / requirements only */
+.restEditorOptions{grid-template-columns:auto auto minmax(180px,1fr)}
