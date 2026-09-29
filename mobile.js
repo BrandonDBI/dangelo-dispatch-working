@@ -231,32 +231,34 @@
     btn.onclick=e=>{
       if(!isMobile()) return coreHandler?.call(btn,e);
       e?.preventDefault?.();
-      if(mobileView==='week'){
-        // Let the core schedule move exactly one week, then explicitly restore
-        // the mobile week presentation after the board has been replaced.
-        coreHandler?.call(btn,e);
+      // Use the visible Week tab as the source of truth. Other mobile helpers can
+      // temporarily desync the private mobileView variable during a board redraw.
+      const inWeek=document.querySelector('[data-mobile-view="week"]')?.classList.contains('active');
+      if(inWeek){
         mobileView='week';
         selectedDate=null;
-        requestAnimationFrame(()=>requestAnimationFrame(()=>{
-          mobileView='week';
+        coreHandler?.call(btn,e);
+        const restoreWeek=()=>{
+          mobileView='week'; selectedDate=null;
           document.querySelectorAll('.cell[data-date]').forEach(cell=>cell.classList.remove('mobileHidden'));
           document.querySelectorAll('.crewName').forEach(name=>name.classList.remove('mobileHidden'));
           applyMobileView();
-        }));
+        };
+        requestAnimationFrame(()=>requestAnimationFrame(restoreWeek));
+        setTimeout(restoreWeek,80);
         return;
       }
-      if(!selectedDate) selectedDate=isoLocal(new Date());
+      mobileView='today';
+      if(!selectedDate) selectedDate=visibleMobileDate()||isoLocal(new Date());
       const target=adjacentDate(selectedDate,dir);
       const dates=boardDates();
       selectedDate=target;
-      if(dates.includes(target)){
-        applyMobileView();
-        return;
-      }
+      if(dates.includes(target)){ applyMobileView(); return; }
       coreHandler?.call(btn,e);
       requestAnimationFrame(()=>applyMobileView());
     };
   }
+  function visibleMobileDate(){return document.querySelector('.cell[data-date]:not(.mobileHidden)')?.dataset.date||null}
 
   function compactToolbar(){
     const toolbar=document.querySelector('.toolbar');
