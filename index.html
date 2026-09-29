@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=84" />
-  <link rel="stylesheet" href="mobile-polish.css?v=84" />
-  <link rel="stylesheet" href="time-off.css?v=84" />
-  <link rel="stylesheet" href="restoration.css?v=84" />
+  <link rel="stylesheet" href="styles.css?v=85" />
+  <link rel="stylesheet" href="mobile-polish.css?v=85" />
+  <link rel="stylesheet" href="time-off.css?v=85" />
+  <link rel="stylesheet" href="restoration.css?v=85" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=84"></script>
-  <script src="auth-persistence.js?v=84"></script>
+  <script src="config.js?v=85"></script>
+  <script src="auth-persistence.js?v=85"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=84','time-off.js?v=84','restoration.js?v=84','supervisor-tabs.js?v=84','mobile.js?v=84','mobile-instant-nav.js?v=84','mobile-view-buttons.js?v=84','incoming-reorder.js?v=84','half-day.js?v=84','single-day.js?v=84','undo-move.js?v=84','job-search.js?v=84','job-copy-paste.js?v=84','instant-timeoff.js?v=84','holidays.js?v=84'];
+      const scripts = ['app.js?v=85','time-off.js?v=85','restoration.js?v=85','supervisor-tabs.js?v=85','mobile.js?v=85','mobile-instant-nav.js?v=85','mobile-view-buttons.js?v=85','incoming-reorder.js?v=85','half-day.js?v=85','single-day.js?v=85','undo-move.js?v=85','job-search.js?v=85','job-copy-paste.js?v=85','instant-timeoff.js?v=85','holidays.js?v=85'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=84').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=85').catch(() => {});
       });
     }
   </script>
-  <!-- v84 asphalt tonnage planning -->
+  <!-- v85 default asphalt depth estimate -->
 </body>
 </html>
