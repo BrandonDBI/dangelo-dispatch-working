@@ -118,3 +118,10 @@
  .routePlannerActions button{min-height:44px}
  .routeSaved{margin-top:10px}
 }
+
+/* Mobile planner: daily tonnage only; tri-axle remains fixed internally */
+@media(max-width:800px){
+ .routeCapacity{grid-template-columns:1fr!important}
+ .routeCapacity>label:nth-of-type(2){display:none!important}
+ .routeCapacity>label:first-of-type{grid-template-columns:auto 72px auto!important;justify-content:start}
+}
