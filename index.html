@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=104" />
-  <link rel="stylesheet" href="mobile-polish.css?v=104" />
-  <link rel="stylesheet" href="time-off.css?v=104" />
-  <link rel="stylesheet" href="restoration.css?v=104" />
+  <link rel="stylesheet" href="styles.css?v=105" />
+  <link rel="stylesheet" href="mobile-polish.css?v=105" />
+  <link rel="stylesheet" href="time-off.css?v=105" />
+  <link rel="stylesheet" href="restoration.css?v=105" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=104"></script>
-  <script src="auth-persistence.js?v=104"></script>
+  <script src="config.js?v=105"></script>
+  <script src="auth-persistence.js?v=105"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=104','time-off.js?v=104','restoration.js?v=104','supervisor-tabs.js?v=104','mobile.js?v=104','mobile-instant-nav.js?v=104','mobile-view-buttons.js?v=104','incoming-reorder.js?v=104','half-day.js?v=104','single-day.js?v=104','undo-move.js?v=104','job-search.js?v=104','job-copy-paste.js?v=104','instant-timeoff.js?v=104','holidays.js?v=104'];
+      const scripts = ['app.js?v=105','time-off.js?v=105','restoration.js?v=105','supervisor-tabs.js?v=105','mobile.js?v=105','mobile-instant-nav.js?v=105','mobile-view-buttons.js?v=105','incoming-reorder.js?v=105','half-day.js?v=105','single-day.js?v=105','undo-move.js?v=105','job-search.js?v=105','job-copy-paste.js?v=105','instant-timeoff.js?v=105','holidays.js?v=105'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=104').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=105').catch(() => {});
       });
     }
   </script>
-  <!-- v104 mobile field job controls -->
+  <!-- v105 compact mobile field stop -->
 </body>
 </html>
