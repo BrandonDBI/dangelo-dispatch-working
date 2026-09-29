@@ -125,3 +125,21 @@
  .routeCapacity>label:nth-of-type(2){display:none!important}
  .routeCapacity>label:first-of-type{grid-template-columns:auto 72px auto!important;justify-content:start}
 }
+
+/* Desktop route planner capacity row cleanup */
+@media(min-width:801px){
+ .routeAuto{display:flex!important;align-items:center!important;gap:0!important;margin-bottom:8px!important}
+ .routeAuto #routeAutoStatus{margin-left:0!important}
+ .routeCapacity{display:grid!important;grid-template-columns:145px minmax(260px,1fr)!important;align-items:end!important;gap:16px!important;margin:0 0 14px!important;max-width:560px}
+ .routeCapacity>label:first-of-type{display:grid!important;grid-template-columns:72px auto!important;grid-template-rows:auto auto!important;column-gap:6px!important;align-items:end!important;font-size:12px}
+ .routeCapacity>label:first-of-type input{grid-column:1;grid-row:2;width:72px!important;padding:7px!important}
+ .routeCapacity>label:first-of-type::after{content:"tons";grid-column:2;grid-row:2;align-self:center}
+ .routeCapacity>label:first-of-type{font-size:0}
+ .routeCapacity>label:first-of-type::before{content:"Daily target";font-size:12px;font-weight:700;grid-column:1/3;grid-row:1}
+ .routeCapacity>label:first-of-type input{font-size:13px}
+ #routeLoadSummary{grid-column:2!important;margin:0!important;padding:0!important}
+ #routeLoadSummary strong{display:block;font-size:15px}
+ #routeLoadSummary span{display:block;font-size:12px}
+ #routeLoadSummary .routeCapacityBar{margin-top:4px!important}
+ .routePlannerTools{margin-top:0!important}
+}
