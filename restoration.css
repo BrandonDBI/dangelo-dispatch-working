@@ -65,3 +65,20 @@
  .fieldComplete{min-height:48px;font-size:16px;font-weight:800}
  .fieldJobActions .fieldFullEdit{width:100%;min-height:44px}
 }
+
+/* Compact mobile restoration stop */
+.fieldNavigate{width:100%;min-height:44px;margin:0 0 10px;font-weight:800}
+.fieldJobControl{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,.8fr);gap:8px;align-items:center}
+.fieldJobControl .fieldQty{position:relative}
+.fieldSaved{font-size:10px;font-style:normal;color:#16803c;white-space:nowrap}
+@media(max-width:800px){
+ .fieldJobItems{gap:8px}
+ .fieldJobItem{padding:11px 12px}
+ .fieldJobItemName{margin-bottom:7px}
+ .fieldJobItemName strong{font-size:17px}
+ .fieldJobControl{grid-template-columns:minmax(0,1fr) minmax(125px,.75fr)}
+ .fieldQty{gap:6px}.fieldQty input{font-size:17px;padding:8px 9px;min-height:42px}
+ .fieldQty span{font-size:13px}
+ .fieldComplete{margin-top:0;min-height:42px;font-size:13px;padding:7px}
+ .fieldJobActions{margin-top:8px}
+}
