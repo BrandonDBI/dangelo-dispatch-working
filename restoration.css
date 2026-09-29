@@ -27,3 +27,30 @@
 
 /* Restoration workflow: readiness / requirements only */
 .restEditorOptions{grid-template-columns:auto auto minmax(180px,1fr)}
+
+/* Mobile Restoration field view */
+@media(max-width:800px){
+  .restorationPage{padding:12px 10px 18px}
+  .restHead{display:block;margin-bottom:10px}
+  .restHead>div:first-child h2{margin-bottom:2px}
+  .restHead>div:first-child p{font-size:14px;line-height:1.25;margin:0 0 10px}
+  .restHeadActions{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:6px;width:100%}
+  .restHeadActions button{min-width:0;padding:9px 6px;font-size:13px;white-space:nowrap}
+  .restSummary{padding:10px 12px;margin-bottom:10px}
+  .restSummaryTop{display:block}
+  .restSummaryLabel{font-size:10px}
+  .restSummaryBig{font-size:13px}
+  .restSummaryBig strong{font-size:18px}
+  .restSummaryAll{margin-top:7px;padding:6px 9px;font-size:12px}
+  .restSummaryTypes{margin-top:7px;padding-top:7px;font-size:12px;gap:5px 12px}
+  .restProjectSummary{display:none}
+  .restTools{gap:8px}
+  .restSearchWrap input{min-height:42px}
+  .restStatusTabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;overflow:visible}
+  .restStatusTabs button{padding:9px 6px;font-size:13px}
+  .restFilters{display:flex;gap:6px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+  .restFilters::-webkit-scrollbar{display:none}
+  .restFilters select{flex:0 0 auto;min-width:145px;max-width:190px;padding:8px 28px 8px 9px;font-size:13px}
+  .restList{margin-top:4px}
+  .restCard{padding:12px}
+}
