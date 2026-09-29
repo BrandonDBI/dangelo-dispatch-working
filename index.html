@@ -14,20 +14,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=109" />
-  <link rel="stylesheet" href="mobile-polish.css?v=109" />
-  <link rel="stylesheet" href="time-off.css?v=109" />
-  <link rel="stylesheet" href="restoration.css?v=109" />
+  <link rel="stylesheet" href="styles.css?v=110" />
+  <link rel="stylesheet" href="mobile-polish.css?v=110" />
+  <link rel="stylesheet" href="time-off.css?v=110" />
+  <link rel="stylesheet" href="restoration.css?v=110" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=109"></script>
+  <script src="config.js?v=110"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth-persistence.js?v=109"></script>
+  <script src="auth-persistence.js?v=110"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=109','time-off.js?v=109','restoration.js?v=109','supervisor-tabs.js?v=109','mobile.js?v=109','mobile-instant-nav.js?v=109','mobile-view-buttons.js?v=109','incoming-reorder.js?v=109','half-day.js?v=109','single-day.js?v=109','undo-move.js?v=109','job-search.js?v=109','job-copy-paste.js?v=109','instant-timeoff.js?v=109','holidays.js?v=109'];
+      const scripts = ['app.js?v=110','time-off.js?v=110','restoration.js?v=110','supervisor-tabs.js?v=110','mobile.js?v=110','mobile-instant-nav.js?v=110','mobile-view-buttons.js?v=110','incoming-reorder.js?v=110','half-day.js?v=110','single-day.js?v=110','undo-move.js?v=110','job-search.js?v=110','job-copy-paste.js?v=110','instant-timeoff.js?v=110','holidays.js?v=110'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -42,10 +42,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=109').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=110').catch(() => {});
       });
     }
   </script>
-  <!-- v109 mobile field route planner -->
+  <!-- v110 simplified mobile route capacity -->
 </body>
 </html>
