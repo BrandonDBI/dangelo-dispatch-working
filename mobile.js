@@ -269,10 +269,10 @@
       selectedDate=target;
       if(dates.includes(target)){ applyMobileView(); return; }
 
-      // Crossing a week boundary: the core arrow redraws the board asynchronously.
-      // Keep the requested date authoritative and reapply Day only after the new
-      // week's cells exist. A single RAF can run before renderBoardOnly finishes.
-      coreHandler?.call(btn,e);
+      // Crossing a week boundary: navigate the core board to the exact
+      // requested date. Do not reuse the Week arrow here; Day navigation and
+      // Week navigation are separate operations.
+      window.dispatchEvent(new CustomEvent('dispatch:navigate-date',{detail:{date:target}}));
       const restoreDay=()=>{
         mobileView='today';
         selectedDate=target;
