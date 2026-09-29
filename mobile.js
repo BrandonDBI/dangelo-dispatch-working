@@ -217,6 +217,15 @@
         mobileView=btn.dataset.mobileView;
         if(mobileView==='today') selectedDate=isoLocal(new Date());
         applyMobileView();
+        if(mobileView!=='week'){
+          requestAnimationFrame(()=>requestAnimationFrame(()=>{
+            const board=document.getElementById('board');
+            const top=board?Math.max(0,board.getBoundingClientRect().top+window.scrollY-6):0;
+            window.scrollTo({top,behavior:'auto'});
+            const scroller=document.querySelector('.scroller');
+            if(scroller){scroller.scrollTop=0;scroller.scrollLeft=0}
+          }));
+        }
         queueMobileTimeOffSync();
       };
     });
