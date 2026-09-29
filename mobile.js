@@ -214,7 +214,11 @@
     tabs.innerHTML=`<button data-mobile-view="today">Today</button><button data-mobile-view="tomorrow">Tomorrow</button><button data-mobile-view="week">Week</button>`;
     tabs.querySelectorAll('button').forEach(btn=>{
       btn.onclick=()=>{
-        mobileView=btn.dataset.mobileView;
+        const requestedView=btn.dataset.mobileView;
+        // Tapping the already-active mobile view must be a true no-op.
+        // In particular, an active Day tap must not rerender or alter scroll.
+        if(requestedView===mobileView && btn.classList.contains('active')) return;
+        mobileView=requestedView;
         if(mobileView==='today'){
           selectedDate=isoLocal(new Date());
           // If Week browsing moved the core board away from the current week,
