@@ -245,8 +245,7 @@
     btn.onclick=e=>{
       if(!isMobile()) return coreHandler?.call(btn,e);
       e?.preventDefault?.();
-      // Use the visible Week tab as the source of truth. Other mobile helpers can
-      // temporarily desync the private mobileView variable during a board redraw.
+
       const inWeek=document.querySelector('[data-mobile-view="week"]')?.classList.contains('active');
       if(inWeek){
         mobileView='week';
@@ -262,24 +261,24 @@
         setTimeout(restoreWeek,80);
         return;
       }
-      mobileView='today';
-      if(!selectedDate) selectedDate=visibleMobileDate()||isoLocal(new Date());
-      const target=adjacentDate(selectedDate,dir);
-      const dates=boardDates();
-      selectedDate=target;
-      if(dates.includes(target)){ applyMobileView(); return; }
 
-      // Crossing a week boundary: navigate the core board to the exact
-      // requested date. Do not reuse the Week arrow here; Day navigation and
-      // Week navigation are separate operations.
+      // Day mode: derive every move from the date actually visible on screen.
+      // This prevents stale private state from sending navigation backward.
+      mobileView='today';
+      const current=visibleMobileDate() || selectedDate || isoLocal(new Date());
+      const target=adjacentDate(current,dir);
+      selectedDate=target;
+
+      if(boardDates().includes(target)){
+        applyMobileView();
+        return;
+      }
+
+      // Crossing a work-week boundary. The core board needs the week containing
+      // the exact target date; after its synchronous redraw, filter to target.
       window.dispatchEvent(new CustomEvent('dispatch:navigate-date',{detail:{date:target}}));
-      const restoreDay=()=>{
-        mobileView='today';
-        selectedDate=target;
-        if(boardDates().includes(target)) applyMobileView();
-      };
-      requestAnimationFrame(()=>requestAnimationFrame(restoreDay));
-      setTimeout(restoreDay,80);
+      selectedDate=target;
+      applyMobileView();
     };
   }
   function visibleMobileDate(){return document.querySelector('.cell[data-date]:not(.mobileHidden)')?.dataset.date||null}
