@@ -86,3 +86,35 @@
 /* Field quantity adjustment audit */
 .fieldAdjustment{color:#9a6700!important;font-size:11px!important;font-weight:800;margin-top:3px!important}
 .fieldAdjustedBadge{display:inline-block;font-size:9px;font-style:normal;font-weight:900;letter-spacing:.04em;color:#9a6700;background:#fff4ce;border:1px solid #f1cf73;border-radius:999px;padding:2px 6px;margin-left:7px;vertical-align:1px}
+
+/* Mobile asphalt route planner: field-first layout */
+@media(max-width:800px){
+ .routePlannerHead{margin-bottom:8px}
+ .routePlannerHead h3{font-size:22px;margin:0}
+ .routeAuto{display:grid!important;grid-template-columns:1fr!important;gap:5px!important;margin-bottom:8px!important}
+ .routeAuto #routeBuildDay{width:100%;min-height:48px;font-size:18px}
+ .routeAuto #routeAutoStatus{font-size:12px;line-height:1.25}
+ .routeCapacity{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin:8px 0!important}
+ .routeCapacity label{display:grid!important;grid-template-columns:auto 64px auto!important;align-items:center;gap:5px;font-size:12px}
+ .routeCapacity label input{width:64px!important;min-width:0!important;padding:7px!important;font-size:16px}
+ #routeLoadSummary{grid-column:1/-1;margin-top:0!important}
+ #routeLoadSummary strong{font-size:16px}
+ #routeLoadSummary span{font-size:12px}
+ .routePlannerTools{display:block!important;margin:8px 0!important}
+ .routePlannerTools .routeProjectField{display:grid!important;grid-template-columns:auto 1fr;align-items:center;gap:8px;font-size:13px}
+ .routePlannerTools .routeProjectField select{min-height:40px;padding:7px 10px}
+ .routePlannerTools .routeSaveField{display:none!important}
+ .routePlannerGrid{display:flex!important;flex-direction:column!important;gap:10px!important}
+ .routeAvailablePane{order:2}.routeSelectedPane{order:1}
+ .routeSelectedPane:has(.restEmpty){order:2}
+ .routeAvailablePane:has(+ .routeSelectedPane .restEmpty){order:1}
+ .routePlannerTitle{font-size:18px!important;margin:6px 0!important}
+ .routeStops{max-height:none!important}
+ #routeAvailable button{padding:10px 12px!important}
+ #routeAvailable button strong{font-size:16px}
+ #routeAvailable button span,#routeAvailable button em{font-size:12px}
+ .routeStop{padding:9px!important;gap:6px!important}
+ .routePlannerActions{position:sticky;bottom:-1px;z-index:3;background:#fff;padding:8px 0 2px;margin-top:8px;display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+ .routePlannerActions button{min-height:44px}
+ .routeSaved{margin-top:10px}
+}
