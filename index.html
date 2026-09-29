@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=82" />
-  <link rel="stylesheet" href="mobile-polish.css?v=82" />
-  <link rel="stylesheet" href="time-off.css?v=82" />
-  <link rel="stylesheet" href="restoration.css?v=82" />
+  <link rel="stylesheet" href="styles.css?v=83" />
+  <link rel="stylesheet" href="mobile-polish.css?v=83" />
+  <link rel="stylesheet" href="time-off.css?v=83" />
+  <link rel="stylesheet" href="restoration.css?v=83" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=82"></script>
-  <script src="auth-persistence.js?v=82"></script>
+  <script src="config.js?v=83"></script>
+  <script src="auth-persistence.js?v=83"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=82','time-off.js?v=82','restoration.js?v=82','supervisor-tabs.js?v=82','mobile.js?v=82','mobile-instant-nav.js?v=82','mobile-view-buttons.js?v=82','incoming-reorder.js?v=82','half-day.js?v=82','single-day.js?v=82','undo-move.js?v=82','job-search.js?v=82','job-copy-paste.js?v=82','instant-timeoff.js?v=82','holidays.js?v=82'];
+      const scripts = ['app.js?v=83','time-off.js?v=83','restoration.js?v=83','supervisor-tabs.js?v=83','mobile.js?v=83','mobile-instant-nav.js?v=83','mobile-view-buttons.js?v=83','incoming-reorder.js?v=83','half-day.js?v=83','single-day.js?v=83','undo-move.js?v=83','job-search.js?v=83','job-copy-paste.js?v=83','instant-timeoff.js?v=83','holidays.js?v=83'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=82').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=83').catch(() => {});
       });
     }
   </script>
-  <!-- v82 stable restoration ordering -->
+  <!-- v83 asphalt route planner -->
 </body>
 </html>
