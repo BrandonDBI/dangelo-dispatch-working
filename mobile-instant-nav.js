@@ -97,7 +97,7 @@
         previewWeek();
       }else{
         const dates=boardDates(),today=isoLocal(new Date());
-        previewDay(dates.includes(today)?today:(dates[0]||today),true);
+        previewDay(dates.includes(today)?today:(dates[0]||today),false);
       }
       return;
     }
