@@ -14,20 +14,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=112" />
-  <link rel="stylesheet" href="mobile-polish.css?v=112" />
-  <link rel="stylesheet" href="time-off.css?v=112" />
-  <link rel="stylesheet" href="restoration.css?v=112" />
+  <link rel="stylesheet" href="styles.css?v=113" />
+  <link rel="stylesheet" href="mobile-polish.css?v=113" />
+  <link rel="stylesheet" href="time-off.css?v=113" />
+  <link rel="stylesheet" href="restoration.css?v=113" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=112"></script>
+  <script src="config.js?v=113"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth-persistence.js?v=112"></script>
+  <script src="auth-persistence.js?v=113"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=112','time-off.js?v=112','restoration.js?v=112','supervisor-tabs.js?v=112','mobile.js?v=112','mobile-instant-nav.js?v=112','mobile-view-buttons.js?v=112','incoming-reorder.js?v=112','half-day.js?v=112','single-day.js?v=112','undo-move.js?v=112','job-search.js?v=112','job-copy-paste.js?v=112','instant-timeoff.js?v=112','holidays.js?v=112'];
+      const scripts = ['app.js?v=113','time-off.js?v=113','restoration.js?v=113','supervisor-tabs.js?v=113','mobile.js?v=113','mobile-instant-nav.js?v=113','mobile-view-buttons.js?v=113','incoming-reorder.js?v=113','half-day.js?v=113','single-day.js?v=113','undo-move.js?v=113','job-search.js?v=113','job-copy-paste.js?v=113','instant-timeoff.js?v=113','holidays.js?v=113'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -42,10 +42,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=112').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=113').catch(() => {});
       });
     }
   </script>
-  <!-- v112 desktop route planner cleanup -->
+  <!-- v113 mobile week navigation fix -->
 </body>
 </html>
