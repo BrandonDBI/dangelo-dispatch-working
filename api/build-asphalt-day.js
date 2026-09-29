@@ -7,7 +7,7 @@ module.exports = async function handler(req,res){
     const target=Math.max(1,Number(body.targetTons)||36);
     let candidates=Array.isArray(body.candidates)?body.candidates.filter(x=>x&&x.id&&x.address&&Number(x.tons)>0):[];
     if(!candidates.length) return res.status(400).json({error:'No usable asphalt stops were supplied.'});
-    if(candidates.length>120) return res.status(400).json({error:'Choose a project first; this view has too many stops to optimize at once.'});
+    
     const geocoded=[];
     const geocode=async c=>{
       if(Number.isFinite(Number(c.latitude))&&Number.isFinite(Number(c.longitude))) return {...c,latitude:Number(c.latitude),longitude:Number(c.longitude)};
@@ -18,7 +18,7 @@ module.exports = async function handler(req,res){
       geocoded.push({id:c.id,latitude:out.latitude,longitude:out.longitude,formattedAddress:g.formatted_address||c.address});
       return out;
     };
-    const located=(await Promise.all(candidates.map(geocode))).filter(Boolean);
+    const located=[];for(let i=0;i<candidates.length;i+=20){const batch=await Promise.all(candidates.slice(i,i+20).map(geocode));located.push(...batch.filter(Boolean));}
     if(!located.length) return res.status(400).json({error:'Google could not locate these addresses.'});
     const rad=x=>x*Math.PI/180;
     const miles=(a,b)=>{const R=3958.8,dLat=rad(b.latitude-a.latitude),dLon=rad(b.longitude-a.longitude),q=Math.sin(dLat/2)**2+Math.cos(rad(a.latitude))*Math.cos(rad(b.latitude))*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(q))};
