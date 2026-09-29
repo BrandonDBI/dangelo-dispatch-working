@@ -89,6 +89,8 @@
     if(!isMobile()) return;
     const tab=e.target.closest?.('[data-mobile-view]');
     if(tab){
+      // An already-active tab is a true no-op, including scroll position.
+      if(tab.classList.contains('active')) return;
       // The main mobile controller owns Day/Week state. This helper only gives
       // instant visual feedback; never click controls or change weeks itself.
       if(tab.dataset.mobileView==='week'){
