@@ -268,8 +268,18 @@
       const dates=boardDates();
       selectedDate=target;
       if(dates.includes(target)){ applyMobileView(); return; }
+
+      // Crossing a week boundary: the core arrow redraws the board asynchronously.
+      // Keep the requested date authoritative and reapply Day only after the new
+      // week's cells exist. A single RAF can run before renderBoardOnly finishes.
       coreHandler?.call(btn,e);
-      requestAnimationFrame(()=>applyMobileView());
+      const restoreDay=()=>{
+        mobileView='today';
+        selectedDate=target;
+        if(boardDates().includes(target)) applyMobileView();
+      };
+      requestAnimationFrame(()=>requestAnimationFrame(restoreDay));
+      setTimeout(restoreDay,80);
     };
   }
   function visibleMobileDate(){return document.querySelector('.cell[data-date]:not(.mobileHidden)')?.dataset.date||null}
