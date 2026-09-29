@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=89" />
-  <link rel="stylesheet" href="mobile-polish.css?v=89" />
-  <link rel="stylesheet" href="time-off.css?v=89" />
-  <link rel="stylesheet" href="restoration.css?v=89" />
+  <link rel="stylesheet" href="styles.css?v=90" />
+  <link rel="stylesheet" href="mobile-polish.css?v=90" />
+  <link rel="stylesheet" href="time-off.css?v=90" />
+  <link rel="stylesheet" href="restoration.css?v=90" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=89"></script>
-  <script src="auth-persistence.js?v=89"></script>
+  <script src="config.js?v=90"></script>
+  <script src="auth-persistence.js?v=90"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=89','time-off.js?v=89','restoration.js?v=89','supervisor-tabs.js?v=89','mobile.js?v=89','mobile-instant-nav.js?v=89','mobile-view-buttons.js?v=89','incoming-reorder.js?v=89','half-day.js?v=89','single-day.js?v=89','undo-move.js?v=89','job-search.js?v=89','job-copy-paste.js?v=89','instant-timeoff.js?v=89','holidays.js?v=89'];
+      const scripts = ['app.js?v=90','time-off.js?v=90','restoration.js?v=90','supervisor-tabs.js?v=90','mobile.js?v=90','mobile-instant-nav.js?v=90','mobile-view-buttons.js?v=90','incoming-reorder.js?v=90','half-day.js?v=90','single-day.js?v=90','undo-move.js?v=90','job-search.js?v=90','job-copy-paste.js?v=90','instant-timeoff.js?v=90','holidays.js?v=90'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=89').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=90').catch(() => {});
       });
     }
   </script>
-  <!-- v89 saved crew routes -->
+  <!-- v90 saved route click fix -->
 </body>
 </html>
