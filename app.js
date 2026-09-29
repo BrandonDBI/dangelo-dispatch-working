@@ -98,6 +98,15 @@
     updateWeekRange();
     renderBoardOnly();
   }
+  // Mobile Day navigation can request an exact date instead of translating a
+  // day step into a +/-7-day week-arrow click.
+  window.addEventListener('dispatch:navigate-date',e=>{
+    const value=e.detail?.date;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(value||'')) return;
+    state.weekStart=mondayOf(new Date(value+'T00:00:00'));
+    updateWeekRange();
+    renderBoardOnly();
+  });
   function bindShell(){
     document.getElementById('signout').onclick=logout;
     document.getElementById('prev').onclick=()=>changeWeek(-7);
