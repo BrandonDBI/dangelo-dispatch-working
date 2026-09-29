@@ -14,20 +14,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=129" />
-  <link rel="stylesheet" href="mobile-polish.css?v=129" />
-  <link rel="stylesheet" href="time-off.css?v=129" />
-  <link rel="stylesheet" href="restoration.css?v=129" />
+  <link rel="stylesheet" href="styles.css?v=130" />
+  <link rel="stylesheet" href="mobile-polish.css?v=130" />
+  <link rel="stylesheet" href="time-off.css?v=130" />
+  <link rel="stylesheet" href="restoration.css?v=130" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=129"></script>
+  <script src="config.js?v=130"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth-persistence.js?v=129"></script>
+  <script src="auth-persistence.js?v=130"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=129','time-off.js?v=129','restoration.js?v=129','supervisor-tabs.js?v=129','mobile.js?v=129','mobile-instant-nav.js?v=129','mobile-view-buttons.js?v=129','incoming-reorder.js?v=129','half-day.js?v=129','single-day.js?v=129','undo-move.js?v=129','job-search.js?v=129','job-copy-paste.js?v=129','instant-timeoff.js?v=129','holidays.js?v=129'];
+      const scripts = ['app.js?v=130','time-off.js?v=130','restoration.js?v=130','supervisor-tabs.js?v=130','mobile.js?v=130','mobile-instant-nav.js?v=130','mobile-view-buttons.js?v=130','incoming-reorder.js?v=130','half-day.js?v=130','single-day.js?v=130','undo-move.js?v=130','job-search.js?v=130','job-copy-paste.js?v=130','instant-timeoff.js?v=130','holidays.js?v=130'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -42,10 +42,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=129').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=130').catch(() => {});
       });
     }
   </script>
-  <!-- v129 force restoration photo client refresh -->
+  <!-- v130 compact restoration photo UI -->
 </body>
 </html>
