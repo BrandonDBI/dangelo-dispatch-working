@@ -25,7 +25,7 @@ module.exports = async function handler(req,res){
     let best=null;
     for(const seed of located){
       let route=[seed],tons=Number(seed.tons),remaining=located.filter(x=>x.id!==seed.id);
-      while(route.length<10&&remaining.length){
+      while(route.length<25&&remaining.length){
         const center={latitude:route.reduce((s,x)=>s+x.latitude,0)/route.length,longitude:route.reduce((s,x)=>s+x.longitude,0)/route.length};
         const fit=remaining.filter(x=>tons+Number(x.tons)<=target*1.02).sort((a,b)=>miles(center,a)-miles(center,b));
         if(!fit.length) break;
