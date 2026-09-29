@@ -14,19 +14,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=102" />
-  <link rel="stylesheet" href="mobile-polish.css?v=102" />
-  <link rel="stylesheet" href="time-off.css?v=102" />
-  <link rel="stylesheet" href="restoration.css?v=102" />
+  <link rel="stylesheet" href="styles.css?v=103" />
+  <link rel="stylesheet" href="mobile-polish.css?v=103" />
+  <link rel="stylesheet" href="time-off.css?v=103" />
+  <link rel="stylesheet" href="restoration.css?v=103" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=102"></script>
-  <script src="auth-persistence.js?v=102"></script>
+  <script src="config.js?v=103"></script>
+  <script src="auth-persistence.js?v=103"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=102','time-off.js?v=102','restoration.js?v=102','supervisor-tabs.js?v=102','mobile.js?v=102','mobile-instant-nav.js?v=102','mobile-view-buttons.js?v=102','incoming-reorder.js?v=102','half-day.js?v=102','single-day.js?v=102','undo-move.js?v=102','job-search.js?v=102','job-copy-paste.js?v=102','instant-timeoff.js?v=102','holidays.js?v=102'];
+      const scripts = ['app.js?v=103','time-off.js?v=103','restoration.js?v=103','supervisor-tabs.js?v=103','mobile.js?v=103','mobile-instant-nav.js?v=103','mobile-view-buttons.js?v=103','incoming-reorder.js?v=103','half-day.js?v=103','single-day.js?v=103','undo-move.js?v=103','job-search.js?v=103','job-copy-paste.js?v=103','instant-timeoff.js?v=103','holidays.js?v=103'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -41,10 +41,10 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=102').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=103').catch(() => {});
       });
     }
   </script>
-  <!-- v102 simplify restoration workflow -->
+  <!-- v103 mobile restoration field view -->
 </body>
 </html>
