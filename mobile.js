@@ -215,7 +215,14 @@
     tabs.querySelectorAll('button').forEach(btn=>{
       btn.onclick=()=>{
         mobileView=btn.dataset.mobileView;
-        if(mobileView==='today') selectedDate=isoLocal(new Date());
+        if(mobileView==='today'){
+          selectedDate=isoLocal(new Date());
+          // If Week browsing moved the core board away from the current week,
+          // return the core board first. The click is deferred so this Day
+          // handler finishes setting authoritative mobile state before redraw.
+          const dates=boardDates();
+          if(!dates.includes(selectedDate)) setTimeout(()=>document.getElementById('today')?.click(),0);
+        }
         applyMobileView();
         if(mobileView!=='week'){
           requestAnimationFrame(()=>requestAnimationFrame(()=>{
