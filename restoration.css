@@ -143,3 +143,5 @@
  #routeLoadSummary .routeCapacityBar{margin-top:4px!important}
  .routePlannerTools{margin-top:0!important}
 }
+
+.fieldPhotoCount{font-size:12px;font-weight:700;opacity:.72}.fieldAddPhoto,.fieldPhotos{min-height:40px}.fieldPhotoGallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:8px 0}.fieldPhoto{display:flex;flex-direction:column;gap:6px}.fieldPhoto img{width:100%;max-height:420px;object-fit:contain;border-radius:10px;background:#111}.fieldPhoto span{font-size:12px;opacity:.7}@media(max-width:700px){.fieldPhotoGallery{grid-template-columns:1fr}.fieldJobControl{flex-wrap:wrap}.fieldAddPhoto,.fieldPhotos{flex:1}}
