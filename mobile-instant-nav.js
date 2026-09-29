@@ -101,14 +101,11 @@
       }
       return;
     }
-    const arrow=e.target.closest?.('#prev,#next');
-    if(!arrow) return;
-    const weekButton=document.querySelector('[data-mobile-view="week"]');
-    if(weekButton?.classList.contains('active')) return;
-    const current=visibleDate();
-    if(!current) return;
-    const target=adjacentDate(current,arrow.id==='next'?1:-1);
-    if(boardDates().includes(target)) previewDay(target);
+    // Arrow navigation is intentionally not previewed here. mobile.js owns
+    // the selected date and week-boundary transition; previewing an arrow on
+    // pointerdown and then advancing again on click created two competing date
+    // states and could make Day navigation jump backward.
+    if(e.target.closest?.('#prev,#next')) return;
   },true);
 
   // Prevent a browser-generated delayed synthetic click from making the control
