@@ -88,24 +88,16 @@
   document.addEventListener('pointerdown',e=>{
     if(!isMobile()) return;
     const tab=e.target.closest?.('[data-mobile-view]');
-    if(tab){
-      // An already-active tab is a true no-op, including scroll position.
-      if(tab.classList.contains('active')) return;
-      // The main mobile controller owns Day/Week state. This helper only gives
-      // instant visual feedback; never click controls or change weeks itself.
-      if(tab.dataset.mobileView==='week'){
-        previewWeek();
-      }else{
-        const dates=boardDates(),today=isoLocal(new Date());
-        previewDay(dates.includes(today)?today:(dates[0]||today),false);
-      }
-      return;
+    if(!tab) return;
+    if(tab.classList.contains('active')) return;
+    // Keep instant feedback for Day/Week tabs only. Arrow date navigation is
+    // owned exclusively by mobile.js.
+    if(tab.dataset.mobileView==='week'){
+      previewWeek();
+    }else{
+      const dates=boardDates(),today=isoLocal(new Date());
+      previewDay(dates.includes(today)?today:(dates[0]||today),false);
     }
-    // Arrow navigation is intentionally not previewed here. mobile.js owns
-    // the selected date and week-boundary transition; previewing an arrow on
-    // pointerdown and then advancing again on click created two competing date
-    // states and could make Day navigation jump backward.
-    if(e.target.closest?.('#prev,#next')) return;
   },true);
 
   // Prevent a browser-generated delayed synthetic click from making the control
