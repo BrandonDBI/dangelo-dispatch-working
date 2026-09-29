@@ -54,3 +54,14 @@
   .restList{margin-top:4px}
   .restCard{padding:12px}
 }
+
+/* Mobile field job controls */
+.fieldJobItems{display:grid;gap:10px}.fieldJobItem{border:1px solid #d8dde5;border-radius:10px;padding:12px}.fieldJobItemName{margin-bottom:10px}.fieldJobItemName strong,.fieldJobItemName span{display:block}.fieldJobItemName span{font-size:12px;color:#667085;margin-top:2px}.fieldQty{display:flex;align-items:center;gap:8px}.fieldQty input{min-width:0}.fieldQty span{font-weight:800}.fieldComplete{width:100%;margin-top:8px}.fieldComplete.isDone{font-weight:800}.fieldJobActions{display:flex;justify-content:flex-end;margin-top:12px}
+@media(max-width:800px){
+ .fieldJobTitle h2{font-size:22px}.fieldJobTitle p{margin-bottom:12px}
+ .fieldJobItem{padding:14px}.fieldJobItemName strong{font-size:18px}
+ .fieldJobItem label{font-size:12px;font-weight:800}
+ .fieldQty input{font-size:20px;padding:10px}
+ .fieldComplete{min-height:48px;font-size:16px;font-weight:800}
+ .fieldJobActions .fieldFullEdit{width:100%;min-height:44px}
+}
