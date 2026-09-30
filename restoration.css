@@ -166,3 +166,9 @@
   .restEditorOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;align-items:end}
   .restEditorOptions>label:not(.restCheck){width:auto}
 }
+
+/* v146: desktop completion photo count in restoration item rows */
+.restItemEdit{grid-template-columns:1.2fr 1.2fr 1.4fr .7fr .7fr auto auto auto}
+.riPhotos{min-width:46px;padding:7px 8px;font-weight:700;white-space:nowrap}
+.riPhotos:disabled{opacity:.35;cursor:default}
+@media(max-width:800px){.restItemEdit{grid-template-columns:1fr 1fr}.riPhotos{width:auto}}
