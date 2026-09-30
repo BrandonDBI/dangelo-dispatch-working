@@ -6,7 +6,7 @@ const session=()=>{try{return JSON.parse(localStorage.getItem('dangelo_session')
 const headers=(x={})=>({apikey:KEY,Authorization:`Bearer ${session()?.access_token||KEY}`,'Content-Type':'application/json',...x});
 async function req(path,o={}){const r=await fetch(BASE+path,{...o,headers:{...headers(),...(o.headers||{})}}),t=await r.text();let b=null;try{b=t?JSON.parse(t):null}catch{b=t}if(!r.ok)throw new Error(b?.message||b?.error||b||`Request failed (${r.status})`);return b}
 async function storageUpload(path,file){const r=await fetch(BASE+'/storage/v1/object/restoration-photos/'+path,{method:'POST',headers:{apikey:KEY,Authorization:`Bearer ${session()?.access_token||KEY}`,'Content-Type':file.type||'image/jpeg'},body:file});if(!r.ok)throw new Error((await r.text())||'Photo upload failed')}
-async function photoUrl(path){const r=await fetch(BASE+'/storage/v1/object/sign/restoration-photos/'+path,{method:'POST',headers:headers(),body:JSON.stringify({expiresIn:3600})}),b=await r.json();if(!r.ok)throw new Error(b?.message||'Could not open photo');return BASE+(b.signedURL||b.signedUrl)}
+async function photoUrl(path){const r=await fetch(BASE+'/storage/v1/object/sign/restoration-photos/'+path,{method:'POST',headers:headers(),body:JSON.stringify({expiresIn:3600})}),b=await r.json();if(!r.ok)throw new Error(b?.message||'Could not open photo');return BASE+'/storage/v1'+(b.signedURL||b.signedUrl)}
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const label=v=>({seed:'Seed',sod:'Sod',concrete:'Concrete',asphalt:'Asphalt',pavers:'Pavers',other:'Other'}[v]||v);
 const status=j=>j.completed_at?'complete':items.some(i=>i.restoration_job_id===j.id&&i.completed_at)?'partial':'outstanding';
