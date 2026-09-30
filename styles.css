@@ -71,3 +71,10 @@
 @media(max-width:700px){
   html:not(.mobileBoardReady) #board{visibility:hidden}
 }
+
+
+/* v154: mobile top-level tabs stay focused on field operations */
+@media(max-width:700px){
+  #tabPrivateWork,#tabTimeOff{display:none!important}
+  .appTabs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
