@@ -157,3 +157,12 @@
 
 /* v138: field restoration notes */
 .fieldJobNotes{margin:10px 0 12px;padding:11px 13px;border:1px solid #d5dce5;border-radius:10px;background:#f7f8fa;color:#172033}.fieldJobNotes strong{display:block;margin-bottom:4px;font-size:11px;letter-spacing:.06em}.fieldJobNotes div{font-size:14px;line-height:1.35;white-space:pre-wrap}
+
+/* v143: compact restoration requirements row after readiness removal */
+.restEditorOptions{display:flex;align-items:center;gap:24px;margin:8px 0 18px}
+.restEditorOptions .restCheck{padding-bottom:0;margin:0}
+.restEditorOptions>label:not(.restCheck){width:220px;max-width:100%;margin:0}
+@media(max-width:760px){
+  .restEditorOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;align-items:end}
+  .restEditorOptions>label:not(.restCheck){width:auto}
+}
