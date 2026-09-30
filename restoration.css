@@ -166,16 +166,3 @@
   .restEditorOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;align-items:end}
   .restEditorOptions>label:not(.restCheck){width:auto}
 }
-
-/* v144: integrate requirements row tightly with editor */
-.restEditorOptions{gap:18px;margin:2px 0 8px;align-items:center}
-.restEditorOptions .restCheck{align-self:center}
-.restEditorOptions>label:not(.restCheck){display:flex;align-items:center;gap:8px;width:auto;max-width:none;white-space:nowrap}
-.restEditorOptions>label:not(.restCheck)>span{display:none}
-.restEditorOptions>label:not(.restCheck) select{width:150px;min-width:150px}
-.restEditorOptions+.restItemsHead{margin-top:2px}
-@media(max-width:760px){
-  .restEditorOptions{margin:4px 0 10px}
-  .restEditorOptions>label:not(.restCheck){display:grid;gap:5px;white-space:normal}
-  .restEditorOptions>label:not(.restCheck) select{width:100%;min-width:0}
-}
