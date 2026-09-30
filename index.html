@@ -14,20 +14,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=149" />
-  <link rel="stylesheet" href="mobile-polish.css?v=149" />
-  <link rel="stylesheet" href="time-off.css?v=149" />
-  <link rel="stylesheet" href="restoration.css?v=149" />
+  <link rel="stylesheet" href="styles.css?v=150" />
+  <link rel="stylesheet" href="mobile-polish.css?v=150" />
+  <link rel="stylesheet" href="time-off.css?v=150" />
+  <link rel="stylesheet" href="restoration.css?v=150" />
 </head>
 <body>
   <div id="app"><div class="bootShell" aria-hidden="true"><div class="bootTop"></div><div class="bootToolbar"></div><div class="bootBody"><div class="bootBlock"></div><div class="bootBlock"></div><div class="bootBlock"></div></div></div></div>
-  <script src="config.js?v=149"></script>
+  <script src="config.js?v=150"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth-persistence.js?v=149"></script>
+  <script src="auth-persistence.js?v=150"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=149','time-off.js?v=149','restoration.js?v=149','supervisor-tabs.js?v=149','mobile.js?v=149','mobile-instant-nav.js?v=149','mobile-view-buttons.js?v=149','incoming-reorder.js?v=149','half-day.js?v=149','single-day.js?v=149','undo-move.js?v=149','job-search.js?v=149','job-copy-paste.js?v=149','instant-timeoff.js?v=149','holidays.js?v=149'];
+      const scripts = ['app.js?v=150','time-off.js?v=150','restoration.js?v=150','supervisor-tabs.js?v=150','mobile.js?v=150','mobile-instant-nav.js?v=150','mobile-view-buttons.js?v=150','incoming-reorder.js?v=150','half-day.js?v=150','single-day.js?v=150','undo-move.js?v=150','job-search.js?v=150','job-copy-paste.js?v=150','instant-timeoff.js?v=150','holidays.js?v=150'];
       await Promise.all(scripts.map(src => new Promise(resolve => {
         const s = document.createElement('script');
         s.src = src;
@@ -40,7 +40,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=149').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=150').catch(() => {});
       });
     }
   </script>
