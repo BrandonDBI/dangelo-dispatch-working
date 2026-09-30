@@ -419,6 +419,7 @@
       compactToolbar();
       compactIncoming();
       applyMobileView();
+      document.documentElement.classList.add('mobileBoardReady');
     } finally { enhancing=false; }
   }
 
