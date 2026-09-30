@@ -9,7 +9,8 @@
       !el.classList.contains('appTabs') &&
       !el.classList.contains('timeOffPage') &&
       !el.classList.contains('restorationPage') &&
-      !el.classList.contains('onCallPage')
+      !el.classList.contains('onCallPage') &&
+      !el.classList.contains('privateWorkPage')
     );
   }
   function ensure(){
@@ -47,7 +48,7 @@
     document.getElementById('tabOnCall')?.classList.remove('active');
   }
   document.addEventListener('click',e=>{
-    if(['tabSchedule','tabRestoration','tabTimeOff'].includes(e.target?.id)) hide();
+    if(['tabSchedule','tabPrivateWork','tabRestoration','tabTimeOff'].includes(e.target?.id)) hide();
   },true);
   const obs=new MutationObserver(ensure);
   obs.observe(document.getElementById('app')||document.body,{childList:true,subtree:true});
