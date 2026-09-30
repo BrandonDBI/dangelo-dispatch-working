@@ -14,20 +14,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=135" />
-  <link rel="stylesheet" href="mobile-polish.css?v=135" />
-  <link rel="stylesheet" href="time-off.css?v=135" />
-  <link rel="stylesheet" href="restoration.css?v=135" />
+  <link rel="stylesheet" href="styles.css?v=136" />
+  <link rel="stylesheet" href="mobile-polish.css?v=136" />
+  <link rel="stylesheet" href="time-off.css?v=136" />
+  <link rel="stylesheet" href="restoration.css?v=136" />
 </head>
 <body>
   <div id="app"></div>
-  <script src="config.js?v=135"></script>
+  <script src="config.js?v=136"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth-persistence.js?v=135"></script>
+  <script src="auth-persistence.js?v=136"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=135','time-off.js?v=135','restoration.js?v=135','supervisor-tabs.js?v=135','mobile.js?v=135','mobile-instant-nav.js?v=135','mobile-view-buttons.js?v=135','incoming-reorder.js?v=135','half-day.js?v=135','single-day.js?v=135','undo-move.js?v=135','job-search.js?v=135','job-copy-paste.js?v=135','instant-timeoff.js?v=135','holidays.js?v=135'];
+      const scripts = ['app.js?v=136','time-off.js?v=136','restoration.js?v=136','supervisor-tabs.js?v=136','mobile.js?v=136','mobile-instant-nav.js?v=136','mobile-view-buttons.js?v=136','incoming-reorder.js?v=136','half-day.js?v=136','single-day.js?v=136','undo-move.js?v=136','job-search.js?v=136','job-copy-paste.js?v=136','instant-timeoff.js?v=136','holidays.js?v=136'];
       for (const src of scripts) {
         await new Promise(resolve => {
           const s = document.createElement('script');
@@ -42,7 +42,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=135').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=136').catch(() => {});
       });
     }
   </script>
