@@ -35,7 +35,7 @@
       .toolbar>.actions:last-child{height:0!important;margin:0!important;overflow:visible!important;display:block!important}
       .toolbar .mobileHideOnPhone{display:none!important}
       .mobileDateNavLabel{flex:1;text-align:center;font-size:12px;font-weight:900;color:#444;letter-spacing:.15px;white-space:nowrap}
-      .mobileViewTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:7px 0 0;width:100%}
+      .mobileViewTabs{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:7px 0 0;width:100%}
       .mobileViewTabs button{min-height:40px;border:1px solid #d4d4d4;background:#fff;color:#333;border-radius:8px;font-weight:800}
       .mobileViewTabs button.active{background:#ed1c24;color:#fff;border-color:#ed1c24}
       .mobileFab{position:fixed!important;right:18px!important;bottom:24px!important;z-index:80!important;width:58px!important;height:58px!important;min-height:58px!important;border-radius:50%!important;padding:0!important;background:#ed1c24!important;color:#fff!important;border:3px solid #fff!important;box-shadow:0 8px 22px rgba(0,0,0,.30)!important;font-size:30px!important;line-height:1!important;overflow:hidden!important}
@@ -211,7 +211,7 @@
     const tabs=document.createElement('div');
     tabs.id='mobileViewTabs';
     tabs.className='mobileViewTabs';
-    tabs.innerHTML=`<button data-mobile-view="today">Today</button><button data-mobile-view="tomorrow">Tomorrow</button><button data-mobile-view="week">Week</button>`;
+    tabs.innerHTML=`<button data-mobile-view="today">Day</button><button data-mobile-view="week">Week</button>`;
     tabs.querySelectorAll('button').forEach(btn=>{
       btn.onclick=()=>{
         const requestedView=btn.dataset.mobileView;
