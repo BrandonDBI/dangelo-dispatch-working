@@ -78,3 +78,12 @@
   #tabPrivateWork,#tabTimeOff{display:none!important}
   .appTabs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 }
+
+
+/* v156: keep desktop job-modal actions compact and grouped */
+@media(min-width:701px){
+  .modalActions{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap}
+  .modalActions>span{display:none}
+  .modalActions button{width:auto}
+  #cancelModal{margin-left:auto}
+}
