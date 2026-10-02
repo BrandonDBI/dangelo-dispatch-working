@@ -220,3 +220,7 @@
   .restSummaryTypes b{color:#fff}
   .restProjectSummary{margin-top:0;border-top:0}
 }
+
+
+/* v160: three-stage restoration status tabs */
+@media(max-width:800px){.restStatusTabs{grid-template-columns:repeat(3,1fr)}}
