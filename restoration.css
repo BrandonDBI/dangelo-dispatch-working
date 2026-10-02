@@ -208,3 +208,15 @@
   .restProjectSummary .restProjectRow:hover{background:#fff;border-color:#8f9499}
   .restProjectSummary .restProjectRow:focus{outline:2px solid #231f20;outline-offset:1px}
 }
+
+
+/* v159: strong desktop restoration summary band */
+@media(min-width:801px){
+  .restSummary{padding-top:0;overflow:hidden;border-top:0}
+  .restSummaryTop{margin:0 -16px;padding:13px 16px 12px;background:#ed1c24;color:#fff}
+  .restSummaryTop .restSummaryLabel,.restSummaryTop .restSummaryBig,.restSummaryTop .restSummaryBig strong,.restSummaryTop .restSummaryBig i{color:#fff}
+  .restSummaryTop .restSummaryLabel{opacity:.9}
+  .restSummaryTypes{margin:0 -16px;padding:9px 16px 10px;background:#ed1c24;border-top:1px solid rgba(255,255,255,.25);color:#fff}
+  .restSummaryTypes b{color:#fff}
+  .restProjectSummary{margin-top:0;border-top:0}
+}
