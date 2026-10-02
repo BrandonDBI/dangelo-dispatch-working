@@ -198,3 +198,13 @@
   .restStatus{display:inline-block;margin-top:1px;color:#555}
   .urgentBadge{color:#b42318}
 }
+
+
+/* v158: stronger desktop project-section separation */
+@media(min-width:801px){
+  .restProjectSummary{margin:12px -16px -14px;padding:11px 16px 14px;background:#dfe2e5;border-top:1px solid #c9cdd1;border-radius:0 0 9px 9px}
+  .restProjectSummary .restSummaryLabel{color:#4f555b;margin-bottom:7px}
+  .restProjectSummary .restProjectRow{background:#f7f7f8;border-color:#c8ccd0}
+  .restProjectSummary .restProjectRow:hover{background:#fff;border-color:#8f9499}
+  .restProjectSummary .restProjectRow:focus{outline:2px solid #231f20;outline-offset:1px}
+}
