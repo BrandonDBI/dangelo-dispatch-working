@@ -176,3 +176,25 @@
 /* v147: uniform restoration item editor columns */
 .restItemEdit{grid-template-columns:minmax(220px,1.35fr) minmax(130px,.8fr) minmax(130px,.8fr) auto auto auto;align-items:center}
 @media(max-width:800px){.restItemEdit{grid-template-columns:1fr 1fr}}
+
+
+/* v157: desktop restoration visual hierarchy — D'Angelo neutral palette */
+@media(min-width:801px){
+  .restorationPage{background:#eef0f2}
+  .restHead{padding:2px 2px 0}
+  .restSummary{background:#f7f7f8;border-color:#cfd3d7;border-top:4px solid #231f20;box-shadow:0 1px 2px rgba(35,31,32,.04)}
+  .restProjectSummary{border-top-color:#d7dade}
+  .restProjectRow{background:#e9ebed;border-color:#d4d7da;color:#231f20}
+  .restProjectRow:hover{background:#dedfe1;border-color:#a9adb2}
+  .restTools{background:#dfe2e5;border:1px solid #cbd0d5;border-radius:9px;padding:9px 10px;margin-bottom:12px}
+  .restTools input,.restTools select{border-color:#bcc2c8}
+  .restList{gap:9px}
+  .restCard{position:relative;padding:0 16px 13px;overflow:hidden;border-color:#cfd3d7;box-shadow:0 1px 2px rgba(35,31,32,.035)}
+  .restCardTop{margin:0 -16px 0;padding:11px 16px 9px;background:#f0f1f2;border-bottom:1px solid #e0e2e4}
+  .restCard.urgent .restCardTop{background:#f5eeee}
+  .restMeta{margin-top:7px}
+  .restItems{gap:7px;margin:10px 0}
+  .restItems span{background:#eceeef;border:1px solid #dde0e2;border-radius:5px;padding:4px 7px;color:#343434}
+  .restStatus{display:inline-block;margin-top:1px;color:#555}
+  .urgentBadge{color:#b42318}
+}
