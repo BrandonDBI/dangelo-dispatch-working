@@ -14,20 +14,20 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4" />
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
-  <link rel="stylesheet" href="styles.css?v=165" />
-  <link rel="stylesheet" href="mobile-polish.css?v=165" />
-  <link rel="stylesheet" href="time-off.css?v=165" />
-  <link rel="stylesheet" href="restoration.css?v=165" />
+  <link rel="stylesheet" href="styles.css?v=166" />
+  <link rel="stylesheet" href="mobile-polish.css?v=166" />
+  <link rel="stylesheet" href="time-off.css?v=166" />
+  <link rel="stylesheet" href="restoration.css?v=166" />
 </head>
 <body>
   <div id="app"><div class="bootShell" aria-hidden="true"><div class="bootTop"></div><div class="bootToolbar"></div><div class="bootBody"><div class="bootBlock"></div><div class="bootBlock"></div><div class="bootBlock"></div></div></div></div>
-  <script src="config.js?v=165"></script>
+  <script src="config.js?v=166"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth-persistence.js?v=165"></script>
+  <script src="auth-persistence.js?v=166"></script>
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=165','time-off.js?v=165','restoration.js?v=165','private-work.js?v=165','supervisor-tabs.js?v=165','on-call.js?v=165','mobile.js?v=165','mobile-instant-nav.js?v=165','mobile-view-buttons.js?v=165','incoming-reorder.js?v=165','half-day.js?v=165','single-day.js?v=165','undo-move.js?v=165','job-search.js?v=165','job-copy-paste.js?v=165','instant-timeoff.js?v=165','holidays.js?v=165'];
+      const scripts = ['app.js?v=166','time-off.js?v=166','restoration.js?v=166','private-work.js?v=166','supervisor-tabs.js?v=166','on-call.js?v=166','mobile.js?v=166','mobile-instant-nav.js?v=166','mobile-view-buttons.js?v=166','incoming-reorder.js?v=166','half-day.js?v=166','single-day.js?v=166','undo-move.js?v=166','job-search.js?v=166','job-copy-paste.js?v=166','instant-timeoff.js?v=166','holidays.js?v=166'];
       await Promise.all(scripts.map(src => new Promise(resolve => {
         const s = document.createElement('script');
         s.src = src;
@@ -40,7 +40,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=165').catch(() => {});
+        navigator.serviceWorker.register('/sw.js?v=166').catch(() => {});
       });
     }
   </script>
