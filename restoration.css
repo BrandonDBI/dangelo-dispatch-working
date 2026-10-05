@@ -224,3 +224,7 @@
 
 /* v160: three-stage restoration status tabs */
 @media(max-width:800px){.restStatusTabs{grid-template-columns:repeat(3,1fr)}}
+
+
+/* v161: uppercase Restoration project and job titles */
+.restProjectRow strong,.restCardTop strong{text-transform:uppercase}
