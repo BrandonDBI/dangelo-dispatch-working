@@ -154,3 +154,6 @@
 .pwListNext strong{font-size:11px;color:#344054}
 .pwListNext span{font-size:10px;color:#98a2b3}
 @media(max-width:950px) and (min-width:701px){.pwList{grid-template-columns:1fr}}
+
+/* v171: full-width Private Work desktop layout */
+@media(min-width:801px){.pwHead,.pwListTabs,.pwList{max-width:none;width:100%}}
