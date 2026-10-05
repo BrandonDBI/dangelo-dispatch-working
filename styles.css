@@ -114,3 +114,11 @@
 .pwCardProgress span{display:inline-flex;align-items:center;padding:3px 7px;border:1px solid #d8e0e7;border-radius:999px;background:#f8fafc;font-size:10px;font-weight:700;line-height:1.2;white-space:nowrap;color:#64748b}
 .pwCardProgress span.done{background:#eef7f0;border-color:#b9d8c0;color:#166534}
 .pwCardProgress span.pending{background:#f8fafc;border-color:#d8e0e7;color:#64748b}
+
+
+/* v169: Private Work cards mirror Schedule card hierarchy */
+.pwScheduleStyle{border-left-width:4px}
+.pwScheduleStyle .pwJobTitle{text-transform:uppercase;font-size:13px;font-weight:800;line-height:1.15}
+.pwScheduleStyle .pwListMain{gap:2px}
+.pwScheduleStyle .pwScope{margin-top:5px;font-weight:800;color:#1f2937;text-transform:uppercase;line-height:1.2}
+.pwScheduleStyle .pwCardProgress{margin-top:7px}
