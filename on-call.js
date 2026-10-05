@@ -2,7 +2,7 @@
 'use strict';
 const cfg=window.DANGELO_CONFIG||{},BASE=String(cfg.SUPABASE_URL||'').replace(/\/rest\/v1\/?$/,'').replace(/\/$/,'');const KEY=String(cfg.SUPABASE_ANON_KEY||'');
 let periods=[],assignments=[],role='viewer',current=null;
-const crews=['Chad','Nick','Bernie','Chava','Gasper','Pablo','Jon','Remy','Sammy','Vactor','Tony Ha'];
+const crews=['Chad','Nick','Bernie','Chava','Gasper','Pablo','Jon','Remy','Sammy','Vactor'];
 const session=()=>{try{return JSON.parse(localStorage.getItem('dangelo_session')||'null')}catch{return null}};
 const headers=(x={})=>({apikey:KEY,Authorization:`Bearer ${session()?.access_token||KEY}`,'Content-Type':'application/json',...x});
 async function req(path,o={}){const r=await fetch(BASE+path,{...o,headers:{...headers(),...(o.headers||{})}}),t=await r.text();let b=null;try{b=t?JSON.parse(t):null}catch{b=t}if(!r.ok)throw new Error(b?.message||b?.error||b||'Request failed');return b}
