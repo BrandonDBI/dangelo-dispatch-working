@@ -1,8 +1,8 @@
 (() => {
 'use strict';
 const cfg=window.DANGELO_CONFIG||{},BASE=String(cfg.SUPABASE_URL||'').replace(/\/rest\/v1\/?$/,'').replace(/\/$/,'');const KEY=String(cfg.SUPABASE_ANON_KEY||'');
-let periods=[],assignments=[],role='viewer',current=null;
-const crews=['Chad','Nick','Bernie','Chava','Gasper','Pablo','Jon','Remy','Sammy','Vactor'];
+let periods=[],assignments=[],templates=[],members=[],role='viewer',current=null;
+let crews=[];
 function pad(n){return String(n).padStart(2,'0')} function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())} function add(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
 function nth(y,m,w,n){const d=new Date(y,m,1),o=(w-d.getDay()+7)%7;d.setDate(1+o+(n-1)*7);return d} function last(y,m,w){const d=new Date(y,m+1,0),o=(d.getDay()-w+7)%7;d.setDate(d.getDate()-o);return d}
 function holidayBreaks(y){const tg=nth(y,10,4,4);return[
@@ -22,7 +22,7 @@ const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 function main(){return document.querySelector('#app main')}
 function scheduleEls(){const m=main();if(!m)return[];return [...m.children].filter(el=>!['topbar','appTabs','timeOffPage','restorationPage','onCallPage','privateWorkPage'].some(c=>el.classList.contains(c)))}
 function ensure(){const tabs=document.getElementById('appTabs'),m=main();if(!tabs||!m)return false;let b=document.getElementById('tabOnCall');if(!b){b=document.createElement('button');b.id='tabOnCall';b.className='appTab';b.type='button';b.textContent='On Call';const t=document.getElementById('tabTimeOff');t?tabs.insertBefore(b,t):tabs.appendChild(b)}if(!document.getElementById('onCallPage')){const p=document.createElement('section');p.id='onCallPage';p.className='onCallPage timeOffHidden';const t=document.getElementById('timeOffPage');t?t.insertAdjacentElement('beforebegin',p):tabs.insertAdjacentElement('afterend',p)}b.onclick=show;return true}
-async function load(){const s=session();if(s?.user?.id){const p=await req(`/rest/v1/profiles?id=eq.${s.user.id}&select=role`);role=p?.[0]?.role||'viewer'}[periods,assignments]=await Promise.all([req('/rest/v1/on_call_periods?select=*&order=start_date.desc'),req('/rest/v1/on_call_assignments?select=*&order=normal_crew,employee_name')]);await ensureNextPeriod();render()}
+async function load(){const s=session();if(s?.user?.id){const p=await req(`/rest/v1/profiles?id=eq.${s.user.id}&select=role`);role=p?.[0]?.role||'viewer'}[periods,assignments,templates,members]=await Promise.all([req('/rest/v1/on_call_periods?select=*&order=start_date.desc'),req('/rest/v1/on_call_assignments?select=*&order=normal_crew,employee_name'),req('/rest/v1/on_call_crew_templates?select=*&active=eq.true&order=sort_order'),req('/rest/v1/on_call_crew_members?select=*&order=sort_order')]);crews=templates.map(x=>x.crew_name);await ensureNextPeriod();render()}
 function show(){document.querySelectorAll('.appTab').forEach(x=>x.classList.toggle('active',x.id==='tabOnCall'));['timeOffPage','restorationPage','privateWorkPage'].forEach(id=>{const p=document.getElementById(id);p?.classList.remove('active');p?.classList.add('timeOffHidden')});scheduleEls().forEach(x=>x.classList.add('timeOffHidden'));const p=document.getElementById('onCallPage');p?.classList.remove('timeOffHidden');p?.classList.add('active');load().catch(e=>p.innerHTML='<div class="ocWrap"><div class="ocError">'+esc(e.message)+'</div></div>')}
 function hide(){const p=document.getElementById('onCallPage');p?.classList.remove('active');p?.classList.add('timeOffHidden');document.getElementById('tabOnCall')?.classList.remove('active')}
 document.addEventListener('click',e=>{if(['tabSchedule','tabPrivateWork','tabRestoration','tabTimeOff'].includes(e.target?.id))hide()},true);
