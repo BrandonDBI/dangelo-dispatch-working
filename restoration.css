@@ -228,3 +228,29 @@
 
 /* v161: uppercase Restoration project and job titles */
 .restProjectRow strong,.restCardTop strong{text-transform:uppercase}
+
+
+/* Private Work visual alignment: Restoration desktop shell */
+@media(min-width:801px){
+ .restorationPage{padding:22px 24px 40px}
+ .restorationPage>.restHead,
+ .restorationPage>.restSummary,
+ .restorationPage>.restProjectSummary,
+ .restorationPage>.restTools,
+ .restorationPage>.restList,
+ .restorationPage>.restFiltersBar{max-width:1280px;margin-left:auto;margin-right:auto}
+ .restHead{margin-bottom:14px;padding-bottom:14px;border-bottom:3px solid var(--red)}
+ .restHead h2{font-size:25px;line-height:1.15;letter-spacing:-.02em;color:#231f20}
+ .restHead p{font-size:13px;color:#667085}
+ .restSummary{border-radius:10px;box-shadow:0 1px 3px rgba(17,24,39,.05)}
+ .restProjectSummary{border-radius:10px}
+ .restTools{border-radius:10px}
+ .restList{gap:12px}
+ .restCard{padding:16px 18px;border:1px solid #d7dce1;border-left:5px solid #5f666d;border-radius:10px;box-shadow:0 1px 3px rgba(17,24,39,.05)}
+ .restCard:hover{border-color:#9aa1a8;box-shadow:0 4px 12px rgba(17,24,39,.08)}
+ .restCardTop strong{font-size:15px;font-weight:900;line-height:1.2;color:#231f20;letter-spacing:.01em}
+ .restCardTop span,.restMeta{font-size:11px;color:#64748b}
+ .restItems{gap:6px;margin:10px 0}
+ .restItems span{font-size:11px}
+ .restStatus{font-size:10px;font-weight:900;letter-spacing:.04em}
+}
