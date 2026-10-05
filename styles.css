@@ -160,3 +160,6 @@
 
 /* v172: delineate Private Work header */
 .pwHead{padding:14px 16px;border:1px solid rgba(35,31,32,.55);border-bottom:3px solid var(--pw-red);border-radius:10px;background:rgba(35,31,32,.055)}
+
+/* Explicit shared section-title typography */
+.pwHead h2{font-family:inherit;font-size:25px;font-weight:700;line-height:1.15;letter-spacing:-.02em;text-transform:none}
