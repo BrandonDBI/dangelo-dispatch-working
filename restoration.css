@@ -263,8 +263,3 @@
 
 /* Explicit shared section-title typography */
 .restHead h2{font-family:inherit;font-size:25px;font-weight:700;line-height:1.15;letter-spacing:-.02em;text-transform:none}
-
-/* v173: unify Restoration red accents with app red */
-.restSummaryTop,.restSummaryTypes{background:var(--red)!important}
-.restCard.urgent{border-left-color:var(--red)!important}
-.urgentBadge{color:var(--red)!important}
