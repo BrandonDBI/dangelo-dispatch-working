@@ -166,3 +166,6 @@
 
 /* v174: Private Work cards always stack full width */
 .pwList{grid-template-columns:1fr!important}
+
+/* v177: force every Private Work card to occupy the entire list row */
+.pwListCard{grid-column:1 / -1!important;box-sizing:border-box}
