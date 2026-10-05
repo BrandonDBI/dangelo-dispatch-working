@@ -74,7 +74,7 @@
   }
   function renderLogin(){
     const rememberedEmail = localStorage.getItem('dangelo_last_email') || '';
-    app.innerHTML=`<main class="loginPage"><form id="loginForm" class="loginCard"><div class="logo">D</div><h1>D’Angelo Schedule</h1><p>Crew-first dispatch board</p><label>Email<input id="email" type="email" value="${esc(rememberedEmail)}" autocomplete="username" required></label><label>Password<input id="password" type="password" minlength="6" autocomplete="current-password" required></label><div id="loginMessage"></div><button class="primary wide" type="submit">Sign in</button><button class="linkButton" id="signupButton" type="button">Create first account</button></form></main>`;
+    app.innerHTML=`<main class="loginPage"><form id="loginForm" class="loginCard"><div class="logo">D</div><h1>D’Angelo Brothers Home Base</h1><label>Email<input id="email" type="email" value="${esc(rememberedEmail)}" autocomplete="username" required></label><label>Password<input id="password" type="password" minlength="6" autocomplete="current-password" required></label><div id="loginMessage"></div><button class="primary wide" type="submit">Sign in</button><button class="linkButton" id="signupButton" type="button">Create first account</button></form></main>`;
     document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();await doAuth(false)};
     document.getElementById('signupButton').onclick=async()=>doAuth(true);
     async function doAuth(signup){
@@ -85,7 +85,7 @@
   }
   function shellHtml(){
     const end=addDays(state.weekStart,6);
-    return `<main><header class="topbar"><div><h1>D’Angelo Schedule</h1><p>Crew-first dispatch board</p></div><div class="actions"><span class="liveBadge">● Live</span><span class="roleBadge" data-role-ready="0">${esc(state.role)}</span><button id="signout">Sign out</button></div></header><section class="toolbar"><div class="actions"><button id="prev">‹</button><button id="today">Today</button><button id="next">›</button><strong>${fmtShort(state.weekStart)} – ${fmtShort(end)}, ${end.getFullYear()}</strong></div><div class="actions"><button id="weekend">${state.showWeekend?'Hide Weekend':'Show Weekend'}</button>${state.role==='supervisor'?'<button class="primary" id="newIncoming">+ New incoming job</button>':''}</div></section><div id="message"></div><div id="board"></div><div id="modalRoot"></div></main>`;
+    return `<main><header class="topbar"><div><h1>D’Angelo Brothers Home Base</h1></div><div class="actions"><span class="liveBadge">● Live</span><span class="roleBadge" data-role-ready="0">${esc(state.role)}</span><button id="signout">Sign out</button></div></header><section class="toolbar"><div class="actions"><button id="prev">‹</button><button id="today">Today</button><button id="next">›</button><strong>${fmtShort(state.weekStart)} – ${fmtShort(end)}, ${end.getFullYear()}</strong></div><div class="actions"><button id="weekend">${state.showWeekend?'Hide Weekend':'Show Weekend'}</button>${state.role==='supervisor'?'<button class="primary" id="newIncoming">+ New incoming job</button>':''}</div></section><div id="message"></div><div id="board"></div><div id="modalRoot"></div></main>`;
   }
   function updateWeekRange(){
     const range=document.querySelector('.toolbar>.actions:first-child strong');
