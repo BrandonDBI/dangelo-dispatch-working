@@ -163,3 +163,6 @@
 
 /* Explicit shared section-title typography */
 .pwHead h2{font-family:inherit;font-size:25px;font-weight:700;line-height:1.15;letter-spacing:-.02em;text-transform:none}
+
+/* v174: Private Work cards always stack full width */
+.pwList{grid-template-columns:1fr!important}
