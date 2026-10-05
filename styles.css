@@ -122,3 +122,35 @@
 .pwScheduleStyle .pwListMain{gap:2px}
 .pwScheduleStyle .pwScope{margin-top:5px;font-weight:800;color:#1f2937;text-transform:uppercase;line-height:1.2}
 .pwScheduleStyle .pwCardProgress{margin-top:7px}
+
+
+/* v170: Private Work landing polish */
+.privateWorkPage{--pw-red:var(--red);padding:22px 24px 40px}
+.pwHead{max-width:1280px;margin:0 auto 14px;padding-bottom:14px;border-bottom:3px solid var(--pw-red)}
+.pwHead h2{font-size:25px;letter-spacing:-.02em;color:#231f20}
+.pwHead p{font-size:13px;color:#667085}
+.pwHead .pwPrimary{background:#231f20;color:#fff;border-color:#231f20;font-weight:800}
+.pwHead .pwPrimary:hover{background:var(--pw-red);border-color:var(--pw-red)}
+.pwListTabs{max-width:1280px;margin:0 auto 14px;gap:6px}
+.pwListTabs button{padding:8px 13px;border-color:#d0d5dd;font-weight:800;color:#344054}
+.pwListTabs button.active{background:#231f20;color:#fff;border-color:#231f20;box-shadow:inset 0 -3px 0 var(--pw-red)}
+.pwListTabs span{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;margin-left:5px;border-radius:999px;background:#eef0f2;color:#667085;font-size:10px}
+.pwListTabs button.active span{background:#fff;color:#231f20;opacity:1}
+.pwList{max-width:1280px;margin:0 auto;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:12px}
+.pwListCard{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"main meta" "main next";gap:8px 20px;align-items:start;min-height:150px;padding:16px 18px;border:1px solid #d7dce1;border-left:5px solid #5f666d;border-radius:10px;box-shadow:0 1px 3px rgba(17,24,39,.05)}
+.pwListCard:hover{border-color:#9aa1a8;box-shadow:0 4px 12px rgba(17,24,39,.08)}
+.pwListCard.pwStale{border-left-color:var(--pw-red)}
+.pwListMain{grid-area:main;min-width:0}
+.pwListMeta{grid-area:meta;align-items:flex-end;text-align:right;min-width:110px}
+.pwListNext{grid-area:next;align-items:flex-end;text-align:right;align-self:end}
+.pwListMain .pwJobTitle{font-size:15px;font-weight:900;line-height:1.2;color:#231f20;letter-spacing:.01em}
+.pwListMain>span:first-of-type{font-size:12px;color:#475467;margin-top:2px}
+.pwScope{margin-top:8px!important;padding-top:8px;border-top:1px solid #eaecf0;font-size:11px!important;color:#344054!important}
+.pwCardProgress{margin-top:10px;gap:5px}
+.pwCardProgress span{padding:4px 8px;background:#f2f4f7;border-color:#d0d5dd;color:#667085}
+.pwCardProgress span.done{background:#231f20;border-color:#231f20;color:#fff}
+.pwState{display:inline-block;margin:0;padding:4px 8px;border-radius:999px;background:#eef0f2;color:#344054!important;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+.pwListMeta b{font-size:16px;color:#231f20}
+.pwListNext strong{font-size:11px;color:#344054}
+.pwListNext span{font-size:10px;color:#98a2b3}
+@media(max-width:950px) and (min-width:701px){.pwList{grid-template-columns:1fr}}
