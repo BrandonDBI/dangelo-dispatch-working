@@ -254,3 +254,6 @@
  .restItems span{font-size:11px}
  .restStatus{font-size:10px;font-weight:900;letter-spacing:.04em}
 }
+
+/* Full-width Restoration desktop layout, retaining shared visual styling */
+@media(min-width:801px){.restorationPage>.restHead,.restorationPage>.restSummary,.restorationPage>.restProjectSummary,.restorationPage>.restTools,.restorationPage>.restList,.restorationPage>.restFiltersBar{max-width:none;width:100%}}
