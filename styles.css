@@ -107,3 +107,10 @@
 
 /* v167: Private Work Scheduled -> Completed -> Billed */
 .pwScheduleBox{gap:8px}.pwCompleteBtn{background:#1d4ed8;color:#fff;border-color:#1d4ed8;font-weight:800;padding:10px 16px}.pwBilledBtn{background:#231f20;color:#fff;border-color:#231f20;font-weight:800;padding:10px 16px}.pwState{margin-top:3px;font-size:11px}.pwStateScheduled{color:#166534}.pwStateCompleted{color:#1d4ed8}.pwStateBilled{color:#111827}
+
+
+/* v168: Private Work card progress chips */
+.pwCardProgress{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.pwCardProgress span{display:inline-flex;align-items:center;padding:3px 7px;border:1px solid #d8e0e7;border-radius:999px;background:#f8fafc;font-size:10px;font-weight:700;line-height:1.2;white-space:nowrap;color:#64748b}
+.pwCardProgress span.done{background:#eef7f0;border-color:#b9d8c0;color:#166534}
+.pwCardProgress span.pending{background:#f8fafc;border-color:#d8e0e7;color:#64748b}
