@@ -257,3 +257,6 @@
 
 /* Full-width Restoration desktop layout, retaining shared visual styling */
 @media(min-width:801px){.restorationPage>.restHead,.restorationPage>.restSummary,.restorationPage>.restProjectSummary,.restorationPage>.restTools,.restorationPage>.restList,.restorationPage>.restFiltersBar{max-width:none;width:100%}}
+
+/* Match Private Work header treatment */
+.restHead{padding:14px 16px;border:1px solid rgba(35,31,32,.55);border-bottom:3px solid var(--red);border-radius:10px;background:rgba(35,31,32,.055)}
