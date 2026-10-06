@@ -158,7 +158,7 @@ function render(){
 function periodBlock(p){
   return `<section class="ocPeriodBlock ${p.label!=='Weekend'?'holiday':''}">
     <div class="ocPeriodBlockHead">
-      <strong>${esc(p.label)} · ${fmt(p.start_date)} – ${fmt(p.end_date)}</strong>
+      <strong>${esc(String(p.label||'').toUpperCase())} · ${fmt(p.start_date)} – ${fmt(p.end_date)}</strong>
       <span>Assign two crews for each day</span>
     </div>
     <div class="ocPeriodDays">
