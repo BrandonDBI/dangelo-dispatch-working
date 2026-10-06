@@ -131,11 +131,10 @@ function render(){
     return;
   }
 
-  if(!current || !allUpcoming.some(x=>x.id===current)) current=allUpcoming[0].id;
-  const activeIndex=Math.max(0,allUpcoming.findIndex(x=>x.id===current));
-  const visible=allUpcoming.slice(activeIndex,activeIndex+4);
+  const visible=allUpcoming.slice(0,4);
+  if(!current || !visible.some(x=>x.id===current)) current=visible[0].id;
 
-  p.innerHTML=`<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocUpcomingTitle">Current + Next 3 Coverage Periods</div><div class="ocPlanWrap"><table class="ocPlanTable"><thead><tr><th>Date</th><th>Coverage</th><th>Crew 1</th><th>Crew 2</th><th>Crew 3</th></tr></thead><tbody>${visible.map((x,idx)=>planRow(x)+(idx===0&&x.id===current?inlinePeriodEditor(x):'')).join('')}</tbody></table></div></div>`;
+  p.innerHTML=`<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocUpcomingTitle">Current + Next 3 Coverage Periods</div><div class="ocPlanWrap"><table class="ocPlanTable"><thead><tr><th>Date</th><th>Coverage</th><th>Crew 1</th><th>Crew 2</th><th>Crew 3</th></tr></thead><tbody>${visible.map(x=>planRow(x)+(x.id===current?inlinePeriodEditor(x):'')).join('')}</tbody></table></div></div>`;
 
   p.querySelectorAll('.ocPlanRow[data-period]').forEach(row=>row.onclick=e=>{
     if(e.target.closest('select,button'))return;
