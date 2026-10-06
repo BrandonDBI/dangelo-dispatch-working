@@ -26,11 +26,17 @@ async function load(){const s=session();if(s?.user?.id){const p=await req(`/rest
 
 function queueOnCallRealtime(){
   clearTimeout(onCallRealtimeTimer);
-  onCallRealtimeTimer=setTimeout(()=>{
+  const refresh=()=>{
     const page=document.getElementById('onCallPage');
     if(document.hidden||!page?.classList.contains('active'))return;
+    const active=document.activeElement;
+    if(active?.matches?.('[data-inline-slot]')){
+      onCallRealtimeTimer=setTimeout(refresh,500);
+      return;
+    }
     load().catch(()=>{});
-  },80);
+  };
+  onCallRealtimeTimer=setTimeout(refresh,120);
 }
 function startOnCallRealtime(){
   if(onCallRealtime||!window.supabase?.createClient||!session()?.access_token)return;
