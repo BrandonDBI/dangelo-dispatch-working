@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 const cfg=window.DANGELO_CONFIG||{},BASE=String(cfg.SUPABASE_URL||'').replace(/\/rest\/v1\/?$/,'').replace(/\/$/,'');const KEY=String(cfg.SUPABASE_ANON_KEY||'');
-let periods=[],assignments=[],templates=[],members=[],role='viewer',current=null,currentDate=null,onCallRealtime=null,onCallRealtimeTimer=null,onCallSelectLocked=false,onCallSelectLockTimer=null;
+let periods=[],assignments=[],templates=[],members=[],role='viewer',current=null,currentDate=null,onCallRealtime=null,onCallRealtimeTimer=null,onCallSelectLocked=false,onCallSelectLockTimer=null,onCallPageOffset=0;
 let crews=[];
 function pad(n){return String(n).padStart(2,'0')} function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())} function add(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
 function nth(y,m,w,n){const d=new Date(y,m,1),o=(w-d.getDay()+7)%7;d.setDate(1+o+(n-1)*7);return d} function last(y,m,w){const d=new Date(y,m+1,0),o=(d.getDay()-w+7)%7;d.setDate(d.getDate()-o);return d}
@@ -58,6 +58,15 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocExpandRow td{padding:0!important;background:#f7f8fa!important;border-top:0!important}
 .ocInlineEditor{padding:12px 14px 14px;border-top:2px solid #231f20}
 .ocPeriodStack{display:grid;gap:14px}
+.ocCoverageNav{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:4px 0 10px}
+.ocCoverageNav .ocUpcomingTitle{margin:0}
+.ocCoverageRange{display:block;margin-top:3px;font-size:12px;color:#64748b;font-weight:700}
+.ocCoverageNavBtns{display:flex;gap:7px;flex-wrap:wrap}
+.ocCoverageNavBtns button{padding:7px 11px;border:1px solid #cbd3db;border-radius:7px;background:#fff;color:#231f20;font-weight:800;cursor:pointer}
+.ocCoverageNavBtns button:hover:not(:disabled){border-color:#231f20;background:#f4f6f8}
+.ocCoverageNavBtns button:disabled{opacity:.35;cursor:default}
+@media(max-width:700px){.ocCoverageNav{align-items:flex-start;flex-direction:column}.ocCoverageNavBtns{width:100%}.ocCoverageNavBtns button{flex:1;min-height:40px}}
+
 .ocPeriodBlock{background:#fff;border:1px solid #dce2e8;border-radius:10px;overflow:hidden}
 .ocPeriodBlock.holiday{box-shadow:inset 4px 0 0 var(--oc-red)}
 .ocPeriodBlockHead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;background:rgba(239,7,20,.07);border-bottom:2px solid rgba(239,7,20,.78)}
@@ -134,18 +143,40 @@ function render(){
   const p=document.getElementById('onCallPage');
   if(!p)return;
 
-  const visible=periods
+  const allUpcoming=periods
     .filter(x=>x.end_date>=iso(new Date()))
     .filter(x=>x.label!=='Weekend'||!periods.some(h=>h.label!=='Weekend'&&h.start_date<=x.start_date&&h.end_date>=x.end_date))
-    .sort((a,b)=>a.start_date.localeCompare(b.start_date))
-    .slice(0,4);
+    .sort((a,b)=>a.start_date.localeCompare(b.start_date));
 
-  if(!visible.length){
+  if(!allUpcoming.length){
     p.innerHTML='<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocEmpty"><p>No upcoming on-call periods.</p></div></div>';
     return;
   }
 
-  p.innerHTML=`<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocUpcomingTitle">Next 4 Coverage Periods</div><div class="ocPeriodStack">${visible.map(periodBlock).join('')}</div></div>`;
+  const maxOffset=Math.max(0,Math.floor((allUpcoming.length-1)/4)*4);
+  onCallPageOffset=Math.min(Math.max(0,onCallPageOffset),maxOffset);
+  const visible=allUpcoming.slice(onCallPageOffset,onCallPageOffset+4);
+  const rangeStart=visible[0],rangeEnd=visible[visible.length-1];
+
+  p.innerHTML=`<div class="ocWrap">
+    <div class="ocHead"><div><h2>ON CALL</h2></div></div>
+    <div class="ocCoverageNav">
+      <div>
+        <div class="ocUpcomingTitle">Coverage Schedule</div>
+        <span class="ocCoverageRange">${fmt(rangeStart.start_date)} – ${fmt(rangeEnd.end_date)}</span>
+      </div>
+      <div class="ocCoverageNavBtns">
+        <button type="button" id="ocPrevPeriods" ${onCallPageOffset===0?'disabled':''}>‹ Earlier</button>
+        <button type="button" id="ocCurrentPeriods" ${onCallPageOffset===0?'disabled':''}>Current</button>
+        <button type="button" id="ocNextPeriods" ${onCallPageOffset+4>=allUpcoming.length?'disabled':''}>Later ›</button>
+      </div>
+    </div>
+    <div class="ocPeriodStack">${visible.map(periodBlock).join('')}</div>
+  </div>`;
+
+  p.querySelector('#ocPrevPeriods')?.addEventListener('click',()=>{onCallPageOffset=Math.max(0,onCallPageOffset-4);render()});
+  p.querySelector('#ocCurrentPeriods')?.addEventListener('click',()=>{onCallPageOffset=0;render()});
+  p.querySelector('#ocNextPeriods')?.addEventListener('click',()=>{onCallPageOffset=Math.min(maxOffset,onCallPageOffset+4);render()});
 
   p.querySelectorAll('[data-inline-slot]').forEach(sel=>{
     const lock=()=>{
@@ -181,7 +212,6 @@ function render(){
     showCrewRoster(b.dataset.rosterCrew);
   });
 }
-
 function periodBlock(p){
   return `<section class="ocPeriodBlock ${p.label!=='Weekend'?'holiday':''}">
     <div class="ocPeriodBlockHead">
