@@ -116,10 +116,44 @@ function inlineAssignField(p,date,n){
 function inlinePeriodEditor(p){
   return `<tr class="ocExpandRow"><td colspan="5"><div class="ocInlineEditor"><div class="ocInlineHead"><strong>${esc(p.label)} · ${fmt(p.start_date)} – ${fmt(p.end_date)}</strong><span>Assign two crews for each day</span></div>${periodDays(p).map(d=>{const dt=new Date(d+'T12:00:00');return `<div class="ocDayAssign"><div class="ocDayAssignDate"><strong>${esc(dt.toLocaleDateString('en-US',{weekday:'long'}))}</strong><span>${esc(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}))}</span></div>${inlineAssignField(p,d,1)}${inlineAssignField(p,d,2)}${inlineAssignField(p,d,3)}</div>`}).join('')}</div></td></tr>`;
 }
-function render(){injectStyle();const p=document.getElementById('onCallPage');if(!p)return;const upcoming=periods.filter(x=>x.end_date>=iso(new Date())).filter(x=>x.label!=='Weekend'||!periods.some(h=>h.label!=='Weekend'&&h.start_date<=x.start_date&&h.end_date>=x.end_date)).sort((a,b)=>a.start_date.localeCompare(b.start_date)).slice(0,9);p.innerHTML=`<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocUpcomingTitle">Upcoming Coverage · 2026</div><div class="ocPlanWrap"><table class="ocPlanTable"><thead><tr><th>Date</th><th>Coverage</th><th>Crew 1</th><th>Crew 2</th><th>Crew 3</th></tr></thead><tbody>${upcoming.map(x=>planRow(x)+(x.id===current?inlinePeriodEditor(x):'')).join('')}</tbody></table></div></div>`;
-  p.querySelectorAll('.ocPlanRow[data-period]').forEach(row=>row.onclick=e=>{if(e.target.closest('select,button'))return;const id=Number(row.dataset.period);current=current===id?null:id;render()});
-  p.querySelectorAll('[data-inline-slot]').forEach(sel=>sel.onchange=()=>setSlot(Number(sel.dataset.inlinePeriod),sel.dataset.inlineDate,Number(sel.dataset.inlineSlot),sel.value));
-  p.querySelectorAll('[data-roster-crew]').forEach(b=>b.onclick=e=>{e.stopPropagation();showCrewRoster(b.dataset.rosterCrew)});
+function render(){
+  injectStyle();
+  const p=document.getElementById('onCallPage');
+  if(!p)return;
+
+  const allUpcoming=periods
+    .filter(x=>x.end_date>=iso(new Date()))
+    .filter(x=>x.label!=='Weekend'||!periods.some(h=>h.label!=='Weekend'&&h.start_date<=x.start_date&&h.end_date>=x.end_date))
+    .sort((a,b)=>a.start_date.localeCompare(b.start_date));
+
+  if(!allUpcoming.length){
+    p.innerHTML='<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocEmpty"><p>No upcoming on-call periods.</p></div></div>';
+    return;
+  }
+
+  if(!current || !allUpcoming.some(x=>x.id===current)) current=allUpcoming[0].id;
+  const activeIndex=Math.max(0,allUpcoming.findIndex(x=>x.id===current));
+  const visible=allUpcoming.slice(activeIndex,activeIndex+4);
+
+  p.innerHTML=`<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocUpcomingTitle">Current + Next 3 Coverage Periods</div><div class="ocPlanWrap"><table class="ocPlanTable"><thead><tr><th>Date</th><th>Coverage</th><th>Crew 1</th><th>Crew 2</th><th>Crew 3</th></tr></thead><tbody>${visible.map((x,idx)=>planRow(x)+(idx===0&&x.id===current?inlinePeriodEditor(x):'')).join('')}</tbody></table></div></div>`;
+
+  p.querySelectorAll('.ocPlanRow[data-period]').forEach(row=>row.onclick=e=>{
+    if(e.target.closest('select,button'))return;
+    current=Number(row.dataset.period);
+    render();
+  });
+
+  p.querySelectorAll('[data-inline-slot]').forEach(sel=>sel.onchange=()=>setSlot(
+    Number(sel.dataset.inlinePeriod),
+    sel.dataset.inlineDate,
+    Number(sel.dataset.inlineSlot),
+    sel.value
+  ));
+
+  p.querySelectorAll('[data-roster-crew]').forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    showCrewRoster(b.dataset.rosterCrew);
+  });
 }
 function planRow(p){return `<tr class="ocPlanRow ${p.id===current?'active':''} ${p.label!=='Weekend'?'holiday':''}" data-period="${p.id}"><td class="ocDateCell">${planDate(p.start_date,p.end_date)}</td><td class="ocCoverageName">${esc(p.label)}</td><td>${esc(periodSummaryCrew(p,1))}</td><td>${esc(periodSummaryCrew(p,2))}</td><td>${esc(periodSummaryCrew(p,3))}</td></tr>`}
 function showCrewRoster(crew){
