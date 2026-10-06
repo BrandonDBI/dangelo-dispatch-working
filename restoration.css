@@ -267,3 +267,7 @@
 
 /* v151: compact Requirements group in restoration editor */
 .restRequirements{margin:10px 0 18px}.restRequirementsTitle{font-size:12px;font-weight:800;color:#475467;margin-bottom:8px}.restRequirements .restEditorOptions{display:flex;align-items:center;gap:22px;margin:0}.restRequirements .restEditorOptions .restCheck{margin:0;padding:0}.restRequirements .restEditorOptions>label:not(.restCheck){width:220px;max-width:100%;margin:0}@media(max-width:760px){.restRequirements .restEditorOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;align-items:end}.restRequirements .restEditorOptions>label:not(.restCheck){width:auto}}
+
+
+/* v152: compact restoration requirements row */
+.restRequirements{padding:10px 12px;background:#f8f9fa;border-radius:8px}.restRequirementsTitle{margin-bottom:6px}.restRequirements .restEditorOptions{display:flex;align-items:center;gap:22px;margin:0}.restRequirements .restCheck{margin:0!important}.restRequirements .restNoticeLabel{display:flex;align-items:center;gap:8px;margin:0!important;width:auto!important;white-space:nowrap}.restRequirements .restNoticeLabel select{width:150px}@media(max-width:760px){.restRequirements .restEditorOptions{display:grid;grid-template-columns:1fr}.restRequirements .restNoticeLabel{justify-content:space-between}.restRequirements .restNoticeLabel select{width:160px;max-width:55vw}}
