@@ -75,8 +75,11 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocPeriodBlock.holiday{box-shadow:inset 4px 0 0 var(--oc-red)}
 .ocPeriodBlockHead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;background:rgba(239,7,20,.07);border-bottom:2px solid rgba(239,7,20,.78)}
 .ocPeriodBlockHead strong{font-size:14px}.ocPeriodBlockHead span{font-size:11px;color:#64748b}
+.ocPeriodHeadActions{display:flex;align-items:center;gap:9px}
+.ocDeletePeriod{width:26px;height:26px;border:1px solid rgba(143,17,24,.22);border-radius:6px;background:rgba(255,255,255,.65);color:#8f1118;font-size:18px;line-height:20px;font-weight:700;cursor:pointer;padding:0}
+.ocDeletePeriod:hover{border-color:rgba(143,17,24,.55);background:rgba(239,7,20,.08)}
 .ocPeriodDays{padding:0 14px}
-@media(max-width:700px){.ocPeriodBlockHead{align-items:flex-start}.ocPeriodBlockHead span{display:none}.ocPeriodDays{padding:0 10px}}
+@media(max-width:700px){.ocPeriodBlockHead{align-items:flex-start}.ocPeriodHeadActions>span{display:none}.ocPeriodDays{padding:0 10px}}
 
 .ocInlineHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
 .ocInlineHead strong{font-size:13px}.ocInlineHead span{font-size:11px;color:#64748b}
@@ -147,9 +150,16 @@ function render(){
   const p=document.getElementById('onCallPage');
   if(!p)return;
 
-  const allUpcoming=periods
-    .filter(x=>x.end_date>=iso(new Date()))
-    .filter(x=>x.label!=='Weekend'||!periods.some(h=>h.label!=='Weekend'&&h.start_date<=x.start_date&&h.end_date>=x.end_date))
+  const upcomingRaw=periods.filter(x=>x.end_date>=iso(new Date()));
+  const allUpcoming=upcomingRaw
+    .filter(x=>!upcomingRaw.some(h=>{
+      if(h.id===x.id)return false;
+      const contains=h.start_date<=x.start_date&&h.end_date>=x.end_date;
+      if(!contains)return false;
+      const strictlyBroader=h.start_date<x.start_date||h.end_date>x.end_date;
+      const sameDates=h.start_date===x.start_date&&h.end_date===x.end_date;
+      return strictlyBroader||(sameDates&&Number(h.id)>Number(x.id));
+    }))
     .sort((a,b)=>a.start_date.localeCompare(b.start_date));
 
   if(!allUpcoming.length){
@@ -217,12 +227,27 @@ function render(){
     e.stopPropagation();
     showCrewRoster(b.dataset.rosterCrew);
   });
+
+  p.querySelectorAll('[data-delete-period]').forEach(b=>b.onclick=async e=>{
+    e.stopPropagation();
+    const id=Number(b.dataset.deletePeriod);
+    const period=periods.find(x=>x.id===id);
+    if(!period||role!=='supervisor')return;
+    if(!confirm('Remove '+period.label+' ('+fmt(period.start_date)+' – '+fmt(period.end_date)+') from the on-call schedule?'))return;
+    await req('/rest/v1/on_call_assignments?period_id=eq.'+id,{method:'DELETE'});
+    await req('/rest/v1/on_call_periods?id=eq.'+id,{method:'DELETE'});
+    if(current===id)current=null;
+    await load();
+  });
 }
 function periodBlock(p){
   return `<section class="ocPeriodBlock ${p.label!=='Weekend'?'holiday':''}">
     <div class="ocPeriodBlockHead">
       <strong>${esc(String(p.label||'').toUpperCase())} · ${fmt(p.start_date)} – ${fmt(p.end_date)}</strong>
-      <span>Assign two crews for each day</span>
+      <div class="ocPeriodHeadActions">
+        <span>Assign two crews for each day</span>
+        ${role==='supervisor'?'<button type="button" class="ocDeletePeriod" data-delete-period="'+p.id+'" title="Remove this coverage period" aria-label="Remove coverage period">×</button>':''}
+      </div>
     </div>
     <div class="ocPeriodDays">
       ${periodDays(p).map(d=>{
