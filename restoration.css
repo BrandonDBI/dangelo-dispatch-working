@@ -174,7 +174,7 @@
 @media(max-width:800px){.restItemEdit{grid-template-columns:1fr 1fr}.riPhotos{width:auto}}
 
 /* v147: uniform restoration item editor columns */
-.restItemEdit{grid-template-columns:minmax(220px,1.35fr) minmax(130px,.8fr) minmax(130px,.8fr) auto auto auto;align-items:center}
+.restItemEdit{grid-template-columns:minmax(220px,1.35fr) minmax(130px,.8fr) minmax(130px,.8fr) auto auto;align-items:center}
 @media(max-width:800px){.restItemEdit{grid-template-columns:1fr 1fr}}
 
 
