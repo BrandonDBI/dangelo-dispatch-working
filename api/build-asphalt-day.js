@@ -6,7 +6,7 @@ module.exports = async function handler(req,res){
     const body=typeof req.body==='string'?JSON.parse(req.body):req.body||{};
     const target=Math.max(1,Number(body.targetTons)||36);
     let candidates=Array.isArray(body.candidates)?body.candidates.filter(x=>x&&x.id&&x.address&&Number(x.tons)>0):[];
-    if(!candidates.length) return res.status(400).json({error:'No usable asphalt stops were supplied.'});
+    if(!candidates.length) return res.status(400).json({error:'No usable restoration stops were supplied.'});
     
     const geocoded=[];
     const geocode=async c=>{
