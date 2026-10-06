@@ -296,3 +296,24 @@
   .routeBuildBar #routeBuildDay{width:100%;min-height:46px}
   .routeBuildBar #routeAutoStatus{white-space:normal}
 }
+
+
+/* v154: route planner polish */
+.routeBuildBar{grid-template-columns:180px minmax(260px,620px) auto;justify-content:start;align-items:center}
+.routeBuildBar #routeBuildDay{width:180px}
+.routeBuildBar #routeLoadSummary{max-width:620px}
+.routePlannerTitle{margin-bottom:8px}
+.routePlannerActions{
+  position:sticky;
+  bottom:0;
+  z-index:3;
+  background:#fff;
+  padding:12px 0 2px;
+  border-top:1px solid #eaecf0;
+}
+@media(max-width:800px){
+  .routeBuildBar{grid-template-columns:1fr}
+  .routeBuildBar #routeBuildDay{width:100%}
+  .routeBuildBar #routeLoadSummary{max-width:none}
+  .routePlannerActions{padding-top:10px}
+}
