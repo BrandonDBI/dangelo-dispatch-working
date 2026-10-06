@@ -55,7 +55,7 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocPeriodStack{display:grid;gap:14px}
 .ocPeriodBlock{background:#fff;border:1px solid #dce2e8;border-radius:10px;overflow:hidden}
 .ocPeriodBlock.holiday{box-shadow:inset 4px 0 0 var(--oc-red)}
-.ocPeriodBlockHead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;background:#f4f6f8;border-bottom:2px solid #231f20}
+.ocPeriodBlockHead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;background:rgba(239,7,20,.07);border-bottom:2px solid rgba(239,7,20,.38)}
 .ocPeriodBlockHead strong{font-size:14px}.ocPeriodBlockHead span{font-size:11px;color:#64748b}
 .ocPeriodDays{padding:0 14px}
 @media(max-width:700px){.ocPeriodBlockHead{align-items:flex-start}.ocPeriodBlockHead span{display:none}.ocPeriodDays{padding:0 10px}}
