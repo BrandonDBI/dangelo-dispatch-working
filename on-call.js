@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 const cfg=window.DANGELO_CONFIG||{},BASE=String(cfg.SUPABASE_URL||'').replace(/\/rest\/v1\/?$/,'').replace(/\/$/,'');const KEY=String(cfg.SUPABASE_ANON_KEY||'');
-let periods=[],assignments=[],templates=[],members=[],role='viewer',current=null,currentDate=null,onCallRealtime=null,onCallRealtimeTimer=null;
+let periods=[],assignments=[],templates=[],members=[],role='viewer',current=null,currentDate=null,onCallRealtime=null,onCallRealtimeTimer=null,onCallSelectLocked=false,onCallSelectLockTimer=null;
 let crews=[];
 function pad(n){return String(n).padStart(2,'0')} function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())} function add(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
 function nth(y,m,w,n){const d=new Date(y,m,1),o=(w-d.getDay()+7)%7;d.setDate(1+o+(n-1)*7);return d} function last(y,m,w){const d=new Date(y,m+1,0),o=(d.getDay()-w+7)%7;d.setDate(d.getDate()-o);return d}
@@ -29,14 +29,13 @@ function queueOnCallRealtime(){
   const refresh=()=>{
     const page=document.getElementById('onCallPage');
     if(document.hidden||!page?.classList.contains('active'))return;
-    const active=document.activeElement;
-    if(active?.matches?.('[data-inline-slot]')){
-      onCallRealtimeTimer=setTimeout(refresh,500);
+    if(onCallSelectLocked||document.activeElement?.matches?.('[data-inline-slot]')){
+      onCallRealtimeTimer=setTimeout(refresh,700);
       return;
     }
     load().catch(()=>{});
   };
-  onCallRealtimeTimer=setTimeout(refresh,120);
+  onCallRealtimeTimer=setTimeout(refresh,150);
 }
 function startOnCallRealtime(){
   if(onCallRealtime||!window.supabase?.createClient||!session()?.access_token)return;
@@ -148,12 +147,34 @@ function render(){
 
   p.innerHTML=`<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocUpcomingTitle">Next 4 Coverage Periods</div><div class="ocPeriodStack">${visible.map(periodBlock).join('')}</div></div>`;
 
-  p.querySelectorAll('[data-inline-slot]').forEach(sel=>sel.onchange=()=>setSlot(
-    Number(sel.dataset.inlinePeriod),
-    sel.dataset.inlineDate,
-    Number(sel.dataset.inlineSlot),
-    sel.value
-  ));
+  p.querySelectorAll('[data-inline-slot]').forEach(sel=>{
+    const lock=()=>{
+      onCallSelectLocked=true;
+      clearTimeout(onCallSelectLockTimer);
+      onCallSelectLockTimer=setTimeout(()=>{onCallSelectLocked=false},15000);
+    };
+    const unlockSoon=()=>{
+      clearTimeout(onCallSelectLockTimer);
+      onCallSelectLockTimer=setTimeout(()=>{onCallSelectLocked=false;queueOnCallRealtime()},350);
+    };
+    sel.addEventListener('pointerdown',lock);
+    sel.addEventListener('mousedown',lock);
+    sel.addEventListener('focus',lock);
+    sel.addEventListener('keydown',lock);
+    sel.addEventListener('change',async()=>{
+      lock();
+      await setSlot(
+        Number(sel.dataset.inlinePeriod),
+        sel.dataset.inlineDate,
+        Number(sel.dataset.inlineSlot),
+        sel.value
+      );
+      unlockSoon();
+    });
+    sel.addEventListener('blur',()=>setTimeout(()=>{
+      if(document.activeElement!==sel) unlockSoon();
+    },250));
+  });
 
   p.querySelectorAll('[data-roster-crew]').forEach(b=>b.onclick=e=>{
     e.stopPropagation();
