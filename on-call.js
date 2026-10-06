@@ -23,6 +23,22 @@ function main(){return document.querySelector('#app main')}
 function scheduleEls(){const m=main();if(!m)return[];return [...m.children].filter(el=>!['topbar','appTabs','timeOffPage','restorationPage','onCallPage','privateWorkPage'].some(c=>el.classList.contains(c)))}
 function ensure(){const tabs=document.getElementById('appTabs'),m=main();if(!tabs||!m)return false;let b=document.getElementById('tabOnCall');if(!b){b=document.createElement('button');b.id='tabOnCall';b.className='appTab';b.type='button';b.textContent='On Call';const t=document.getElementById('tabTimeOff');t?tabs.insertBefore(b,t):tabs.appendChild(b)}if(!document.getElementById('onCallPage')){const p=document.createElement('section');p.id='onCallPage';p.className='onCallPage timeOffHidden';const t=document.getElementById('timeOffPage');t?t.insertAdjacentElement('beforebegin',p):tabs.insertAdjacentElement('afterend',p)}b.onclick=show;return true}
 async function load(){const s=session();if(s?.user?.id){const p=await req(`/rest/v1/profiles?id=eq.${s.user.id}&select=role`);role=p?.[0]?.role||'viewer'}[periods,assignments,templates,members]=await Promise.all([req('/rest/v1/on_call_periods?select=*&order=start_date.desc'),req('/rest/v1/on_call_assignments?select=*&order=normal_crew,employee_name'),req('/rest/v1/on_call_crew_templates?select=*&active=eq.true&order=sort_order'),req('/rest/v1/on_call_crew_members?select=*&order=sort_order')]);crews=templates.map(x=>x.crew_name);await ensureNextPeriod();render()}
+
+function queueOnCallRealtime(){
+  clearTimeout(onCallRealtimeTimer);
+  onCallRealtimeTimer=setTimeout(()=>{
+    const page=document.getElementById('onCallPage');
+    if(document.hidden||!page?.classList.contains('active'))return;
+    load().catch(()=>{});
+  },80);
+}
+function startOnCallRealtime(){
+  if(onCallRealtime||!window.supabase?.createClient||!session()?.access_token)return;
+  const client=window.supabase.createClient(BASE,KEY,{auth:{persistSession:false},global:{headers:{Authorization:`Bearer ${session().access_token}`}}});
+  onCallRealtime=client.channel('on-call-live');
+  ['on_call_periods','on_call_assignments','on_call_crew_templates','on_call_crew_members'].forEach(table=>onCallRealtime.on('postgres_changes',{event:'*',schema:'public',table},queueOnCallRealtime));
+  onCallRealtime.subscribe();
+}
 function show(){document.querySelectorAll('.appTab').forEach(x=>x.classList.toggle('active',x.id==='tabOnCall'));['timeOffPage','restorationPage','privateWorkPage'].forEach(id=>{const p=document.getElementById(id);p?.classList.remove('active');p?.classList.add('timeOffHidden')});scheduleEls().forEach(x=>x.classList.add('timeOffHidden'));const p=document.getElementById('onCallPage');p?.classList.remove('timeOffHidden');p?.classList.add('active');load().catch(e=>p.innerHTML='<div class="ocWrap"><div class="ocError">'+esc(e.message)+'</div></div>')}
 function hide(){const p=document.getElementById('onCallPage');p?.classList.remove('active');p?.classList.add('timeOffHidden');document.getElementById('tabOnCall')?.classList.remove('active')}
 document.addEventListener('click',e=>{if(['tabSchedule','tabPrivateWork','tabRestoration','tabTimeOff'].includes(e.target?.id))hide()},true);
@@ -72,5 +88,5 @@ function employeeModal(periodId,crew){const b=modal(`<h3>Add Employee</h3><label
 async function assignMember(periodId,memberId,normalCrew,n){const m=members.find(x=>x.id===memberId);if(!m||role!=='supervisor')return;await req('/rest/v1/on_call_assignments',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({period_id:periodId,employee_name:m.employee_name,normal_crew:normalCrew,role:m.role,on_call_crew:n})});await load()}
 async function assignWhole(periodId,crew){if(role!=='supervisor')return;const n=Number(prompt('Assign '+crew+' crew to On Call Crew 1, 2, or 3:'));if(![1,2,3].includes(n))return;const t=templates.find(x=>x.crew_name===crew),base=members.filter(x=>x.crew_id===t?.id),existing=assignments.filter(x=>x.period_id===periodId&&x.normal_crew===crew);for(const m of base){const a=existing.find(x=>x.employee_name===m.employee_name);if(a)await req('/rest/v1/on_call_assignments?id=eq.'+a.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({on_call_crew:n,role:m.role})});else await req('/rest/v1/on_call_assignments',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({period_id:periodId,employee_name:m.employee_name,normal_crew:crew,role:m.role,on_call_crew:n})})}await load()}
 async function setCrew(id,n){if(role!=='supervisor')return;const a=assignments.find(x=>x.id===id);if(!a)return;const val=a.on_call_crew===n?null:n;await req('/rest/v1/on_call_assignments?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({on_call_crew:val})});a.on_call_crew=val;render()}
-const obs=new MutationObserver(ensure);obs.observe(document.getElementById('app')||document.body,{childList:true,subtree:true});ensure();
+const obs=new MutationObserver(ensure);obs.observe(document.getElementById('app')||document.body,{childList:true,subtree:true});ensure();startOnCallRealtime();document.addEventListener('visibilitychange',()=>{if(!document.hidden&&document.getElementById('onCallPage')?.classList.contains('active'))load().catch(()=>{})});
 })();
