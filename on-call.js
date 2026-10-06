@@ -52,6 +52,14 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocWrap{padding:24px;width:100%;max-width:none;margin:0;box-sizing:border-box}.ocHead{padding:14px 16px;border:1px solid rgba(35,31,32,.55);border-bottom:3px solid #ef0714;border-radius:10px;background:rgba(35,31,32,.055)}.ocHead h2{font-family:inherit;font-size:25px;font-weight:700;line-height:1.15;letter-spacing:-.02em;text-transform:none}.ocHead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.ocHead h2{margin:0 0 4px}.ocHead p,.ocEmpty p{margin:0;color:#64748b}.ocPrimary{background:#231f20;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:800;cursor:pointer}.ocUpcomingTitle{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin:4px 0 8px;color:#475569}.ocPlanWrap{background:#fff;border:1px solid #dce2e8;border-radius:10px;overflow:auto;margin-bottom:20px}.ocPlanWrap .ocPlanTable{display:table!important;width:100%!important}.ocPlanWrap .ocPlanTable thead{display:table-header-group!important}.ocPlanWrap .ocPlanTable tbody{display:table-row-group!important}.ocPlanWrap .ocPlanTable tr{display:table-row!important}.ocPlanWrap .ocPlanTable th,.ocPlanWrap .ocPlanTable td{display:table-cell!important;box-sizing:border-box!important}.ocPlanWrap .ocPlanRow{width:auto!important;border-radius:0!important;padding:0!important;text-align:left!important}.ocPlanTable{width:100%;border-collapse:collapse;table-layout:fixed}.ocPlanTable th{padding:9px 12px;background:#f4f6f8;text-align:left;font-size:11px;text-transform:uppercase;color:#64748b}.ocPlanTable td{padding:10px 12px;border-top:1px solid #edf0f2}.ocPlanTable tr.ocPlanRow{cursor:pointer}.ocPlanTable tr.ocPlanRow:hover td{background:#f8fafc}.ocPlanTable tr.ocPlanRow.holiday td{background:#f7f4ee}.ocPlanTable tr.ocPlanRow.holiday .ocCoverageName{font-weight:900}.ocPlanTable tr.ocPlanRow.holiday.active td{background:#231f20;color:#fff}.ocPlanTable tr.ocPlanRow.active td{background:#231f20;color:#fff}.ocPlanTable th:first-child{width:24%}.ocPlanTable th:nth-child(2){width:22%}.ocCoverageName{font-weight:800}.ocPlan{background:#fff;border:1px solid #dce2e8;border-radius:10px;overflow:hidden;margin-bottom:20px}.ocPlanHead,.ocPlanRow{display:grid;grid-template-columns:1.35fr 1.2fr 1fr 1fr 1fr;align-items:center;gap:10px;padding:9px 12px}.ocPlanHead{background:#f4f6f8;font-size:11px;font-weight:900;text-transform:uppercase;color:#64748b}.ocPlanRow{width:100%;border:0;border-top:1px solid #edf0f2;background:#fff;text-align:left;font:inherit;cursor:pointer}.ocPlanRow:hover{background:#f8fafc}.ocPlanRow.active{background:#231f20;color:#fff}.ocPlanRow.active .ocCoverageName{color:#fff}.ocCoverageName{font-weight:800}.ocPlanRow .ocCoverageName:not(:first-child){}.ocPeriods{display:flex;gap:8px;overflow:auto;margin-bottom:18px;padding-bottom:3px}.ocPeriod{border:1px solid #d6dde5;background:#fff;border-radius:9px;padding:8px 12px;text-align:left;white-space:nowrap;cursor:pointer}.ocPeriod.active{background:#231f20;color:#fff;border-color:#231f20}.ocPeriod strong,.ocPeriod span{display:block}.ocPeriod span{font-size:11px;opacity:.72;margin-top:2px}.ocToolbar{display:flex;justify-content:space-between;align-items:center;margin:12px 0}.ocToolbar h3{margin:0}.ocLegend{font-size:12px;color:#64748b}.ocDayTabs{display:flex;gap:8px;overflow:auto;margin:0 0 12px;padding-bottom:2px}.ocDayTab{border:1px solid #cbd3db;background:#fff;border-radius:8px;padding:8px 11px;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer}.ocDayTab.active{background:#231f20;color:#fff;border-color:#231f20}.ocDayName{margin-top:2px;font-size:10px;font-weight:800;color:#7b838c}.ocPlanRow.active .ocDayName{color:#c7cbd0}
 .ocExpandRow td{padding:0!important;background:#f7f8fa!important;border-top:0!important}
 .ocInlineEditor{padding:12px 14px 14px;border-top:2px solid #231f20}
+.ocPeriodStack{display:grid;gap:14px}
+.ocPeriodBlock{background:#fff;border:1px solid #dce2e8;border-radius:10px;overflow:hidden}
+.ocPeriodBlock.holiday{box-shadow:inset 4px 0 0 var(--oc-red)}
+.ocPeriodBlockHead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;background:#f4f6f8;border-bottom:2px solid #231f20}
+.ocPeriodBlockHead strong{font-size:14px}.ocPeriodBlockHead span{font-size:11px;color:#64748b}
+.ocPeriodDays{padding:0 14px}
+@media(max-width:700px){.ocPeriodBlockHead{align-items:flex-start}.ocPeriodBlockHead span{display:none}.ocPeriodDays{padding:0 10px}}
+
 .ocInlineHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
 .ocInlineHead strong{font-size:13px}.ocInlineHead span{font-size:11px;color:#64748b}
 .ocDayAssign{display:grid;grid-template-columns:150px 1fr 1fr 1fr;gap:10px;align-items:end;padding:9px 0;border-top:1px solid #e1e5ea}
@@ -121,26 +129,18 @@ function render(){
   const p=document.getElementById('onCallPage');
   if(!p)return;
 
-  const allUpcoming=periods
+  const visible=periods
     .filter(x=>x.end_date>=iso(new Date()))
     .filter(x=>x.label!=='Weekend'||!periods.some(h=>h.label!=='Weekend'&&h.start_date<=x.start_date&&h.end_date>=x.end_date))
-    .sort((a,b)=>a.start_date.localeCompare(b.start_date));
+    .sort((a,b)=>a.start_date.localeCompare(b.start_date))
+    .slice(0,4);
 
-  if(!allUpcoming.length){
+  if(!visible.length){
     p.innerHTML='<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocEmpty"><p>No upcoming on-call periods.</p></div></div>';
     return;
   }
 
-  const visible=allUpcoming.slice(0,4);
-  if(!current || !visible.some(x=>x.id===current)) current=visible[0].id;
-
-  p.innerHTML=`<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocUpcomingTitle">Current + Next 3 Coverage Periods</div><div class="ocPlanWrap"><table class="ocPlanTable"><thead><tr><th>Date</th><th>Coverage</th><th>Crew 1</th><th>Crew 2</th><th>Crew 3</th></tr></thead><tbody>${visible.map(x=>planRow(x)+(x.id===current?inlinePeriodEditor(x):'')).join('')}</tbody></table></div></div>`;
-
-  p.querySelectorAll('.ocPlanRow[data-period]').forEach(row=>row.onclick=e=>{
-    if(e.target.closest('select,button'))return;
-    current=Number(row.dataset.period);
-    render();
-  });
+  p.innerHTML=`<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocUpcomingTitle">Next 4 Coverage Periods</div><div class="ocPeriodStack">${visible.map(periodBlock).join('')}</div></div>`;
 
   p.querySelectorAll('[data-inline-slot]').forEach(sel=>sel.onchange=()=>setSlot(
     Number(sel.dataset.inlinePeriod),
@@ -153,6 +153,29 @@ function render(){
     e.stopPropagation();
     showCrewRoster(b.dataset.rosterCrew);
   });
+}
+
+function periodBlock(p){
+  return `<section class="ocPeriodBlock ${p.label!=='Weekend'?'holiday':''}">
+    <div class="ocPeriodBlockHead">
+      <strong>${esc(p.label)} · ${fmt(p.start_date)} – ${fmt(p.end_date)}</strong>
+      <span>Assign two crews for each day</span>
+    </div>
+    <div class="ocPeriodDays">
+      ${periodDays(p).map(d=>{
+        const dt=new Date(d+'T12:00:00');
+        return `<div class="ocDayAssign">
+          <div class="ocDayAssignDate">
+            <strong>${esc(dt.toLocaleDateString('en-US',{weekday:'long'}))}</strong>
+            <span>${esc(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}))}</span>
+          </div>
+          ${inlineAssignField(p,d,1)}
+          ${inlineAssignField(p,d,2)}
+          ${inlineAssignField(p,d,3)}
+        </div>`;
+      }).join('')}
+    </div>
+  </section>`;
 }
 function planRow(p){return `<tr class="ocPlanRow ${p.id===current?'active':''} ${p.label!=='Weekend'?'holiday':''}" data-period="${p.id}"><td class="ocDateCell">${planDate(p.start_date,p.end_date)}</td><td class="ocCoverageName">${esc(p.label)}</td><td>${esc(periodSummaryCrew(p,1))}</td><td>${esc(periodSummaryCrew(p,2))}</td><td>${esc(periodSummaryCrew(p,3))}</td></tr>`}
 function showCrewRoster(crew){
