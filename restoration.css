@@ -327,3 +327,48 @@
   .routeSetup{grid-template-columns:1fr 110px;max-width:none}
   .routePlannerActions #routeOpenMaps{width:100%;min-width:0}
 }
+
+
+/* v156: final route planner spacing polish */
+.routeSetup{
+  grid-template-columns:minmax(280px,520px) 150px;
+  gap:18px;
+  max-width:720px;
+  align-items:end;
+}
+.routeBuildBar{
+  grid-template-columns:150px minmax(260px,520px) auto;
+  gap:14px;
+  max-width:900px;
+}
+.routeBuildBar #routeBuildDay{
+  width:150px;
+  min-height:44px;
+  padding:9px 14px;
+}
+.routeBuildBar #routeLoadSummary{
+  max-width:520px;
+}
+.routeSelectedPane .routeStops{
+  min-height:135px;
+}
+.routeSelectedPane .restEmpty{
+  padding:22px;
+}
+@media(max-width:800px){
+  .routeSetup{
+    grid-template-columns:1fr 105px;
+    gap:10px;
+    max-width:none;
+  }
+  .routeBuildBar{
+    grid-template-columns:1fr;
+    max-width:none;
+  }
+  .routeBuildBar #routeBuildDay{
+    width:100%;
+  }
+  .routeSelectedPane .routeStops{
+    min-height:120px;
+  }
+}
