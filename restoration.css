@@ -317,3 +317,13 @@
   .routeBuildBar #routeLoadSummary{max-width:none}
   .routePlannerActions{padding-top:10px}
 }
+
+
+/* v155: route planner is now a temporary field routing tool */
+.routeSetup{grid-template-columns:minmax(260px,1fr) 160px;max-width:650px}
+.routePlannerActions{justify-content:flex-end}
+.routePlannerActions #routeOpenMaps{min-width:210px}
+@media(max-width:800px){
+  .routeSetup{grid-template-columns:1fr 110px;max-width:none}
+  .routePlannerActions #routeOpenMaps{width:100%;min-width:0}
+}
