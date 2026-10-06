@@ -445,3 +445,63 @@
   /* Keep field job modal focused on Navigate / Photo / Complete */
   .fieldNavigate{min-height:48px!important;font-size:17px!important}
 }
+
+
+/* v159: tighten mobile field job modal */
+@media(max-width:800px){
+  .fieldJobNotes{
+    margin:8px 0 10px!important;
+    padding:9px 11px!important;
+    background:#fafbfc!important;
+    border-color:#e2e6ea!important;
+  }
+  .fieldJobNotes strong{
+    font-size:10px!important;
+    margin-bottom:3px!important;
+    color:#667085!important;
+  }
+  .fieldJobNotes div{
+    font-size:13px!important;
+    line-height:1.3!important;
+  }
+
+  .fieldNavigate{
+    min-height:46px!important;
+    margin-bottom:8px!important;
+    background:#087cf0!important;
+    color:#fff!important;
+    border-color:#087cf0!important;
+  }
+
+  .fieldJobItems{gap:8px!important}
+  .fieldJobItem{
+    padding:10px 11px!important;
+  }
+  .fieldJobItemName{
+    margin-bottom:6px!important;
+  }
+  .fieldJobItemName strong{
+    font-size:17px!important;
+  }
+  .fieldJobControl{
+    gap:7px 10px!important;
+  }
+
+  .fieldComplete{
+    min-height:44px!important;
+    background:#fff!important;
+    color:#344054!important;
+    border:1px solid #cfd6de!important;
+    font-weight:700!important;
+  }
+  .fieldComplete.isDone{
+    background:#eef7ee!important;
+    color:#176b2c!important;
+    border-color:#b7d7bd!important;
+  }
+
+  .fieldAddPhoto{
+    margin-top:1px!important;
+    font-size:14px!important;
+  }
+}
