@@ -705,3 +705,10 @@
     color:#667085;
   }
 }
+
+
+/* v162: honor camera orientation in restoration photo viewer */
+#restModalRoot .photoViewerModal .fieldPhoto img,
+#restModalRoot .fieldPhotoGallery .fieldPhoto img{
+  image-orientation:from-image;
+}
