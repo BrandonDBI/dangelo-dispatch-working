@@ -4,7 +4,7 @@
   const BASE=String(cfg.SUPABASE_URL||'').replace(/\/rest\/v1\/?$/,'').replace(/\/$/,'');
   const KEY=String(cfg.SUPABASE_ANON_KEY||'');
   let activeView='schedule', monthDate=firstOfMonth(new Date()), entries=[], crews=[], role='viewer', enhancing=false;
-  let scheduleMarkerTimer=null, scheduleMarkerBusy=false, timeOffPoller=null, timeOffSignature='';
+  let scheduleMarkerTimer=null, scheduleMarkerBusy=false, timeOffPoller=null, timeOffSignature='', timeOffRealtime=null, timeOffRealtimeTimer=null;
 
   function session(){try{return JSON.parse(localStorage.getItem('dangelo_session')||'null')}catch{return null}}
   function headers(extra={}){return{apikey:KEY,Authorization:`Bearer ${session()?.access_token||KEY}`,'Content-Type':'application/json',...extra}}
@@ -28,10 +28,26 @@
   async function loadData(){const range=calendarRange(),start=iso(range.start),end=iso(range.end);const [offs,crewRows]=await Promise.all([req(`/rest/v1/time_off_entries?select=*&start_date=lte.${end}&end_date=gte.${start}&order=start_date.asc,employee_name.asc`),req('/rest/v1/crews?select=id,name,sort_order&order=sort_order.asc')]);entries=offs||[];crews=crewRows||[];timeOffSignature=JSON.stringify([entries,crews])}
   async function refreshTimeOffIfChanged(){if(activeView!=='timeoff'||document.hidden)return;const range=calendarRange(),start=iso(range.start),end=iso(range.end);try{const [offs,crewRows]=await Promise.all([req(`/rest/v1/time_off_entries?select=*&start_date=lte.${end}&end_date=gte.${start}&order=start_date.asc,employee_name.asc`),req('/rest/v1/crews?select=id,name,sort_order&order=sort_order.asc')]);const nextEntries=offs||[],nextCrews=crewRows||[],nextSignature=JSON.stringify([nextEntries,nextCrews]);if(nextSignature!==timeOffSignature){entries=nextEntries;crews=nextCrews;timeOffSignature=nextSignature;renderTimeOff()}}catch{}}
   function startTimeOffPolling(){if(timeOffPoller)return;timeOffPoller=setInterval(()=>{if(document.hidden)return;if(activeView==='schedule')queueScheduleMarkers(true);else refreshTimeOffIfChanged()},3000)}
+
+  function queueTimeOffRealtime(){
+    clearTimeout(timeOffRealtimeTimer);
+    timeOffRealtimeTimer=setTimeout(()=>{
+      if(document.hidden)return;
+      if(activeView==='schedule')queueScheduleMarkers(true);
+      else refreshTimeOffIfChanged();
+    },80);
+  }
+  function startTimeOffRealtime(){
+    if(timeOffRealtime||!window.supabase?.createClient||!session()?.access_token)return;
+    const client=window.supabase.createClient(BASE,KEY,{auth:{persistSession:false},global:{headers:{Authorization:`Bearer ${session().access_token}`}}});
+    timeOffRealtime=client.channel('time-off-live');
+    ['time_off_entries','crews'].forEach(table=>timeOffRealtime.on('postgres_changes',{event:'*',schema:'public',table},queueTimeOffRealtime));
+    timeOffRealtime.subscribe();
+  }
   function main(){return document.querySelector('#app main')}
   function scheduleEls(){const m=main();if(!m)return[];return Array.from(m.children).filter(el=>!el.classList.contains('topbar')&&!el.classList.contains('appTabs')&&!el.classList.contains('timeOffPage')&&!el.classList.contains('restorationPage')&&!el.classList.contains('onCallPage')&&!el.classList.contains('privateWorkPage'))}
   function applyView(){const page=document.getElementById('timeOffPage');document.getElementById('tabSchedule')?.classList.toggle('active',activeView==='schedule');document.getElementById('tabTimeOff')?.classList.toggle('active',activeView==='timeoff');scheduleEls().forEach(el=>el.classList.toggle('timeOffHidden',activeView==='timeoff'));if(page){page.classList.toggle('active',activeView==='timeoff');page.classList.toggle('timeOffHidden',activeView!=='timeoff')}if(activeView==='schedule')queueScheduleMarkers(true)}
-  function ensureShell(){const m=main(),top=m?.querySelector('.topbar');if(!m||!top||document.getElementById('appTabs'))return false;const tabs=document.createElement('div');tabs.id='appTabs';tabs.className='appTabs';tabs.innerHTML='<button id="tabSchedule" class="appTab active" type="button">Schedule</button><button id="tabRestoration" class="appTab" type="button">Restoration</button><button id="tabTimeOff" class="appTab" type="button">Time Off</button>';top.insertAdjacentElement('afterend',tabs);document.getElementById('appTabsBoot')?.remove();const page=document.createElement('section');page.id='timeOffPage';page.className='timeOffPage';tabs.insertAdjacentElement('afterend',page);tabs.querySelector('#tabSchedule').onclick=()=>{activeView='schedule';applyView()};tabs.querySelector('#tabTimeOff').onclick=()=>{activeView='timeoff';applyView();refreshTimeOff()};startTimeOffPolling();Promise.all([loadRole(),loadData()]).then(()=>{if(activeView==='timeoff')renderTimeOff()}).catch(()=>{});return true}
+  function ensureShell(){const m=main(),top=m?.querySelector('.topbar');if(!m||!top||document.getElementById('appTabs'))return false;const tabs=document.createElement('div');tabs.id='appTabs';tabs.className='appTabs';tabs.innerHTML='<button id="tabSchedule" class="appTab active" type="button">Schedule</button><button id="tabRestoration" class="appTab" type="button">Restoration</button><button id="tabTimeOff" class="appTab" type="button">Time Off</button>';top.insertAdjacentElement('afterend',tabs);document.getElementById('appTabsBoot')?.remove();const page=document.createElement('section');page.id='timeOffPage';page.className='timeOffPage';tabs.insertAdjacentElement('afterend',page);tabs.querySelector('#tabSchedule').onclick=()=>{activeView='schedule';applyView()};tabs.querySelector('#tabTimeOff').onclick=()=>{activeView='timeoff';applyView();refreshTimeOff()};startTimeOffPolling();startTimeOffRealtime();Promise.all([loadRole(),loadData()]).then(()=>{if(activeView==='timeoff')renderTimeOff()}).catch(()=>{});return true}
   async function refreshTimeOff(){const page=document.getElementById('timeOffPage');if(!page)return;if(!entries.length&&!crews.length)page.innerHTML='<div class="timeOffEmpty">Loading time off…</div>';try{await loadRole();await loadData();renderTimeOff()}catch(e){page.innerHTML=`<div class="timeOffError">${esc(e.message)}</div>`}}
 
   function renderTimeOff(){
