@@ -372,3 +372,19 @@
     min-height:120px;
   }
 }
+
+
+/* v157: field-first mobile restoration cards and modal */
+.restMobileMeta{display:none}
+@media(max-width:800px){
+  .restDesktopAddress,.restDesktopMeta,.restDesktopStatus{display:none!important}
+  .restMobileMeta{display:block!important;font-size:13px!important;color:#64748b!important;margin-top:4px!important}
+  .restCard{padding:12px 14px!important}
+  .restCardTop{margin:0!important;padding:0!important;background:transparent!important;border-bottom:0!important}
+  .restCardTop strong{font-size:19px!important;line-height:1.15!important}
+  .restItems{margin:10px 0 0!important;gap:6px 12px!important}
+  .restItems span{font-size:15px!important}
+  .fieldJobTitle p{font-size:14px!important;color:#64748b!important;margin-top:4px!important}
+  .fieldPhotoCount[hidden]{display:none!important}
+  .fieldPhotoCount{font-size:12px!important;opacity:.8!important;color:#087cf0!important}
+}
