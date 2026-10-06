@@ -9,7 +9,7 @@
   const state = {
     session: JSON.parse(localStorage.getItem('dangelo_session') || 'null'),
     role: 'viewer', crews: [], jobs: [], weekStart: mondayOf(new Date()), showWeekend: false,
-    draft: null, poller: null, message: '', dataSignature: ''
+    draft: null, poller: null, message: '', dataSignature: '', realtime: null, realtimeTimer: null
   };
 
   function configured() {
@@ -42,9 +42,9 @@
     if (signup && !data.access_token) return {needsConfirmation:true};
     localStorage.setItem('dangelo_last_email',email);
     state.session = data; localStorage.setItem('dangelo_session',JSON.stringify(data));
-    await loadRole(); await loadData(); render(); startPolling(); return {};
+    await loadRole(); await loadData(); render(); startPolling(); startRealtime(); return {};
   }
-  async function logout(){ localStorage.removeItem('dangelo_session'); state.session=null; state.role='viewer'; stopPolling(); render(); }
+  async function logout(){ localStorage.removeItem('dangelo_session'); state.session=null; state.role='viewer'; stopPolling(); stopRealtime(); render(); }
   async function loadRole(){
     const rows = await request(`/rest/v1/profiles?id=eq.${encodeURIComponent(state.session.user.id)}&select=role`);
     state.role = rows?.[0]?.role || 'viewer';
@@ -63,6 +63,26 @@
   }
   function startPolling(){ stopPolling(); state.poller=setInterval(async()=>{ if(!state.draft){ try{const changed=await loadData();if(changed)renderBoardOnly();}catch(e){state.message=e.message;renderBoardOnly();} } },3000); }
   function stopPolling(){ if(state.poller) clearInterval(state.poller); state.poller=null; }
+
+  function queueRealtimeRefresh(){
+    clearTimeout(state.realtimeTimer);
+    state.realtimeTimer=setTimeout(async()=>{
+      if(!state.session?.access_token||state.draft)return;
+      try{const changed=await loadData();if(changed)renderBoardOnly()}catch(e){state.message=e.message;renderBoardOnly()}
+    },80);
+  }
+  function startRealtime(){
+    if(state.realtime||!window.supabase?.createClient||!state.session?.access_token)return;
+    const client=window.supabase.createClient(BASE,KEY,{auth:{persistSession:false},global:{headers:{Authorization:`Bearer ${state.session.access_token}`}}});
+    state.realtime=client.channel('dispatch-live');
+    ['jobs','crews'].forEach(table=>state.realtime.on('postgres_changes',{event:'*',schema:'public',table},queueRealtimeRefresh));
+    state.realtime.subscribe();
+  }
+  function stopRealtime(){
+    clearTimeout(state.realtimeTimer);state.realtimeTimer=null;
+    if(state.realtime){try{state.realtime.unsubscribe()}catch{}}
+    state.realtime=null;
+  }
 
   function render(){
     if(!configured()) return renderConfigHelp();
@@ -172,7 +192,7 @@
   async function boot(){
     if(state.session?.access_token){
       render();
-      try{await loadRole();await loadData();const roleBadge=document.querySelector('.roleBadge');if(roleBadge){roleBadge.textContent=state.role;roleBadge.dataset.roleReady='1';}renderBoardOnly();startPolling()}catch{localStorage.removeItem('dangelo_session');state.session=null;render()}
+      try{await loadRole();await loadData();const roleBadge=document.querySelector('.roleBadge');if(roleBadge){roleBadge.textContent=state.role;roleBadge.dataset.roleReady='1';}renderBoardOnly();startPolling();startRealtime()}catch{localStorage.removeItem('dangelo_session');state.session=null;render()}
       return;
     }
     render();
