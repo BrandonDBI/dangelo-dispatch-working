@@ -712,3 +712,29 @@
 #restModalRoot .fieldPhotoGallery .fieldPhoto img{
   image-orientation:from-image;
 }
+
+
+/* Keep Restoration search controls stable while typing */
+.restSearchWrap{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  gap:8px;
+  align-items:center;
+  min-width:0;
+}
+.restSearchWrap input{
+  min-width:0;
+}
+.restSearchWrap button{
+  white-space:nowrap;
+  margin:0;
+}
+.restSearchWrap button[hidden]{
+  display:none!important;
+}
+@media(max-width:800px){
+  .restSearchWrap{
+    grid-template-columns:minmax(0,1fr) auto auto;
+    gap:8px;
+  }
+}
