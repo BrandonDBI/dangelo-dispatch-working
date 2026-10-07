@@ -10,8 +10,11 @@ module.exports = async function handler(req,res){
     
     const geocoded=[];
     const geocode=async c=>{
-      const lat=Number(c.latitude),lng=Number(c.longitude);if(c.latitude!=null&&c.longitude!=null&&Number.isFinite(lat)&&Number.isFinite(lng)&&!(lat===0&&lng===0)) return {...c,latitude:lat,longitude:lng};
-      const u='https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURIComponent(c.address)+'&region=us&key='+encodeURIComponent(key);
+      const lat=Number(c.latitude),lng=Number(c.longitude),savedInMichigan=Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=41.6&&lat<=48.4&&lng>=-90.6&&lng<=-82.0;
+      if(c.latitude!=null&&c.longitude!=null&&savedInMichigan) return {...c,latitude:lat,longitude:lng};
+      const municipality=String(c.city||c.project||'').trim(),state=String(c.state||'MI').trim();
+      const fullAddress=[c.address,municipality,state].filter(Boolean).join(', ');
+      const u='https://maps.googleapis.com/maps/api/geocode/json?address='+encodeURIComponent(fullAddress)+'&region=us&components='+encodeURIComponent('administrative_area:'+state+'|country:US')+'&key='+encodeURIComponent(key);
       const r=await fetch(u),j=await r.json(),g=j.results&&j.results[0];
       if(!r.ok||!g) return null;
       const out={...c,latitude:g.geometry.location.lat,longitude:g.geometry.location.lng};
