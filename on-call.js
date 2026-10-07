@@ -132,20 +132,15 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocMobilePeriodHead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:#f4f6f8;border-bottom:1px solid #e2e7ec}
 .ocMobilePeriodHead strong{font-size:14px}
 .ocMobilePeriodHead span{font-size:12px;color:#64748b;font-weight:700;white-space:nowrap}
-.ocMobileDay{padding:12px 14px;border-top:1px solid #edf0f2}
+.ocMobileDay{padding:10px 14px;border-top:1px solid #edf0f2}
 .ocMobileDay:first-of-type{border-top:0}
-.ocMobileDate{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.ocMobileDate{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
 .ocMobileDate strong{font-size:16px}
 .ocMobileDate span{font-size:12px;color:#64748b;font-weight:700}
-.ocMobileCrews{display:grid;gap:8px}
-.ocMobileCrew{padding:9px 10px;border:1px solid #e0e5ea;border-radius:9px;background:#fbfcfd}
-.ocMobileCrew>strong{display:block;font-size:12px;margin-bottom:5px}
-.ocMobileCrew.empty{opacity:.55}
-.ocMobileCrew.empty>strong{margin-bottom:0}
-.ocMobileCrew.empty>span{font-size:12px;color:#64748b;margin-left:6px}
-.ocMobileNames{display:flex;flex-wrap:wrap;gap:4px 10px}
-.ocMobileNames>span{font-size:13px;font-weight:700}
-.ocMobileNames small{font-size:10px;color:#64748b;font-weight:600;margin-left:3px}
+.ocMobileCrews{display:grid;gap:6px}
+.ocMobileCrew{padding:8px 10px;border:1px solid #e0e5ea;border-radius:9px;background:#fbfcfd;font-size:13px;line-height:1.35}
+.ocMobileCrew>strong{font-size:12px;margin-right:5px}
+.ocMobileCrew>span{font-weight:700;color:#1f2937}
 }`;document.head.appendChild(s)}
 function periodSummaryCrew(p,n){
   const days=periodDays(p);
@@ -171,12 +166,12 @@ function inlinePeriodEditor(p){
 }
 function mobileCrewRoster(periodId,date,n){
   const rows=assignments.filter(a=>a.period_id===periodId&&a.assignment_date===date&&a.on_call_crew===n);
-  if(!rows.length)return '<div class="ocMobileCrew empty"><strong>Crew '+n+'</strong><span>Not assigned</span></div>';
+  if(!rows.length)return '';
   const crewNames=[...new Set(rows.map(a=>a.normal_crew).filter(Boolean))];
   const crewLabel=crewNames.length===1?crewNames[0]:'Crew '+n;
   const rank={'Foreman':0,'Operator':1,'Truck Driver':2,'Driver':2,'Laborer':3};
   const sorted=[...rows].sort((a,b)=>(rank[a.role]??9)-(rank[b.role]??9)||String(a.employee_name||'').localeCompare(String(b.employee_name||'')));
-  return '<div class="ocMobileCrew"><strong>Crew '+n+' · '+esc(String(crewLabel).toUpperCase())+'</strong><div class="ocMobileNames">'+sorted.map(a=>'<span>'+esc(a.employee_name)+(a.role?' <small>'+esc(a.role)+'</small>':'')+'</span>').join('')+'</div></div>';
+  return '<div class="ocMobileCrew"><strong>Crew '+n+' — '+esc(String(crewLabel).toUpperCase())+':</strong><span>'+sorted.map(a=>esc(a.employee_name)).join(', ')+'</span></div>';
 }
 function mobilePeriodBlock(p){
   return '<section class="ocMobilePeriod '+(p.label!=='Weekend'?'holiday':'')+'"><div class="ocMobilePeriodHead"><strong>'+esc(String(p.label||'').toUpperCase())+'</strong><span>'+fmt(p.start_date)+' – '+fmt(p.end_date)+'</span></div>'+periodDays(p).map(d=>{const dt=new Date(d+'T12:00:00');return '<div class="ocMobileDay"><div class="ocMobileDate"><strong>'+esc(dt.toLocaleDateString('en-US',{weekday:'long'}))+'</strong><span>'+esc(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}))+'</span></div><div class="ocMobileCrews">'+mobileCrewRoster(p.id,d,1)+mobileCrewRoster(p.id,d,2)+mobileCrewRoster(p.id,d,3)+'</div></div>'}).join('')+'</section>';
