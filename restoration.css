@@ -738,3 +738,33 @@
     gap:8px;
   }
 }
+
+
+/* v162: balance mobile Restoration actions and full-width search */
+@media(max-width:800px){
+  .restHeadActions{
+    grid-template-columns:1fr 1fr!important;
+  }
+  #planRestRoute,
+  #addRest{
+    grid-column:auto!important;
+    width:100%!important;
+    min-height:48px!important;
+    padding:10px 8px!important;
+    font-size:15px!important;
+    font-weight:800!important;
+  }
+  .restSearchWrap{
+    display:block!important;
+    width:100%!important;
+  }
+  .restSearchWrap input{
+    display:block!important;
+    width:100%!important;
+    box-sizing:border-box!important;
+  }
+  .restSearchWrap #restSearchBtn,
+  .restSearchWrap #restClearBtn{
+    margin-top:8px!important;
+  }
+}
