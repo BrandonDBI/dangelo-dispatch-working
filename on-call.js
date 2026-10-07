@@ -69,7 +69,7 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocCoverageNavBtns .ocAddCoverage:hover:not(:disabled){border-color:rgba(239,7,20,.7);background:rgba(239,7,20,.09)}
 .ocModalHint{margin:-2px 0 12px;color:#64748b;font-size:12px;line-height:1.4}
 
-.ocRosterEditList{display:grid;gap:7px;margin-top:10px}.ocRosterEditRow{display:grid;grid-template-columns:minmax(150px,.85fr) minmax(260px,1.5fr) 34px;gap:8px;align-items:center;padding:8px 9px;border:1px solid #e1e5ea;border-radius:8px;background:#fafbfc}.ocRosterEditRow>div strong,.ocRosterEditRow>div small{display:block}.ocRosterEditRow>div small{margin-top:2px;color:#64748b}.ocRosterEditRow select{width:100%;padding:8px;border:1px solid #cbd3db;border-radius:7px;background:#fff;font-weight:700}.ocRosterRemove{height:34px;border:1px solid #e0b9bc;border-radius:7px;background:#fff;color:#a20d15;font-size:18px;font-weight:800;cursor:pointer}.ocRosterAdd{margin-top:10px;padding:8px 11px;border:1px solid #cbd3db;border-radius:7px;background:#fff;font-weight:800;cursor:pointer}.ocRosterAdd:hover{border-color:#231f20}
+.ocRosterEditorModal{width:min(720px,calc(100vw - 40px))!important;box-sizing:border-box}.ocRosterEditList{display:grid;gap:8px;margin-top:12px;min-width:0}.ocRosterEditRow{display:grid;grid-template-columns:minmax(170px,.9fr) minmax(0,1.35fr) 38px;gap:10px;align-items:center;width:100%;min-width:0;box-sizing:border-box;padding:9px 10px;border:1px solid #e1e5ea;border-radius:8px;background:#fafbfc;overflow:hidden}.ocRosterCurrent{min-width:0}.ocRosterEditRow>div strong,.ocRosterEditRow>div small{display:block}.ocRosterEditRow>div strong{font-size:14px}.ocRosterEditRow>div small{margin-top:2px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ocRosterEditRow select{display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box;padding:8px 30px 8px 9px;border:1px solid #cbd3db;border-radius:7px;background:#fff;font-weight:700}.ocRosterRemove{width:38px;height:36px;min-width:38px;padding:0;border:1px solid #e0b9bc;border-radius:7px;background:#fff;color:#a20d15;font-size:18px;font-weight:800;cursor:pointer}.ocRosterAdd{margin-top:10px;padding:8px 11px;border:1px solid #cbd3db;border-radius:7px;background:#fff;font-weight:800;cursor:pointer}.ocRosterAdd:hover{border-color:#231f20}@media(max-width:700px){.ocRosterEditorModal{width:min(94vw,540px)!important}.ocRosterEditRow{grid-template-columns:1fr 38px}.ocRosterEditRow .ocRosterSwap{grid-column:1/-1;grid-row:2}.ocRosterCurrent{grid-column:1}.ocRosterRemove{grid-column:2;grid-row:1}}
 @media(max-width:700px){.ocCoverageNav{align-items:flex-start;flex-direction:column}.ocCoverageNavBtns{width:100%}.ocCoverageNavBtns button{flex:1;min-height:40px}}
 
 .ocPeriodBlock{background:#fff;border:1px solid #dce2e8;border-radius:10px;overflow:hidden}
@@ -310,11 +310,10 @@ function periodBlock(p){
   </section>`;
 }
 function planRow(p){return `<tr class="ocPlanRow ${p.id===current?'active':''} ${p.label!=='Weekend'?'holiday':''}" data-period="${p.id}"><td class="ocDateCell">${planDate(p.start_date,p.end_date)}</td><td class="ocCoverageName">${esc(p.label)}</td><td>${esc(periodSummaryCrew(p,1))}</td><td>${esc(periodSummaryCrew(p,2))}</td><td>${esc(periodSummaryCrew(p,3))}</td></tr>`}
-function fullRosterOptions(selectedName='',selectedCrew=''){
+function fullRosterOptions(){
   return templates.map(t=>{
     const opts=members.filter(m=>m.crew_id===t.id).sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)).map(m=>{
-      const sel=m.employee_name===selectedName&&t.crew_name===selectedCrew?'selected':'';
-      return '<option value="'+m.id+'" '+sel+'>'+esc(m.employee_name)+(m.role?' — '+esc(m.role):'')+'</option>';
+      return '<option value="'+m.id+'">'+esc(m.employee_name)+(m.role?' — '+esc(m.role):'')+'</option>';
     }).join('');
     return opts?'<optgroup label="'+esc(String(t.crew_name||'').toUpperCase())+'">'+opts+'</optgroup>':'';
   }).join('');
@@ -341,10 +340,9 @@ function showDayRoster(periodId,date,slot){
   const editable=role==='supervisor';
   const rowHtml=rows.map(a=>{
     if(!editable)return '<div class="ocRosterModalRow"><strong>'+esc(a.employee_name)+'</strong><small>'+esc(a.role||'')+'</small></div>';
-    const currentMember=members.find(m=>m.employee_name===a.employee_name&&templates.find(t=>t.id===m.crew_id)?.crew_name===a.normal_crew);
-    return '<div class="ocRosterEditRow" data-assignment-id="'+a.id+'"><div><strong>'+esc(a.employee_name)+'</strong><small>'+esc((a.normal_crew||'')+(a.role?' · '+a.role:''))+'</small></div><select class="ocRosterSwap"><option value="">Replace / swap with…</option>'+fullRosterOptions(currentMember?.employee_name||'',a.normal_crew||'')+'</select><button type="button" class="ocRosterRemove" title="Remove from this day">×</button></div>';
+    return '<div class="ocRosterEditRow" data-assignment-id="'+a.id+'"><div class="ocRosterCurrent"><strong>'+esc(a.employee_name)+'</strong><small>'+esc((a.normal_crew||'')+(a.role?' · '+a.role:''))+'</small></div><select class="ocRosterSwap"><option value="" selected>Replace with…</option>'+fullRosterOptions()+'</select><button type="button" class="ocRosterRemove" title="Remove from this day">×</button></div>';
   }).join('')||'<div class="ocSlotEmpty">No one is assigned to this crew.</div>';
-  const b=modal('<h3>'+esc(title)+'</h3><p class="ocModalHint">'+esc(p?.label||'On Call')+' · Changes apply only to this date.</p><div class="ocRosterEditList">'+rowHtml+'</div>'+(editable?'<button type="button" id="ocRosterAdd" class="ocRosterAdd">+ Add Person</button>':'')+'<div class="ocActions"><button data-cancel>Close</button></div>');
+  const b=modal('<h3>'+esc(title)+'</h3><p class="ocModalHint">'+esc(p?.label||'On Call')+' · Changes apply only to this date.</p><div class="ocRosterEditList">'+rowHtml+'</div>'+(editable?'<button type="button" id="ocRosterAdd" class="ocRosterAdd">+ Add Person</button>':'')+'<div class="ocActions"><button data-cancel>Close</button></div>');b.querySelector('.ocModal')?.classList.add('ocRosterEditorModal');
   if(!editable)return;
   b.querySelectorAll('.ocRosterEditRow').forEach(row=>{
     const assignmentId=Number(row.dataset.assignmentId),sel=row.querySelector('.ocRosterSwap');
