@@ -79,7 +79,7 @@ w.querySelector('#routeBuildDay').onclick=async()=>{
   if(!pool.length)return alert('No usable '+cfg.label.toLowerCase()+' stops with an address and quantity in this view.');
   btn.disabled=true;autoStatus.textContent='Building route…';
   try{
-    const res=await fetch('/api/build-asphalt-day',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetTons:Number(target.value)||cfg.target,candidates:pool.map(j=>({id:j.id,address:j.address,tons:jobAmount(j,kind),latitude:j.latitude,longitude:j.longitude}))})});
+    const res=await fetch('/api/build-asphalt-day',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetTons:Number(target.value)||cfg.target,candidates:pool.map(j=>({id:j.id,address:j.address,city:j.city,project:j.project,state:'MI',tons:jobAmount(j,kind),latitude:j.latitude,longitude:j.longitude,geocodedAddress:j.geocoded_address}))})});
     const out=await res.json();if(!res.ok)throw new Error(out.error||'Could not build route.');
     selected=out.order.map(Number);
     for(const g of out.geocoded||[]){const j=jobs.find(x=>x.id===Number(g.id));if(j){j.latitude=g.latitude;j.longitude=g.longitude;j.geocoded_address=g.formattedAddress;req('/rest/v1/restoration_jobs?id=eq.'+j.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({latitude:g.latitude,longitude:g.longitude,geocoded_address:g.formattedAddress})}).catch(()=>{})}}
