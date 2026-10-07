@@ -322,13 +322,13 @@ async function changeDayRosterPerson(assignmentId,memberId,periodId,date,slot){
   if(role!=='supervisor')return;
   const a=assignments.find(x=>x.id===assignmentId),m=members.find(x=>x.id===memberId),t=templates.find(x=>x.id===m?.crew_id);
   if(!a||!m||!t)return;
-  if(a.employee_name===m.employee_name&&a.normal_crew===t.crew_name)return;
+  if(a.employee_name===m.employee_name)return;
   const other=assignments.find(x=>x.period_id===periodId&&x.assignment_date===date&&x.id!==a.id&&x.employee_name===m.employee_name);
-  const original={employee_name:a.employee_name,normal_crew:a.normal_crew,role:a.role};
+  const originalPerson={employee_name:a.employee_name,role:a.role};
   if(other){
-    await req('/rest/v1/on_call_assignments?id=eq.'+other.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(original)});
+    await req('/rest/v1/on_call_assignments?id=eq.'+other.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(originalPerson)});
   }
-  await req('/rest/v1/on_call_assignments?id=eq.'+a.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({employee_name:m.employee_name,normal_crew:t.crew_name,role:m.role})});
+  await req('/rest/v1/on_call_assignments?id=eq.'+a.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({employee_name:m.employee_name,role:m.role})});
   await load();
   showDayRoster(periodId,date,slot);
 }
