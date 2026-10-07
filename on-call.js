@@ -69,6 +69,7 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocCoverageNavBtns .ocAddCoverage:hover:not(:disabled){border-color:rgba(239,7,20,.7);background:rgba(239,7,20,.09)}
 .ocModalHint{margin:-2px 0 12px;color:#64748b;font-size:12px;line-height:1.4}
 
+.ocRosterEditList{display:grid;gap:7px;margin-top:10px}.ocRosterEditRow{display:grid;grid-template-columns:minmax(150px,.85fr) minmax(260px,1.5fr) 34px;gap:8px;align-items:center;padding:8px 9px;border:1px solid #e1e5ea;border-radius:8px;background:#fafbfc}.ocRosterEditRow>div strong,.ocRosterEditRow>div small{display:block}.ocRosterEditRow>div small{margin-top:2px;color:#64748b}.ocRosterEditRow select{width:100%;padding:8px;border:1px solid #cbd3db;border-radius:7px;background:#fff;font-weight:700}.ocRosterRemove{height:34px;border:1px solid #e0b9bc;border-radius:7px;background:#fff;color:#a20d15;font-size:18px;font-weight:800;cursor:pointer}.ocRosterAdd{margin-top:10px;padding:8px 11px;border:1px solid #cbd3db;border-radius:7px;background:#fff;font-weight:800;cursor:pointer}.ocRosterAdd:hover{border-color:#231f20}
 @media(max-width:700px){.ocCoverageNav{align-items:flex-start;flex-direction:column}.ocCoverageNavBtns{width:100%}.ocCoverageNavBtns button{flex:1;min-height:40px}}
 
 .ocPeriodBlock{background:#fff;border:1px solid #dce2e8;border-radius:10px;overflow:hidden}
@@ -164,8 +165,9 @@ function assignmentCrew(periodId,date,n){
 }
 function inlineAssignField(p,date,n){
   const selected=assignmentCrew(p.id,date,n);
-  if(role!=='supervisor')return `<div class="ocAssignField"><div><label>Crew ${n}</label><strong>${esc(selected||'—')}</strong></div>${selected?`<button type="button" class="ocRosterBtn" data-roster-crew="${esc(selected)}">Roster</button>`:''}</div>`;
-  return `<div class="ocAssignField"><div><label>Crew ${n}${n===3?' (optional)':''}</label><select data-inline-slot="${n}" data-inline-date="${date}" data-inline-period="${p.id}"><option value="">${n===3?'None':'Select crew…'}</option>${crews.map(cr=>`<option value="${esc(cr)}" ${selected===cr?'selected':''}>${esc(cr.toUpperCase())}</option>`).join('')}</select></div>${selected?`<button type="button" class="ocRosterBtn" data-roster-crew="${esc(selected)}">Roster</button>`:''}</div>`;
+  const rosterBtn=selected?`<button type="button" class="ocRosterBtn" data-roster-period="${p.id}" data-roster-date="${date}" data-roster-slot="${n}">Roster</button>`:'';
+  if(role!=='supervisor')return `<div class="ocAssignField"><div><label>Crew ${n}</label><strong>${esc(selected||'—')}</strong></div>${rosterBtn}</div>`;
+  return `<div class="ocAssignField"><div><label>Crew ${n}${n===3?' (optional)':''}</label><select data-inline-slot="${n}" data-inline-date="${date}" data-inline-period="${p.id}"><option value="">${n===3?'None':'Select crew…'}</option>${crews.map(cr=>`<option value="${esc(cr)}" ${selected===cr?'selected':''}>${esc(cr.toUpperCase())}</option>`).join('')}</select></div>${rosterBtn}</div>`;
 }
 function inlinePeriodEditor(p){
   return `<tr class="ocExpandRow"><td colspan="5"><div class="ocInlineEditor"><div class="ocInlineHead"><strong>${esc(String(p.label||'').toUpperCase())} · ${fmt(p.start_date)} – ${fmt(p.end_date)}</strong><span>Assign two crews for each day</span></div>${periodDays(p).map(d=>{const dt=new Date(d+'T12:00:00');return `<div class="ocDayAssign"><div class="ocDayAssignDate"><strong>${esc(dt.toLocaleDateString('en-US',{weekday:'long'}))}</strong><span>${esc(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}))}</span></div>${inlineAssignField(p,d,1)}${inlineAssignField(p,d,2)}${inlineAssignField(p,d,3)}</div>`}).join('')}</div></td></tr>`;
@@ -265,9 +267,9 @@ function render(){
     },250));
   });
 
-  p.querySelectorAll('[data-roster-crew]').forEach(b=>b.onclick=e=>{
+  p.querySelectorAll('[data-roster-period]').forEach(b=>b.onclick=e=>{
     e.stopPropagation();
-    showCrewRoster(b.dataset.rosterCrew);
+    showDayRoster(Number(b.dataset.rosterPeriod),b.dataset.rosterDate,Number(b.dataset.rosterSlot));
   });
 
   p.querySelectorAll('[data-delete-period]').forEach(b=>b.onclick=async e=>{
@@ -308,9 +310,59 @@ function periodBlock(p){
   </section>`;
 }
 function planRow(p){return `<tr class="ocPlanRow ${p.id===current?'active':''} ${p.label!=='Weekend'?'holiday':''}" data-period="${p.id}"><td class="ocDateCell">${planDate(p.start_date,p.end_date)}</td><td class="ocCoverageName">${esc(p.label)}</td><td>${esc(periodSummaryCrew(p,1))}</td><td>${esc(periodSummaryCrew(p,2))}</td><td>${esc(periodSummaryCrew(p,3))}</td></tr>`}
-function showCrewRoster(crew){
-  const t=templates.find(x=>x.crew_name===crew),base=members.filter(m=>m.crew_id===t?.id).sort((a,b)=>(a.sort_order??0)-(b.sort_order??0));
-  const b=modal(`<h3>${esc(String(crew||'').toUpperCase())} CREW</h3><div class="ocRosterModalList">${base.map(m=>`<div class="ocRosterModalRow"><strong>${esc(m.employee_name)}</strong><small>${esc(m.role||'')}</small></div>`).join('')||'<div class="ocSlotEmpty">No crew members found.</div>'}</div><div class="ocActions"><button data-cancel>Close</button></div>`);
+function fullRosterOptions(selectedName='',selectedCrew=''){
+  return templates.map(t=>{
+    const opts=members.filter(m=>m.crew_id===t.id).sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)).map(m=>{
+      const sel=m.employee_name===selectedName&&t.crew_name===selectedCrew?'selected':'';
+      return '<option value="'+m.id+'" '+sel+'>'+esc(m.employee_name)+(m.role?' — '+esc(m.role):'')+'</option>';
+    }).join('');
+    return opts?'<optgroup label="'+esc(String(t.crew_name||'').toUpperCase())+'">'+opts+'</optgroup>':'';
+  }).join('');
+}
+async function changeDayRosterPerson(assignmentId,memberId,periodId,date,slot){
+  if(role!=='supervisor')return;
+  const a=assignments.find(x=>x.id===assignmentId),m=members.find(x=>x.id===memberId),t=templates.find(x=>x.id===m?.crew_id);
+  if(!a||!m||!t)return;
+  if(a.employee_name===m.employee_name&&a.normal_crew===t.crew_name)return;
+  const other=assignments.find(x=>x.period_id===periodId&&x.assignment_date===date&&x.id!==a.id&&x.employee_name===m.employee_name);
+  const original={employee_name:a.employee_name,normal_crew:a.normal_crew,role:a.role};
+  if(other){
+    await req('/rest/v1/on_call_assignments?id=eq.'+other.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(original)});
+  }
+  await req('/rest/v1/on_call_assignments?id=eq.'+a.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({employee_name:m.employee_name,normal_crew:t.crew_name,role:m.role})});
+  await load();
+  showDayRoster(periodId,date,slot);
+}
+function showDayRoster(periodId,date,slot){
+  const p=periods.find(x=>x.id===periodId),rows=assignments.filter(a=>a.period_id===periodId&&a.assignment_date===date&&a.on_call_crew===slot);
+  const rank={'Foreman':0,'Operator':1,'Truck Driver':2,'Driver':2,'Laborer':3};
+  rows.sort((a,b)=>(rank[a.role]??9)-(rank[b.role]??9)||String(a.employee_name||'').localeCompare(String(b.employee_name||'')));
+  const dt=new Date(date+'T12:00:00'),title='Crew '+slot+' · '+dt.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  const editable=role==='supervisor';
+  const rowHtml=rows.map(a=>{
+    if(!editable)return '<div class="ocRosterModalRow"><strong>'+esc(a.employee_name)+'</strong><small>'+esc(a.role||'')+'</small></div>';
+    const currentMember=members.find(m=>m.employee_name===a.employee_name&&templates.find(t=>t.id===m.crew_id)?.crew_name===a.normal_crew);
+    return '<div class="ocRosterEditRow" data-assignment-id="'+a.id+'"><div><strong>'+esc(a.employee_name)+'</strong><small>'+esc((a.normal_crew||'')+(a.role?' · '+a.role:''))+'</small></div><select class="ocRosterSwap"><option value="">Replace / swap with…</option>'+fullRosterOptions(currentMember?.employee_name||'',a.normal_crew||'')+'</select><button type="button" class="ocRosterRemove" title="Remove from this day">×</button></div>';
+  }).join('')||'<div class="ocSlotEmpty">No one is assigned to this crew.</div>';
+  const b=modal('<h3>'+esc(title)+'</h3><p class="ocModalHint">'+esc(p?.label||'On Call')+' · Changes apply only to this date.</p><div class="ocRosterEditList">'+rowHtml+'</div>'+(editable?'<button type="button" id="ocRosterAdd" class="ocRosterAdd">+ Add Person</button>':'')+'<div class="ocActions"><button data-cancel>Close</button></div>');
+  if(!editable)return;
+  b.querySelectorAll('.ocRosterEditRow').forEach(row=>{
+    const assignmentId=Number(row.dataset.assignmentId),sel=row.querySelector('.ocRosterSwap');
+    sel.onchange=async()=>{const memberId=Number(sel.value);if(!memberId)return;sel.disabled=true;try{b.remove();await changeDayRosterPerson(assignmentId,memberId,periodId,date,slot)}catch(e){alert(e.message);await load()}};
+    row.querySelector('.ocRosterRemove').onclick=async()=>{if(!confirm('Remove this person from this on-call crew for '+dt.toLocaleDateString('en-US')+'?'))return;await req('/rest/v1/on_call_assignments?id=eq.'+assignmentId,{method:'DELETE'});b.remove();await load();showDayRoster(periodId,date,slot)};
+  });
+  b.querySelector('#ocRosterAdd')?.addEventListener('click',()=>{b.remove();addDayRosterPerson(periodId,date,slot)});
+}
+function addDayRosterPerson(periodId,date,slot){
+  const b=modal('<h3>Add Person · Crew '+slot+'</h3><p class="ocModalHint">This adds the employee only to this on-call date.</p><label>Employee<select id="ocDayRosterPerson"><option value="">Select employee…</option>'+fullRosterOptions()+'</select></label><div class="ocActions"><button data-cancel>Cancel</button><button id="ocDayRosterAdd" class="ocPrimary">Add</button></div>');
+  b.querySelector('#ocDayRosterAdd').onclick=async()=>{
+    const memberId=Number(b.querySelector('#ocDayRosterPerson').value),m=members.find(x=>x.id===memberId),t=templates.find(x=>x.id===m?.crew_id);
+    if(!m||!t)return;
+    const existing=assignments.find(x=>x.period_id===periodId&&x.assignment_date===date&&x.employee_name===m.employee_name);
+    if(existing)return alert(m.employee_name+' is already assigned on call that day. Use a roster dropdown to swap them instead.');
+    await req('/rest/v1/on_call_assignments',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({period_id:periodId,assignment_date:date,employee_name:m.employee_name,normal_crew:t.crew_name,role:m.role,on_call_crew:slot})});
+    b.remove();await load();showDayRoster(periodId,date,slot);
+  };
 }
 function slotHtml(n,rows){const rank={'Operator':1,'Truck Driver':2,'Driver':2,'Laborer':3,'Foreman':0};const people=rows.filter(a=>a.on_call_crew===n).sort((a,b)=>{const r=(rank[a.role]??9)-(rank[b.role]??9);if(r)return r;const ta=templates.find(t=>t.crew_name===a.normal_crew),tb=templates.find(t=>t.crew_name===b.normal_crew),ma=members.find(m=>m.crew_id===ta?.id&&m.employee_name===a.employee_name),mb=members.find(m=>m.crew_id===tb?.id&&m.employee_name===b.employee_name);return (ma?.sort_order??99)-(mb?.sort_order??99)}),names=[...new Set(people.map(a=>a.normal_crew).filter(Boolean))],selected=names.length===1?names[0]:'';return `<section class="ocSlot ${!people.length&&n===3?'ocSlotOptional':''}"><div class="ocSlotHead"><strong>ON CALL CREW ${n}${selected?' — '+esc(selected.toUpperCase()):''}</strong>${role==='supervisor'?`<select data-slot="${n}"><option value="">Select normal crew…</option>${crews.map(c=>`<option value="${esc(c)}" ${selected===c?'selected':''} >${esc(c.toUpperCase())}</option>`).join('')}</select>`:''}</div>${people.length?`<div class="ocRoster">${people.map(a=>`<div class="ocRosterRow"><span><b>${esc(a.employee_name)}</b><small>${esc(a.role||'')}</small></span><button class="ocPersonRemove" data-remove-person="${a.id}">×</button></div>`).join('')}</div>${role==='supervisor'?'<div class="ocWeekendActions"><button class="ocEditWeekend" data-edit-weekend="'+n+'">Edit</button><button class="ocEditWeekend" data-add-weekend="'+n+'">+ Add Person</button></div>':''}`:'<div class="ocSlotEmpty">'+(n===3?'Optional third crew':'No crew assigned')+'</div>'}</section>`}
 function addWeekendPerson(periodId,assignmentDate,n){const opts=templates.flatMap(t=>members.filter(m=>m.crew_id===t.id).map(m=>`<option value="${m.id}">${esc(m.employee_name)} — ${esc(t.crew_name.toUpperCase())} · ${esc(m.role)}</option>`)).join('');const b=modal(`<h3>Add Person to On Call Crew ${n}</h3><label>Employee<select id="ocPickPerson"><option value="">Select employee…</option>${opts}</select></label><div class="ocActions"><button data-cancel>Cancel</button><button id="ocAddPicked" class="ocPrimary">Add</button></div>`);b.querySelector('#ocAddPicked').onclick=async()=>{const id=Number(b.querySelector('#ocPickPerson').value),m=members.find(x=>x.id===id),t=templates.find(x=>x.id===m?.crew_id);if(!m||!t)return;await req('/rest/v1/on_call_assignments',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({period_id:periodId,assignment_date:assignmentDate,employee_name:m.employee_name,normal_crew:t.crew_name,role:m.role,on_call_crew:n})});b.remove();await load()}}
