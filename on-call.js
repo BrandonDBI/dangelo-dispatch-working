@@ -122,6 +122,30 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocPerson small{display:none}
 .ocCrewBtns{grid-column:2}
 .ocLegend{display:none}
+.ocHead{display:none!important}
+.ocCoverageNav{margin-top:2px!important;gap:8px!important}
+.ocCoverageNavBtns{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}
+.ocCoverageNavBtns button{width:100%!important;min-height:38px!important;padding:7px 8px!important;font-size:12px!important}
+.ocPeriodStack{gap:10px!important}
+.ocMobilePeriod{background:#fff;border:1px solid #dce2e8;border-radius:12px;overflow:hidden}
+.ocMobilePeriod.holiday{box-shadow:inset 4px 0 0 var(--oc-red)}
+.ocMobilePeriodHead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:#f4f6f8;border-bottom:1px solid #e2e7ec}
+.ocMobilePeriodHead strong{font-size:14px}
+.ocMobilePeriodHead span{font-size:12px;color:#64748b;font-weight:700;white-space:nowrap}
+.ocMobileDay{padding:12px 14px;border-top:1px solid #edf0f2}
+.ocMobileDay:first-of-type{border-top:0}
+.ocMobileDate{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.ocMobileDate strong{font-size:16px}
+.ocMobileDate span{font-size:12px;color:#64748b;font-weight:700}
+.ocMobileCrews{display:grid;gap:8px}
+.ocMobileCrew{padding:9px 10px;border:1px solid #e0e5ea;border-radius:9px;background:#fbfcfd}
+.ocMobileCrew>strong{display:block;font-size:12px;margin-bottom:5px}
+.ocMobileCrew.empty{opacity:.55}
+.ocMobileCrew.empty>strong{margin-bottom:0}
+.ocMobileCrew.empty>span{font-size:12px;color:#64748b;margin-left:6px}
+.ocMobileNames{display:flex;flex-wrap:wrap;gap:4px 10px}
+.ocMobileNames>span{font-size:13px;font-weight:700}
+.ocMobileNames small{font-size:10px;color:#64748b;font-weight:600;margin-left:3px}
 }`;document.head.appendChild(s)}
 function periodSummaryCrew(p,n){
   const days=periodDays(p);
@@ -144,6 +168,18 @@ function inlineAssignField(p,date,n){
 }
 function inlinePeriodEditor(p){
   return `<tr class="ocExpandRow"><td colspan="5"><div class="ocInlineEditor"><div class="ocInlineHead"><strong>${esc(String(p.label||'').toUpperCase())} · ${fmt(p.start_date)} – ${fmt(p.end_date)}</strong><span>Assign two crews for each day</span></div>${periodDays(p).map(d=>{const dt=new Date(d+'T12:00:00');return `<div class="ocDayAssign"><div class="ocDayAssignDate"><strong>${esc(dt.toLocaleDateString('en-US',{weekday:'long'}))}</strong><span>${esc(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}))}</span></div>${inlineAssignField(p,d,1)}${inlineAssignField(p,d,2)}${inlineAssignField(p,d,3)}</div>`}).join('')}</div></td></tr>`;
+}
+function mobileCrewRoster(periodId,date,n){
+  const rows=assignments.filter(a=>a.period_id===periodId&&a.assignment_date===date&&a.on_call_crew===n);
+  if(!rows.length)return '<div class="ocMobileCrew empty"><strong>Crew '+n+'</strong><span>Not assigned</span></div>';
+  const crewNames=[...new Set(rows.map(a=>a.normal_crew).filter(Boolean))];
+  const crewLabel=crewNames.length===1?crewNames[0]:'Crew '+n;
+  const rank={'Foreman':0,'Operator':1,'Truck Driver':2,'Driver':2,'Laborer':3};
+  const sorted=[...rows].sort((a,b)=>(rank[a.role]??9)-(rank[b.role]??9)||String(a.employee_name||'').localeCompare(String(b.employee_name||'')));
+  return '<div class="ocMobileCrew"><strong>Crew '+n+' · '+esc(String(crewLabel).toUpperCase())+'</strong><div class="ocMobileNames">'+sorted.map(a=>'<span>'+esc(a.employee_name)+(a.role?' <small>'+esc(a.role)+'</small>':'')+'</span>').join('')+'</div></div>';
+}
+function mobilePeriodBlock(p){
+  return '<section class="ocMobilePeriod '+(p.label!=='Weekend'?'holiday':'')+'"><div class="ocMobilePeriodHead"><strong>'+esc(String(p.label||'').toUpperCase())+'</strong><span>'+fmt(p.start_date)+' – '+fmt(p.end_date)+'</span></div>'+periodDays(p).map(d=>{const dt=new Date(d+'T12:00:00');return '<div class="ocMobileDay"><div class="ocMobileDate"><strong>'+esc(dt.toLocaleDateString('en-US',{weekday:'long'}))+'</strong><span>'+esc(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}))+'</span></div><div class="ocMobileCrews">'+mobileCrewRoster(p.id,d,1)+mobileCrewRoster(p.id,d,2)+mobileCrewRoster(p.id,d,3)+'</div></div>'}).join('')+'</section>';
 }
 function render(){
   injectStyle();
@@ -172,6 +208,7 @@ function render(){
   const visible=allUpcoming.slice(onCallPageOffset,onCallPageOffset+4);
   const rangeStart=visible[0],rangeEnd=visible[visible.length-1];
 
+  const mobile=window.matchMedia('(max-width:700px)').matches;
   p.innerHTML=`<div class="ocWrap">
     <div class="ocHead"><div><h2>ON CALL</h2></div></div>
     <div class="ocCoverageNav">
@@ -180,13 +217,13 @@ function render(){
         <span class="ocCoverageRange">${fmt(rangeStart.start_date)} – ${fmt(rangeEnd.end_date)}</span>
       </div>
       <div class="ocCoverageNavBtns">
-        ${role==='supervisor'?'<button type="button" id="ocAddCoverage" class="ocAddCoverage">+ Add Days / Break</button>':''}
+        ${!mobile&&role==='supervisor'?'<button type="button" id="ocAddCoverage" class="ocAddCoverage">+ Add Days / Break</button>':''}
         <button type="button" id="ocPrevPeriods" ${onCallPageOffset===0?'disabled':''}>‹ Earlier</button>
         <button type="button" id="ocCurrentPeriods" ${onCallPageOffset===0?'disabled':''}>Current</button>
         <button type="button" id="ocNextPeriods" ${onCallPageOffset+4>=allUpcoming.length?'disabled':''}>Later ›</button>
       </div>
     </div>
-    <div class="ocPeriodStack">${visible.map(periodBlock).join('')}</div>
+    <div class="ocPeriodStack">${mobile?visible.map(mobilePeriodBlock).join(''):visible.map(periodBlock).join('')}</div>
   </div>`;
 
   p.querySelector('#ocAddCoverage')?.addEventListener('click',periodModal);
