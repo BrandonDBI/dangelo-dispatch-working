@@ -768,3 +768,14 @@
     margin-top:8px!important;
   }
 }
+
+
+/* v163: hide office-only Billed status on mobile */
+@media(max-width:800px){
+  .restStatusTabs{
+    grid-template-columns:1fr 1fr!important;
+  }
+  .restStatusTabs button[data-status="billed"]{
+    display:none!important;
+  }
+}
