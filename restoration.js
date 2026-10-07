@@ -29,7 +29,7 @@ if(role!=='supervisor')return;
 const routeKinds={
   asphalt:{label:'Asphalt',unit:'tons',target:36},
   turf:{label:'Seed / Sod',unit:'SF',target:2000},
-  concrete:{label:'Concrete',unit:'stops',target:8}
+  concrete:{label:'Concrete',unit:'CY',target:10}
 };
 const hasOpenType=(j,kind)=>items.some(i=>i.restoration_job_id===j.id&&!i.completed_at&&(kind==='asphalt'?i.type==='asphalt':kind==='turf'?(i.type==='seed'||i.type==='sod'):i.type==='concrete'));
 const routeJobs=jobs.filter(j=>status(j)!=='complete'&&j.ready!==false&&['asphalt','turf','concrete'].some(k=>hasOpenType(j,k)));
@@ -45,9 +45,10 @@ const jobAmount=(j,kind)=>{
   const a=workItems(j,kind);
   if(kind==='asphalt'){const vals=a.map(derivedAsphaltTons);return vals.some(v=>v==null)?null:vals.reduce((s,v)=>s+v,0)}
   if(kind==='turf'){const vals=a.map(i=>String(i.unit||'').toUpperCase()==='SF'&&i.quantity!=null?Number(i.quantity):null);return vals.some(v=>v==null)?null:vals.reduce((s,v)=>s+v,0)}
-  return a.length?1:null;
+  if(kind==='concrete'){const vals=a.map(i=>i.estimated_yards==null||i.estimated_yards===''?null:Number(i.estimated_yards));return vals.some(v=>v==null)?null:vals.reduce((s,v)=>s+v,0)}
+  return null;
 };
-const fmtAmount=(v,kind)=>kind==='asphalt'?Number(v).toFixed(1)+' tons':kind==='turf'?Number(v).toFixed(0)+' SF':Number(v).toFixed(0)+' stop'+(Number(v)===1?'':'s');
+const fmtAmount=(v,kind)=>kind==='asphalt'?Number(v).toFixed(1)+' tons':kind==='turf'?Number(v).toFixed(0)+' SF':Number(v).toFixed(1)+' CY';
 const syncKind=()=>{
   const kind=kindSel.value,cfg=routeKinds[kind];
   target.value=cfg.target;targetUnit.textContent=cfg.unit;availableTitle.textContent='Available '+cfg.label.toLowerCase();selected=[];w.querySelector('#routeAutoStatus').textContent='';draw()
@@ -57,15 +58,16 @@ const draw=()=>{
   const candidates=routeJobs.filter(j=>hasOpenType(j,kind));
   const pool=candidates.filter(j=>(proj.value==='all'||j.project===proj.value)&&!selected.includes(j.id));
   av.innerHTML=pool.map(j=>{const a=jobAmount(j,kind);return '<button type="button" data-add-stop="'+j.id+'"><strong>'+esc(j.job_name)+'</strong><span>'+esc(j.project||'')+' · '+esc(workText(j,kind))+'</span><em>'+(a==null?'⚠ Quantity needed':fmtAmount(a,kind))+'</em></button>'}).join('')||'<div class="restEmpty">No available '+cfg.label.toLowerCase()+' stops.</div>';
-  sel.innerHTML=selected.map((id,n)=>{const j=jobs.find(x=>x.id===id),wis=workItems(j||{},kind);return '<div class="routeStop routeStopTons"><b>'+(n+1)+'</b><div><strong>'+esc(j?.job_name||'')+'</strong><span>'+esc(workText(j||{},kind))+'</span>'+(kind==='asphalt'?'<div class="routeTons">'+wis.map(i=>{const v=derivedAsphaltTons(i);return '<label>'+esc(i.description||'Asphalt')+' <input type="number" min="0" step=".1" data-ton-item="'+i.id+'" value="'+(v==null?'':Number(v).toFixed(1))+'" placeholder="tons"> tons</label>'}).join('')+'</div>':'')+'</div><button type="button" data-up="'+id+'" '+(n===0?'disabled':'')+'>↑</button><button type="button" data-down="'+id+'" '+(n===selected.length-1?'disabled':'')+'>↓</button><button type="button" data-remove-stop="'+id+'">×</button></div>'}).join('')||'<div class="restEmpty">Select stops from Available '+cfg.label.toLowerCase()+'.</div>';
+  sel.innerHTML=selected.map((id,n)=>{const j=jobs.find(x=>x.id===id),wis=workItems(j||{},kind);return '<div class="routeStop routeStopTons"><b>'+(n+1)+'</b><div><strong>'+esc(j?.job_name||'')+'</strong><span>'+esc(workText(j||{},kind))+'</span>'+(kind==='asphalt'?'<div class="routeTons">'+wis.map(i=>{const v=derivedAsphaltTons(i);return '<label>'+esc(i.description||'Asphalt')+' <input type="number" min="0" step=".1" data-ton-item="'+i.id+'" value="'+(v==null?'':Number(v).toFixed(1))+'" placeholder="tons"> tons</label>'}).join('')+'</div>':kind==='concrete'?'<div class="routeTons">'+wis.map(i=>{const v=i.estimated_yards;return '<label>'+esc((i.subtype?label(i.type)+' / '+i.subtype:label(i.type)))+' <input type="number" min="0" step=".1" data-yard-item="'+i.id+'" value="'+(v==null?'':Number(v).toFixed(1))+'" placeholder="yards"> CY</label>'}).join('')+'</div>':'')+'</div><button type="button" data-up="'+id+'" '+(n===0?'disabled':'')+'>↑</button><button type="button" data-down="'+id+'" '+(n===selected.length-1?'disabled':'')+'>↓</button><button type="button" data-remove-stop="'+id+'">×</button></div>'}).join('')||'<div class="restEmpty">Select stops from Available '+cfg.label.toLowerCase()+'.</div>';
   count.textContent=selected.length?'('+selected.length+' stops)':'';
   const vals=selected.map(id=>jobAmount(jobs.find(j=>j.id===id)||{},kind)),known=vals.filter(v=>v!=null).reduce((s,v)=>s+v,0),unknown=vals.filter(v=>v==null).length,tg=Math.max(1,Number(target.value)||cfg.target),pct=Math.round(known/tg*100);
-  load.innerHTML='<strong>'+fmtAmount(known,kind)+' / '+(kind==='asphalt'?tg.toFixed(0)+' tons':kind==='turf'?tg.toFixed(0)+' SF':tg.toFixed(0)+' stops')+'</strong><span>'+pct+'% of day'+(unknown?' · ⚠ '+unknown+' stop'+(unknown===1?'':'s')+' need quantity':'')+'</span><div class="routeCapacityBar"><i style="width:'+Math.min(100,pct)+'%"></i></div>';
+  load.innerHTML='<strong>'+fmtAmount(known,kind)+' / '+(kind==='asphalt'?tg.toFixed(0)+' tons':kind==='turf'?tg.toFixed(0)+' SF':tg.toFixed(1)+' CY')+'</strong><span>'+pct+'% of day'+(unknown?' · ⚠ '+unknown+' stop'+(unknown===1?'':'s')+' need '+(kind==='concrete'?'yards':'quantity'):'')+'</span><div class="routeCapacityBar"><i style="width:'+Math.min(100,pct)+'%"></i></div>';
   av.querySelectorAll('[data-add-stop]').forEach(b=>b.onclick=()=>{selected.push(Number(b.dataset.addStop));draw()});
   sel.querySelectorAll('[data-remove-stop]').forEach(b=>b.onclick=()=>{selected=selected.filter(x=>x!==Number(b.dataset.removeStop));draw()});
   sel.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const i=selected.indexOf(Number(b.dataset.up));[selected[i-1],selected[i]]=[selected[i],selected[i-1]];draw()});
   sel.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>{const i=selected.indexOf(Number(b.dataset.down));[selected[i+1],selected[i]]=[selected[i],selected[i+1]];draw()});
   sel.querySelectorAll('[data-ton-item]').forEach(inp=>inp.onchange=async()=>{const it=items.find(x=>x.id===Number(inp.dataset.tonItem));if(!it)return;const v=inp.value===''?null:Number(inp.value);await req('/rest/v1/restoration_items?id=eq.'+it.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({estimated_tons:v})});it.estimated_tons=v;draw()});
+  sel.querySelectorAll('[data-yard-item]').forEach(inp=>inp.onchange=async()=>{const it=items.find(x=>x.id===Number(inp.dataset.yardItem));if(!it)return;const v=inp.value===''?null:Number(inp.value);await req('/rest/v1/restoration_items?id=eq.'+it.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({estimated_yards:v})});it.estimated_yards=v;draw()});
   w.querySelector('#routeBuildDay').textContent=selected.length?'Rebuild Route':'Build Route'
 };
 proj.onchange=draw;kindSel.onchange=syncKind;target.oninput=draw;draw();
