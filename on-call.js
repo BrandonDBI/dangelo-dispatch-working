@@ -126,21 +126,26 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocCoverageNav{margin-top:2px!important;gap:8px!important}
 .ocCoverageNavBtns{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}
 .ocCoverageNavBtns button{width:100%!important;min-height:38px!important;padding:7px 8px!important;font-size:12px!important}
-.ocPeriodStack{gap:10px!important}
-.ocMobilePeriod{background:#fff;border:1px solid #dce2e8;border-radius:12px;overflow:hidden}
-.ocMobilePeriod.holiday{box-shadow:inset 4px 0 0 var(--oc-red)}
-.ocMobilePeriodHead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:#f4f6f8;border-bottom:1px solid #e2e7ec}
-.ocMobilePeriodHead strong{font-size:14px}
-.ocMobilePeriodHead span{font-size:12px;color:#64748b;font-weight:700;white-space:nowrap}
-.ocMobileDay{padding:10px 14px;border-top:1px solid #edf0f2}
+.ocPeriodStack{gap:14px!important}
+.ocMobilePeriod{background:#fff;border:1px solid #dce2e8;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.ocMobilePeriod.holiday{box-shadow:inset 4px 0 0 var(--oc-red),0 2px 8px rgba(15,23,42,.04)}
+.ocMobilePeriodHead{padding:14px 16px;background:#231f20;color:#fff;border-bottom:0}
+.ocMobilePeriodHead>div{display:flex;align-items:baseline;gap:9px}
+.ocMobilePeriodKicker{font-size:10px;font-weight:900;letter-spacing:.09em;color:#f2b4b8}
+.ocMobilePeriodHead strong{font-size:18px;letter-spacing:-.01em}
+.ocMobileDay{padding:13px 16px 14px;border-top:1px solid #edf0f2}
 .ocMobileDay:first-of-type{border-top:0}
-.ocMobileDate{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
-.ocMobileDate strong{font-size:16px}
-.ocMobileDate span{font-size:12px;color:#64748b;font-weight:700}
-.ocMobileCrews{display:grid;gap:6px}
-.ocMobileCrew{padding:8px 10px;border:1px solid #e0e5ea;border-radius:9px;background:#fbfcfd;font-size:13px;line-height:1.35}
-.ocMobileCrew>strong{font-size:12px;margin-right:5px}
-.ocMobileCrew>span{font-weight:700;color:#1f2937}
+.ocMobileDate{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.ocMobileDate strong{font-size:13px;letter-spacing:.06em;color:#475569}
+.ocMobileDate span{font-size:12px;color:#94a3b8;font-weight:700}
+.ocMobileCrews{display:grid;gap:8px}
+.ocMobileCrew{padding:10px 0 0;border:0;border-top:1px solid #edf0f2;background:transparent}
+.ocMobileCrew:first-child{border-top:0;padding-top:0}
+.ocMobileCrewTop{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.ocMobileCrewBadge{display:inline-flex;align-items:center;justify-content:center;min-width:54px;padding:3px 7px;border-radius:999px;background:rgba(239,7,20,.09);color:#a20d15;font-size:9px;font-weight:900;letter-spacing:.06em}
+.ocMobileCrewTop strong{font-size:12px;letter-spacing:.04em;color:#64748b}
+.ocMobileLead{font-size:20px;font-weight:900;letter-spacing:-.02em;color:#111827;line-height:1.05;margin:2px 0 4px}
+.ocMobileNames{font-size:13px;line-height:1.4;color:#64748b;font-weight:700}
 }`;document.head.appendChild(s)}
 function periodSummaryCrew(p,n){
   const days=periodDays(p);
@@ -171,10 +176,14 @@ function mobileCrewRoster(periodId,date,n){
   const crewLabel=crewNames.length===1?crewNames[0]:'Crew '+n;
   const rank={'Foreman':0,'Operator':1,'Truck Driver':2,'Driver':2,'Laborer':3};
   const sorted=[...rows].sort((a,b)=>(rank[a.role]??9)-(rank[b.role]??9)||String(a.employee_name||'').localeCompare(String(b.employee_name||'')));
-  return '<div class="ocMobileCrew"><strong>Crew '+n+' — '+esc(String(crewLabel).toUpperCase())+':</strong><span>'+sorted.map(a=>esc(a.employee_name)).join(', ')+'</span></div>';
+  const lead=sorted[0]?.employee_name||crewLabel;
+  const rest=sorted.slice(1).map(a=>esc(a.employee_name)).join(' · ');
+  return '<div class="ocMobileCrew"><div class="ocMobileCrewTop"><span class="ocMobileCrewBadge">CREW '+n+'</span><strong>'+esc(String(crewLabel).toUpperCase())+'</strong></div><div class="ocMobileLead">'+esc(lead)+'</div>'+(rest?'<div class="ocMobileNames">'+rest+'</div>':'')+'</div>';
 }
 function mobilePeriodBlock(p){
-  return '<section class="ocMobilePeriod '+(p.label!=='Weekend'?'holiday':'')+'"><div class="ocMobilePeriodHead"><strong>'+esc(String(p.label||'').toUpperCase())+'</strong><span>'+fmt(p.start_date)+' – '+fmt(p.end_date)+'</span></div>'+periodDays(p).map(d=>{const dt=new Date(d+'T12:00:00');return '<div class="ocMobileDay"><div class="ocMobileDate"><strong>'+esc(dt.toLocaleDateString('en-US',{weekday:'long'}))+'</strong><span>'+esc(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}))+'</span></div><div class="ocMobileCrews">'+mobileCrewRoster(p.id,d,1)+mobileCrewRoster(p.id,d,2)+mobileCrewRoster(p.id,d,3)+'</div></div>'}).join('')+'</section>';
+  const A=new Date(p.start_date+'T12:00:00'),B=new Date(p.end_date+'T12:00:00');
+  const range=A.toLocaleString('en-US',{month:'short'}).toUpperCase()+' '+A.getDate()+(A.getMonth()===B.getMonth()?'–'+B.getDate():' – '+B.toLocaleString('en-US',{month:'short'}).toUpperCase()+' '+B.getDate());
+  return '<section class="ocMobilePeriod '+(p.label!=='Weekend'?'holiday':'')+'"><div class="ocMobilePeriodHead"><div><span class="ocMobilePeriodKicker">'+esc(String(p.label||'').toUpperCase())+'</span><strong>'+esc(range)+'</strong></div></div>'+periodDays(p).map(d=>{const dt=new Date(d+'T12:00:00');return '<div class="ocMobileDay"><div class="ocMobileDate"><strong>'+esc(dt.toLocaleDateString('en-US',{weekday:'long'}).toUpperCase())+'</strong><span>'+esc(dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}))+'</span></div><div class="ocMobileCrews">'+mobileCrewRoster(p.id,d,1)+mobileCrewRoster(p.id,d,2)+mobileCrewRoster(p.id,d,3)+'</div></div>'}).join('')+'</section>';
 }
 function render(){
   injectStyle();
