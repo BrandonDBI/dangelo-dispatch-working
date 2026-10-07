@@ -133,8 +133,9 @@ function injectStyle(){if(document.getElementById('onCallStyles'))return;const s
 .ocMobilePeriodHead>div{display:flex;align-items:baseline;gap:9px}
 .ocMobilePeriodKicker{font-size:10px;font-weight:900;letter-spacing:.09em;color:#f2b4b8}
 .ocMobilePeriodHead strong{font-size:18px;letter-spacing:-.01em}
-.ocMobileDay{padding:13px 16px 14px;border-top:1px solid #edf0f2}
+.ocMobileDay{padding:13px 16px 14px;border-top:1px solid #edf0f2;background:#fff}
 .ocMobileDay:first-of-type{border-top:0}
+.ocMobileDay+ .ocMobileDay{border-top:3px solid #d7dde4;padding-top:16px;background:#fafbfc}
 .ocMobileDate{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
 .ocMobileDate strong{font-size:13px;letter-spacing:.06em;color:#475569}
 .ocMobileDate span{font-size:12px;color:#94a3b8;font-weight:700}
