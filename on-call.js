@@ -319,18 +319,23 @@ function fullRosterOptions(){
   }).join('');
 }
 async function changeDayRosterPerson(assignmentId,memberId,periodId,date,slot){
-  if(role!=='supervisor')return;
+  if(role!=='supervisor')return null;
   const a=assignments.find(x=>x.id===assignmentId),m=members.find(x=>x.id===memberId),t=templates.find(x=>x.id===m?.crew_id);
-  if(!a||!m||!t)return;
-  if(a.employee_name===m.employee_name)return;
+  if(!a||!m||!t)return null;
+  if(a.employee_name===m.employee_name)return {assignment:a,swapped:null};
   const other=assignments.find(x=>x.period_id===periodId&&x.assignment_date===date&&x.id!==a.id&&x.employee_name===m.employee_name);
   const originalPerson={employee_name:a.employee_name,role:a.role};
+  let swapped=null;
   if(other){
     await req('/rest/v1/on_call_assignments?id=eq.'+other.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(originalPerson)});
+    other.employee_name=originalPerson.employee_name;
+    other.role=originalPerson.role;
+    swapped=other;
   }
   await req('/rest/v1/on_call_assignments?id=eq.'+a.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({employee_name:m.employee_name,role:m.role})});
-  await load();
-  showDayRoster(periodId,date,slot);
+  a.employee_name=m.employee_name;
+  a.role=m.role;
+  return {assignment:a,swapped};
 }
 function showDayRoster(periodId,date,slot){
   const p=periods.find(x=>x.id===periodId),rows=assignments.filter(a=>a.period_id===periodId&&a.assignment_date===date&&a.on_call_crew===slot);
@@ -346,7 +351,7 @@ function showDayRoster(periodId,date,slot){
   if(!editable)return;
   b.querySelectorAll('.ocRosterEditRow').forEach(row=>{
     const assignmentId=Number(row.dataset.assignmentId),sel=row.querySelector('.ocRosterSwap');
-    sel.onchange=async()=>{const memberId=Number(sel.value);if(!memberId)return;sel.disabled=true;try{b.remove();await changeDayRosterPerson(assignmentId,memberId,periodId,date,slot)}catch(e){alert(e.message);await load()}};
+    sel.onchange=async()=>{const memberId=Number(sel.value);if(!memberId)return;sel.disabled=true;const originalText=sel.options[0]?.textContent||'Replace with…';try{const result=await changeDayRosterPerson(assignmentId,memberId,periodId,date,slot);if(result?.assignment){const a=result.assignment,current=row.querySelector('.ocRosterCurrent');if(current){const strong=current.querySelector('strong'),small=current.querySelector('small');if(strong)strong.textContent=a.employee_name||'';if(small)small.textContent=(a.normal_crew||'')+(a.role?' · '+a.role:'')}sel.value='';sel.options[0].textContent='✓ Replaced';setTimeout(()=>{if(sel.options[0])sel.options[0].textContent=originalText},900);render()}}catch(e){alert(e.message)}finally{sel.disabled=false;sel.value=''}};
     row.querySelector('.ocRosterRemove').onclick=async()=>{if(!confirm('Remove this person from this on-call crew for '+dt.toLocaleDateString('en-US')+'?'))return;await req('/rest/v1/on_call_assignments?id=eq.'+assignmentId,{method:'DELETE'});b.remove();await load();showDayRoster(periodId,date,slot)};
   });
   b.querySelector('#ocRosterAdd')?.addEventListener('click',()=>{b.remove();addDayRosterPerson(periodId,date,slot)});
