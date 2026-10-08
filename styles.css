@@ -181,3 +181,10 @@
 .pwActions>span{flex:1 1 auto}
 .pwActions>button{flex:0 0 auto;width:auto;min-width:0;padding-left:14px;padding-right:14px}
 #pwNotAwarded{background:#fff;color:#344054;border:1px solid #cbd5e1}
+
+/* Quick schedule action on the right side of Active Private Work cards */
+.pwListCard{grid-template-areas:"main meta" "main quick" "main next";cursor:pointer}
+.pwQuickSchedule{grid-area:quick;justify-self:end;align-self:center;padding:7px 12px;border:1px solid #231f20;border-radius:6px;background:#231f20;color:#fff;font-size:12px;font-weight:800;cursor:pointer}
+.pwQuickSchedule:hover{background:#484244}
+.pwQuickSchedule:disabled{opacity:.55;cursor:wait}
+.pwListCard:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
