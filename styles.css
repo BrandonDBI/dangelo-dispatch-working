@@ -175,3 +175,9 @@
 .pwListMain{gap:2px}
 .pwListMain .pwCardProgress{margin-top:6px}
 .pwListNext{align-self:end}
+
+/* Private Work editor actions: compact buttons, save aligned right */
+.pwActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pwActions>span{flex:1 1 auto}
+.pwActions>button{flex:0 0 auto;width:auto;min-width:0;padding-left:14px;padding-right:14px}
+#pwNotAwarded{background:#fff;color:#344054;border:1px solid #cbd5e1}
