@@ -169,3 +169,9 @@
 
 /* v177: force every Private Work card to occupy the entire list row */
 .pwListCard{grid-column:1 / -1!important;box-sizing:border-box}
+
+/* v178: compact Private Work summary cards after removing scope preview */
+.pwListCard{min-height:0;padding:12px 16px;gap:4px 18px}
+.pwListMain{gap:2px}
+.pwListMain .pwCardProgress{margin-top:6px}
+.pwListNext{align-self:end}
