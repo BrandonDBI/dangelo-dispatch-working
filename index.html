@@ -27,7 +27,7 @@
   <script>
     (async () => {
       try { await window.DANGELO_AUTH_READY; } catch {}
-      const scripts = ['app.js?v=167','time-off.js?v=172','restoration.js?v=182','private-work.js?v=179','supervisor-tabs.js?v=167','on-call.js?v=178','mobile.js?v=167','mobile-instant-nav.js?v=167','mobile-view-buttons.js?v=167','incoming-reorder.js?v=167','half-day.js?v=167','single-day.js?v=167','undo-move.js?v=167','job-search.js?v=167','job-copy-paste.js?v=167','instant-timeoff.js?v=167','holidays.js?v=167'];
+      const scripts = ['app.js?v=167','time-off.js?v=172','restoration.js?v=182','private-work.js?v=180','supervisor-tabs.js?v=167','on-call.js?v=178','mobile.js?v=167','mobile-instant-nav.js?v=167','mobile-view-buttons.js?v=167','incoming-reorder.js?v=167','half-day.js?v=167','single-day.js?v=167','undo-move.js?v=167','job-search.js?v=167','job-copy-paste.js?v=167','instant-timeoff.js?v=167','holidays.js?v=167'];
       await Promise.all(scripts.map(src => new Promise(resolve => {
         const s = document.createElement('script');
         s.src = src;
