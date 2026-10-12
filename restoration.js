@@ -31,9 +31,18 @@ function openRestorationMapsSections(stops){
   // Each navigation link is one destination. This is the same iPhone Maps
   // handoff confirmed working in the field, with no ambiguous waypoint parsing.
   const urlFor=stop=>'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(stop.coords||stop.address)+'&travelmode=driving&dir_action=navigate';
+  // Optional iOS Maps-app multi-stop experiment; individual navigation stays intact.
+  const multiSections=[];
+  for(let i=0;i<stops.length;i+=9)multiSections.push({start:i,stops:stops.slice(i,i+9)});
+  const iosRouteUrl=part=>{
+    const destination=part.stops.map(stop=>stop.coords||stop.address).join(' to:');
+    const origin=part.start>0?(stops[part.start-1].coords||stops[part.start-1].address):'';
+    return 'comgooglemaps://?saddr='+encodeURIComponent(origin)+'&daddr='+encodeURIComponent(destination)+'&directionsmode=driving';
+  };
+  const multiMarkup='<div style="margin:10px 0 16px"><strong>Multi-stop routes (iPhone test)</strong><div style="font-size:0.9em;margin:6px 0 10px">Try a route in the Google Maps app. Confirm all stops appear before driving. Individual navigation remains below.</div>'+multiSections.map((part,i)=>'<div class="routeStop"><b>'+(i+1)+'</b><div style="flex:1"><strong>Route '+(i+1)+'</strong><span>Stops '+(part.start+1)+'–'+(part.start+part.stops.length)+'</span></div><a href="'+iosRouteUrl(part)+'" class="restPrimary" style="display:inline-block;padding:12px;border-radius:8px;text-decoration:none">Open Route</a></div>').join('')+'</div>';
   const sections=[];
   for(let i=0;i<stops.length;i+=4)sections.push({start:i,stops:stops.slice(i,i+4)});
-  const panel=modal('<div class="restModalHead"><h3>Restoration Navigation</h3><button class="restX" type="button">×</button></div><div class="routeStops">'+sections.map((part,k)=>'<div style="font-weight:700;margin:14px 0 6px">Section '+(k+1)+' · Stops '+(part.start+1)+'–'+(part.start+part.stops.length)+'</div>'+part.stops.map((stop,n)=>'<div class="routeStop"><b>'+(part.start+n+1)+'</b><div style="min-width:0;flex:1"><strong>'+esc(stop.label||stop.address)+'</strong><span>'+esc(stop.address)+'</span></div><a href="'+urlFor(stop)+'" class="restPrimary" style="display:inline-block;text-decoration:none;padding:12px;border-radius:8px;text-align:center;white-space:nowrap">Navigate</a></div>').join('')).join('')+'</div>');
+  const panel=modal('<div class="restModalHead"><h3>Restoration Navigation</h3><button class="restX" type="button">×</button></div>'+multiMarkup+'<div class="routeStops">'+sections.map((part,k)=>'<div style="font-weight:700;margin:14px 0 6px">Section '+(k+1)+' · Stops '+(part.start+1)+'–'+(part.start+part.stops.length)+'</div>'+part.stops.map((stop,n)=>'<div class="routeStop"><b>'+(part.start+n+1)+'</b><div style="min-width:0;flex:1"><strong>'+esc(stop.label||stop.address)+'</strong><span>'+esc(stop.address)+'</span></div><a href="'+urlFor(stop)+'" class="restPrimary" style="display:inline-block;text-decoration:none;padding:12px;border-radius:8px;text-align:center;white-space:nowrap">Navigate</a></div>').join('')).join('')+'</div>');
   panel.querySelector('.restX').onclick=()=>panel.remove();
 }
 
