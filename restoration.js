@@ -33,7 +33,7 @@ function openRestorationMapsSections(stops){
   const urlFor=stop=>'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(stop.coords||stop.address)+'&travelmode=driving&dir_action=navigate';
   // Optional iOS Maps-app multi-stop experiment; individual navigation stays intact.
   const multiSections=[];
-  for(let i=0;i<stops.length;i+=9)multiSections.push({start:i,stops:stops.slice(i,i+9)});
+  for(let i=0;i<stops.length;i+=7)multiSections.push({start:i,stops:stops.slice(i,i+7)});
   const iosRouteUrl=part=>{
     const destination=part.stops.map(stop=>stop.coords||stop.address).join(' to:');
     const origin=part.start>0?(stops[part.start-1].coords||stops[part.start-1].address):'';
