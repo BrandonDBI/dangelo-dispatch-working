@@ -34,16 +34,15 @@ function openRestorationMapsSections(points){
   }
   const makeUrl=part=>{
     const enc=encodeURIComponent;
-    let url='https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate';
+    let url='https://www.google.com/maps/dir/?api=1&travelmode=driving';
     if(part.origin)url+='&origin='+enc(part.origin);
     url+='&destination='+enc(part.stops[part.stops.length-1]);
     if(part.stops.length>1)url+='&waypoints='+part.stops.slice(0,-1).map(enc).join('%7C');
     return url;
   };
-  if(sections.length===1){window.open(makeUrl(sections[0]),'_blank','noopener');return}
-  const panel=modal('<div class="restModalHead"><h3>Google Maps Route Sections</h3><button class="restX" type="button">×</button></div><p>This route has '+points.length+' stops. Open each section in order so Google Maps does not skip addresses. Each section after the first starts at the previous section’s final stop.</p><div class="routeStops">'+sections.map((part,i)=>'<div class="routeStop"><b>'+(i+1)+'</b><div><strong>Section '+(i+1)+' of '+sections.length+'</strong><span>Stops '+part.start+'–'+part.end+' ('+part.stops.length+' stops)</span></div><button type="button" data-map-section="'+i+'">Open Maps</button></div>').join('')+'</div>');
+  if(sections.length===1){window.location.href=makeUrl(sections[0]);return}
+  const panel=modal('<div class="restModalHead"><h3>Google Maps Route Sections</h3><button class="restX" type="button">×</button></div><p>This route has '+points.length+' stops. Open each section in order so Google Maps does not skip addresses. Each section after the first starts at the previous section’s final stop.</p><div class="routeStops">'+sections.map((part,i)=>'<div class="routeStop"><b>'+(i+1)+'</b><div><strong>Section '+(i+1)+' of '+sections.length+'</strong><span>Stops '+part.start+'–'+part.end+' ('+part.stops.length+' stops)</span></div><a href="'+makeUrl(part)+'" class="restPrimary" style="display:inline-block;text-decoration:none;padding:12px;border-radius:8px;text-align:center">Open Maps</a></div>').join('')+'</div>');
   panel.querySelector('.restX').onclick=()=>panel.remove();
-  panel.querySelectorAll('[data-map-section]').forEach(btn=>btn.onclick=()=>window.open(makeUrl(sections[Number(btn.dataset.mapSection)]),'_blank','noopener'));
 }
 
 async function openSavedRoute(r){const stops=(r.restoration_route_stops||[]).sort((a,b)=>a.position-b.position),js=stops.map(x=>jobs.find(j=>j.id===x.restoration_job_id)).filter(Boolean);const w=modal('<div class="restModalHead"><h3>'+esc(r.name)+'</h3><button class="restX" type="button">×</button></div><div class="routeCapacity"><div><strong>'+(r.route_date?new Date(r.route_date+'T12:00:00').toLocaleDateString('en-US'):'No date')+'</strong><br>'+js.length+' stops · '+Number(r.target_tons||36).toFixed(0)+' ton target</div></div><div class="routeStops">'+js.map((j,n)=>'<div class="routeStop"><b>'+(n+1)+'</b><div><strong>'+esc(j.job_name)+'</strong><span>'+esc(j.address||'No address')+(j.project?' · '+esc(j.project):'')+'</span></div></div>').join('')+'</div><div class="routePlannerActions"><button id="savedMaps" type="button">Open in Google Maps</button><button id="savedEdit" type="button">Edit in Planner</button>'+(role==='supervisor'?'<button id="savedDelete" class="danger" type="button">Delete Route</button>':'')+'</div>');w.querySelector('.restX').onclick=()=>w.remove();w.querySelector('#savedMaps').onclick=()=>{const addrs=js.map(j=>j.address).filter(Boolean);if(addrs.length!==js.length)return alert('Some stops have no address. Add their addresses before exporting so none are skipped.');openRestorationMapsSections(addrs)};w.querySelector('#savedEdit').onclick=()=>{w.remove();openRoutePlanner(r.id)};w.querySelector('#savedDelete')?.addEventListener('click',async()=>{if(!confirm('Delete this saved route? Restoration jobs will not be deleted.'))return;await req('/rest/v1/restoration_routes?id=eq.'+r.id,{method:'DELETE'});w.remove();await load()})}
