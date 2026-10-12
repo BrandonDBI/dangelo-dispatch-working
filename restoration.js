@@ -26,7 +26,7 @@ function routesHtml(){if(!routes.length)return '';return '<section class="restSu
 // continuous sections instead of losing stops from a crew's navigation.
 function openRestorationMapsSections(points){
   if(!points.length)return alert('This route has no usable map locations.');
-  const maxStops=8, sections=[];
+  // Mobile Maps URLs reliably support only three intermediate waypoints.\n  const maxStops=4, sections=[];
   for(let i=0;i<points.length;i+=maxStops){
     const portion=points.slice(i,i+maxStops);
     sections.push({start:i+1,end:i+portion.length,stops:portion,origin:i?points[i-1]:null});
