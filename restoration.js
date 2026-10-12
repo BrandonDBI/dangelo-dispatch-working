@@ -26,24 +26,24 @@ function routesHtml(){if(!routes.length)return '';return '<section class="restSu
 // continuous sections instead of losing stops from a crew's navigation.
 function openRestorationMapsSections(stops){
   if(!stops.length)return alert('This route has no stops.');
-  const valid=stops.every(s=>s&&typeof s.address==='string'&&s.address.trim());
-  if(!valid)return alert('Some route stops have no address. Add those addresses before navigation.');
-  // Each navigation link is one destination. This is the same iPhone Maps
-  // handoff confirmed working in the field, with no ambiguous waypoint parsing.
+  if(stops.some(s=>!s.address||!s.address.trim()))return alert('Some stops have no address. Add addresses before navigating.');
+  const routeKey='rest-nav-'+stops.map(s=>s.id||s.address).join('|');
+  let current=0;
+  try{current=Math.max(0,Math.min(stops.length-1,Number(localStorage.getItem(routeKey))||0))}catch(e){}
   const urlFor=stop=>'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(stop.coords||stop.address)+'&travelmode=driving&dir_action=navigate';
-  // Optional iOS Maps-app multi-stop experiment; individual navigation stays intact.
-  const multiSections=[];
-  for(let i=0;i<stops.length;i+=7)multiSections.push({start:i,stops:stops.slice(i,i+7)});
-  const iosRouteUrl=part=>{
-    const destination=part.stops.map(stop=>stop.coords||stop.address).join(' to:');
-    const origin=part.start>0?(stops[part.start-1].coords||stops[part.start-1].address):'';
-    return 'comgooglemaps://?saddr='+encodeURIComponent(origin)+'&daddr='+encodeURIComponent(destination)+'&directionsmode=driving';
+  const panel=modal('<div class="restModalHead"><h3>Restoration Navigation</h3><button class="restX" type="button">×</button></div><div id="restNavBody"></div>');
+  const body=panel.querySelector('#restNavBody');
+  const renderStop=()=>{
+    const stop=stops[current];
+    body.innerHTML='<div style="padding:8px 0 14px"><div style="font-weight:700;margin-bottom:10px">Stop '+(current+1)+' of '+stops.length+'</div><div style="height:7px;background:#e5e7eb;border-radius:8px;overflow:hidden"><div style="background:#252122;width:'+((current+1)/stops.length*100)+'%;height:100%"></div></div></div><div style="padding:18px 0"><h3 style="margin:0 0 8px;font-size:1.65rem">'+esc(stop.label||stop.address)+'</h3><div style="color:#64748b">'+esc(stop.address)+'</div></div><a id="restNavGo" href="'+urlFor(stop)+'" class="restPrimary" style="display:block;padding:18px;border-radius:10px;text-decoration:none;text-align:center;font-size:1.15rem;font-weight:700">Navigate in Google Maps</a><div style="display:flex;gap:10px;margin-top:14px"><button id="restNavPrev" type="button" style="flex:1;padding:14px" '+(current===0?'disabled':'')+'>← Previous</button><button id="restNavNext" type="button" class="restPrimary" style="flex:1;padding:14px" '+(current===stops.length-1?'disabled':'')+'>Next Stop →</button></div><details style="margin-top:18px"><summary style="cursor:pointer;font-weight:600">View all '+stops.length+' stops</summary><div class="routeStops">'+stops.map((s,i)=>'<button type="button" data-rest-nav-index="'+i+'" style="display:block;width:100%;text-align:left;padding:12px;border:0;border-bottom:1px solid #e5e7eb;background:'+(i===current?'#f3f4f6':'transparent')+'">'+(i+1)+'. '+esc(s.label||s.address)+'</button>').join('')+'</div></details>';
+    body.querySelector('#restNavPrev').onclick=()=>move(-1);
+    body.querySelector('#restNavNext').onclick=()=>move(1);
+    body.querySelectorAll('[data-rest-nav-index]').forEach(btn=>btn.onclick=()=>goTo(Number(btn.dataset.restNavIndex)));
   };
-  const multiMarkup='<div style="margin:10px 0 16px"><strong>Multi-stop routes (iPhone test)</strong><div style="font-size:0.9em;margin:6px 0 10px">Try a route in the Google Maps app. Confirm all stops appear before driving. Individual navigation remains below.</div>'+multiSections.map((part,i)=>'<div class="routeStop"><b>'+(i+1)+'</b><div style="flex:1"><strong>Route '+(i+1)+'</strong><span>Stops '+(part.start+1)+'–'+(part.start+part.stops.length)+'</span></div><a href="'+iosRouteUrl(part)+'" class="restPrimary" style="display:inline-block;padding:12px;border-radius:8px;text-decoration:none">Open Route</a></div>').join('')+'</div>';
-  const sections=[];
-  for(let i=0;i<stops.length;i+=4)sections.push({start:i,stops:stops.slice(i,i+4)});
-  const panel=modal('<div class="restModalHead"><h3>Restoration Navigation</h3><button class="restX" type="button">×</button></div>'+multiMarkup+'<div class="routeStops">'+sections.map((part,k)=>'<div style="font-weight:700;margin:14px 0 6px">Section '+(k+1)+' · Stops '+(part.start+1)+'–'+(part.start+part.stops.length)+'</div>'+part.stops.map((stop,n)=>'<div class="routeStop"><b>'+(part.start+n+1)+'</b><div style="min-width:0;flex:1"><strong>'+esc(stop.label||stop.address)+'</strong><span>'+esc(stop.address)+'</span></div><a href="'+urlFor(stop)+'" class="restPrimary" style="display:inline-block;text-decoration:none;padding:12px;border-radius:8px;text-align:center;white-space:nowrap">Navigate</a></div>').join('')).join('')+'</div>');
+  const goTo=i=>{current=Math.max(0,Math.min(stops.length-1,i));try{localStorage.setItem(routeKey,String(current))}catch(e){}renderStop()};
+  const move=delta=>goTo(current+delta);
   panel.querySelector('.restX').onclick=()=>panel.remove();
+  renderStop();
 }
 
 async function openSavedRoute(r){const stops=(r.restoration_route_stops||[]).sort((a,b)=>a.position-b.position),js=stops.map(x=>jobs.find(j=>j.id===x.restoration_job_id)).filter(Boolean);const w=modal('<div class="restModalHead"><h3>'+esc(r.name)+'</h3><button class="restX" type="button">×</button></div><div class="routeCapacity"><div><strong>'+(r.route_date?new Date(r.route_date+'T12:00:00').toLocaleDateString('en-US'):'No date')+'</strong><br>'+js.length+' stops · '+Number(r.target_tons||36).toFixed(0)+' ton target</div></div><div class="routeStops">'+js.map((j,n)=>'<div class="routeStop"><b>'+(n+1)+'</b><div><strong>'+esc(j.job_name)+'</strong><span>'+esc(j.address||'No address')+(j.project?' · '+esc(j.project):'')+'</span></div></div>').join('')+'</div><div class="routePlannerActions"><button id="savedMaps" type="button">Open in Google Maps</button><button id="savedEdit" type="button">Edit in Planner</button>'+(role==='supervisor'?'<button id="savedDelete" class="danger" type="button">Delete Route</button>':'')+'</div>');w.querySelector('.restX').onclick=()=>w.remove();w.querySelector('#savedMaps').onclick=()=>{const addrs=js.map(j=>j.address).filter(Boolean);if(addrs.length!==js.length)return alert('Some stops have no address. Add their addresses before exporting so none are skipped.');openRestorationMapsSections(js.map(j=>({label:j.job_name,address:[j.address,j.project,'Michigan'].filter(Boolean).join(', '),coords:Number.isFinite(Number(j.latitude))&&Number.isFinite(Number(j.longitude))&&Number(j.latitude)!==0?Number(j.latitude)+','+Number(j.longitude):null})))};w.querySelector('#savedEdit').onclick=()=>{w.remove();openRoutePlanner(r.id)};w.querySelector('#savedDelete')?.addEventListener('click',async()=>{if(!confirm('Delete this saved route? Restoration jobs will not be deleted.'))return;await req('/rest/v1/restoration_routes?id=eq.'+r.id,{method:'DELETE'});w.remove();await load()})}
