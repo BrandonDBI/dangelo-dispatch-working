@@ -804,3 +804,65 @@
 #restModalRoot .routeStartRow label{display:block;white-space:nowrap;margin:0}
 #restModalRoot .routeStartSearchWrap{width:100%;max-width:560px;flex:none}
 @media(max-width:800px){#restModalRoot .routeStartSearchWrap{max-width:none}}
+
+/* v164: balanced desktop route-planner setup, preserving mobile layout. */
+@media(min-width:801px){
+  #restModalRoot .routeSetupGeneral{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    column-gap:18px;
+    row-gap:12px;
+    align-items:end;
+    max-width:none;
+    width:100%;
+    margin:12px 0 14px;
+  }
+  #restModalRoot .routeSetupGeneral .routeProjectField,
+  #restModalRoot .routeSetupGeneral .routeTargetField{
+    min-width:0;
+    margin:0;
+    width:100%;
+  }
+  #restModalRoot .routeSetupGeneral .routeProjectField select{
+    display:block;
+    box-sizing:border-box;
+    width:100%;
+    height:40px;
+    min-height:40px;
+    margin-top:6px;
+    padding:8px 10px;
+    font-size:14px;
+  }
+  #restModalRoot .routeSetupGeneral .routeTargetField{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-rows:auto 40px;
+    column-gap:9px;
+  }
+  #restModalRoot .routeSetupGeneral .routeTargetField input{
+    grid-column:1;
+    grid-row:2;
+    box-sizing:border-box;
+    width:100%;
+    height:40px;
+    min-height:40px;
+    margin:6px 0 0;
+    font-size:14px;
+  }
+  #restModalRoot .routeSetupGeneral .routeTargetField>span{
+    grid-column:2;
+    grid-row:2;
+    margin:6px 0 0;
+    white-space:nowrap;
+  }
+  #restModalRoot .routeStartRow{
+    width:100%;
+    max-width:none;
+    margin:0 0 12px;
+  }
+  #restModalRoot .routeStartSearchWrap{
+    width:100%;
+    max-width:none;
+  }
+  #restModalRoot .routeStartSearchWrap input{min-height:40px;}
+}
