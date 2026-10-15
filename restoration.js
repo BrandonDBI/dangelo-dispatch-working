@@ -125,6 +125,7 @@ const draw=()=>{
   if(role==='supervisor')sel.querySelectorAll('[data-yard-item]').forEach(inp=>inp.onchange=async()=>{const it=items.find(x=>x.id===Number(inp.dataset.yardItem));if(!it)return;const v=inp.value===''?null:Number(inp.value);await req('/rest/v1/restoration_items?id=eq.'+it.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({estimated_yards:v})});it.estimated_yards=v;draw()});
   w.querySelector('#routeBuildDay').textContent=selected.length?'Rebuild Route':'Build Route'
 };
+if(!openRouteId&&projectFilter!=='all'&&[...proj.options].some(option=>option.value===projectFilter))proj.value=projectFilter;
 proj.onchange=draw;contractSel.onchange=draw;kindSel.onchange=syncKind;target.oninput=draw;syncStartChoices();draw();
 if(openRouteId){const r=saved.find(x=>x.id===Number(openRouteId));if(r){selected=(r.restoration_route_stops||[]).sort((a,b)=>a.position-b.position).map(x=>x.restoration_job_id);target.value=r.target_tons||routeKinds[kindSel.value].target;draw()}}
 const autoStatus=w.querySelector('#routeAutoStatus');
