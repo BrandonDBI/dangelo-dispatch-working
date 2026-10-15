@@ -918,3 +918,31 @@
     box-sizing:border-box!important;
   }
 }
+
+/* Mobile route setup: first row stays paired, subsequent filters full-width. */
+@media(max-width:800px){
+  #restModalRoot .routeSetupGeneral{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 112px!important;
+    gap:10px!important;
+    align-items:end!important;
+  }
+  #restModalRoot .routeSetupGeneral > .routeProjectField:first-child{
+    grid-column:1!important;
+    grid-row:1!important;
+    min-width:0!important;
+  }
+  #restModalRoot .routeSetupGeneral > .routeTargetField:nth-child(2){
+    grid-column:2!important;
+    grid-row:1!important;
+    min-width:0!important;
+  }
+  #restModalRoot .routeSetupGeneral > .routeProjectField:nth-child(3){
+    grid-column:1/-1!important;
+    grid-row:2!important;
+  }
+  #restModalRoot .routeSetupGeneral > .routeProjectField:nth-child(4){
+    grid-column:1/-1!important;
+    grid-row:3!important;
+  }
+}
