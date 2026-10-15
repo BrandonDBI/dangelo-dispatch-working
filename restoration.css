@@ -1133,3 +1133,73 @@
   #restModalRoot .fieldDimStatus:not(:empty){margin-top:6px}
   #restModalRoot .fieldNewDimensions{padding:4px 0}
 }
+
+/* Mobile field card hierarchy: distinguish individual patches from their measurements. */
+@media(max-width:649px){
+  #restModalRoot .fieldJobItems{
+    counter-reset:restPatch;
+    gap:16px!important;
+  }
+  #restModalRoot .fieldJobItem{
+    counter-increment:restPatch;
+    position:relative;
+    overflow:hidden;
+    padding:0 12px 12px!important;
+    background:#fff;
+    border:1px solid #c9d2dc;
+    border-left:4px solid #343b46;
+    border-radius:12px;
+    box-shadow:0 2px 5px rgba(26,35,48,.07);
+  }
+  #restModalRoot .fieldJobItemName{
+    margin:0 -12px 12px!important;
+    padding:10px 12px 10px!important;
+    background:#edf1f5;
+    border-bottom:1px solid #d4dde6;
+  }
+  #restModalRoot .fieldJobItemName::before{
+    content:"WORK ITEM " counter(restPatch);
+    display:block;
+    font-size:10px;
+    line-height:1.2;
+    letter-spacing:.08em;
+    font-weight:800;
+    color:#59677a;
+    margin-bottom:4px;
+  }
+  #restModalRoot .fieldJobItemName strong{
+    font-size:18px!important;
+    line-height:1.25;
+  }
+  #restModalRoot .fieldJobControl{padding:0 0 3px}
+  #restModalRoot .fieldPatchDimensions{
+    margin:11px 0 0;
+    padding:0;
+    border:1px solid #dde4eb;
+    border-radius:9px;
+    background:#f6f8fa;
+    overflow:hidden;
+  }
+  #restModalRoot .fieldPatchDimensions summary{
+    padding:11px 12px;
+    font-weight:750;
+    color:#36485b;
+    background:#eef2f6;
+    line-height:1.35;
+    cursor:pointer;
+  }
+  #restModalRoot .fieldPatchDimensions[open] summary{
+    border-bottom:1px solid #dde4eb;
+  }
+  #restModalRoot .fieldPatchDimensions .fieldPatchDimGrid{
+    padding:12px 12px 0;
+    margin:0 0 10px;
+    box-sizing:border-box;
+  }
+  #restModalRoot .fieldPatchDimensions .fieldDimFoot{
+    margin:0 12px 12px;
+  }
+  #restModalRoot .fieldPatchDimensions .fieldDimStatus:not(:empty){
+    margin:0 12px 12px;
+  }
+}
