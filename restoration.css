@@ -983,3 +983,30 @@
 /* Photo metadata: one compact line below each thumbnail. */
 #restModalRoot .restPropertyPhotoThumb{width:auto;min-width:92px;max-width:100%;flex:0 0 auto}
 #restModalRoot .restPropertyPhotoThumb .restPhotoStamp{display:block;width:max-content;max-width:100%;white-space:nowrap;font-size:11px;line-height:1.4;margin-top:4px}
+
+/* Desktop Restoration editor: consistent form control heights and row alignment. */
+@media(min-width:801px){
+  #restModalRoot #restForm input:not([type="checkbox"]):not([type="file"]),
+  #restModalRoot #restForm select{
+    height:40px;
+    min-height:40px;
+    box-sizing:border-box;
+  }
+  #restModalRoot #restForm .restItemEdit{
+    align-items:center;
+    min-height:56px;
+  }
+  #restModalRoot #restForm .restItemEdit .riType,
+  #restModalRoot #restForm .restItemEdit .riQty,
+  #restModalRoot #restForm .restItemEdit .riUnit,
+  #restModalRoot #restForm .restItemEdit .riRemove{
+    height:40px;
+    min-height:40px;
+    box-sizing:border-box;
+    margin:0;
+  }
+  #restModalRoot #restForm .restItemEdit .riDone{
+    align-self:center;
+    margin:0!important;
+  }
+}
