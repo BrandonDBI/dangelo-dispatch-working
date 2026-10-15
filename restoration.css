@@ -1073,3 +1073,16 @@
     transform:translateY(-12px);
   }
 }
+
+/* Match the calculation placeholder to the 40px dimension input height. */
+@media(min-width:801px){
+  #restModalRoot .restItemEdit .riDimensionFields .riCalculated{
+    height:40px;
+    min-height:40px;
+    max-height:40px;
+    overflow:hidden;
+    padding:2px 8px;
+    line-height:1.15;
+    font-size:11px;
+  }
+}
