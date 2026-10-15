@@ -64,7 +64,7 @@ const routeJobs=jobs.filter(j=>status(j)!=='complete'&&j.ready!==false&&['asphal
 const saved=await req('/rest/v1/restoration_routes?select=*,restoration_route_stops(*)&order=created_at.desc');
 const locations=[...new Set(routeJobs.map(j=>j.project).filter(Boolean))].sort();
 const contracts=[...new Set(routeJobs.map(j=>j.contract).filter(Boolean))].sort();
-const w=modal('<div class="restModalHead routePlannerHead"><h3>Restoration Route Planner</h3><button class="restX" type="button">×</button></div><div class="routePlannerTools routeSetup routeSetupGeneral"><label class="routeProjectField">Location<select id="routeProject"><option value="all">All locations</option>'+locations.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('')+'</select></label><label class="routeProjectField">Project<select id="routeContract"><option value="all">All projects</option>'+contracts.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('')+'</select></label><label class="routeProjectField">Work type<select id="routeWorkType"><option value="asphalt">Asphalt</option><option value="concrete">Concrete</option><option value="seed">Seed</option><option value="sod">Sod</option></select></label><label class="routeTargetField">Daily target<input id="routeTarget" type="number" min="1" step="1" value="36"><span id="routeTargetUnit">tons</span></label></div><div class="routeStartRow"><label for="routeStartJob">Start at specific job <span style="font-weight:400">(optional)</span></label><select id="routeStartJob"><option value="">Automatic — choose best start</option></select></div><div class="routeBuildBar"><button id="routeBuildDay" class="restPrimary" type="button">Build Route</button><div id="routeLoadSummary"></div><span id="routeAutoStatus"></span></div><div class="routePlannerGrid"><div class="routeAvailablePane"><div class="routePlannerTitle" id="routeAvailableTitle">Available asphalt</div><div id="routeAvailable" class="routeStops"></div></div><div class="routeSelectedPane"><div class="routePlannerTitle">Route <span id="routeCount"></span></div><div id="routeSelected" class="routeStops"></div></div></div><div class="routePlannerActions"><button id="routeOpenMaps" class="restPrimary" type="button">Open in Google Maps</button></div>');
+const w=modal('<div class="restModalHead routePlannerHead"><h3>Restoration Route Planner</h3><button class="restX" type="button">×</button></div><div class="routePlannerTools routeSetup routeSetupGeneral"><label class="routeProjectField">Location<select id="routeProject"><option value="all">All locations</option>'+locations.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('')+'</select></label><label class="routeProjectField">Project<select id="routeContract"><option value="all">All projects</option>'+contracts.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('')+'</select></label><label class="routeProjectField">Work type<select id="routeWorkType"><option value="asphalt">Asphalt</option><option value="concrete">Concrete</option><option value="seed">Seed</option><option value="sod">Sod</option></select></label><label class="routeTargetField">Daily target<input id="routeTarget" type="number" min="1" step="1" value="36"><span id="routeTargetUnit">tons</span></label></div><div class="routeStartRow"><label for="routeStartSearch">Start at specific job <span style="font-weight:400">(optional)</span></label><div class="routeStartSearchWrap"><input id="routeStartSearch" type="text" autocomplete="off" placeholder="Search address or city — automatic if blank" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="routeStartResults"><button id="routeStartClear" type="button" hidden aria-label="Clear starting job">×</button><div id="routeStartResults" class="routeStartResults" role="listbox" hidden></div></div></div><div class="routeBuildBar"><button id="routeBuildDay" class="restPrimary" type="button">Build Route</button><div id="routeLoadSummary"></div><span id="routeAutoStatus"></span></div><div class="routePlannerGrid"><div class="routeAvailablePane"><div class="routePlannerTitle" id="routeAvailableTitle">Available asphalt</div><div id="routeAvailable" class="routeStops"></div></div><div class="routeSelectedPane"><div class="routePlannerTitle">Route <span id="routeCount"></span></div><div id="routeSelected" class="routeStops"></div></div></div><div class="routePlannerActions"><button id="routeOpenMaps" class="restPrimary" type="button">Open in Google Maps</button></div>');
 w.querySelector('.restX')?.addEventListener('click',()=>w.remove());
 let selected=[];
 const av=w.querySelector('#routeAvailable'),sel=w.querySelector('#routeSelected'),count=w.querySelector('#routeCount'),proj=w.querySelector('#routeProject'),contractSel=w.querySelector('#routeContract'),kindSel=w.querySelector('#routeWorkType'),target=w.querySelector('#routeTarget'),targetUnit=w.querySelector('#routeTargetUnit'),load=w.querySelector('#routeLoadSummary'),availableTitle=w.querySelector('#routeAvailableTitle');
@@ -77,21 +77,34 @@ const jobAmount=(j,kind)=>{
   if(kind==='concrete'){const vals=a.map(derivedConcreteYards);return vals.some(v=>v==null)?null:vals.reduce((s,v)=>s+v,0)}
   return null;
 };
-const startSel=w.querySelector('#routeStartJob');
-const syncStartChoices=()=>{
-  const previous=startSel.value,kind=kindSel.value;
-  const possible=routeJobs.filter(j=>hasOpenType(j,kind)&&j.address&&jobAmount(j,kind)!=null);
-  startSel.innerHTML='<option value="">Automatic — choose best start</option>'+possible.sort((a,b)=>String(a.project||'').localeCompare(String(b.project||''))||String(a.address||'').localeCompare(String(b.address||''))).map(j=>'<option value="'+j.id+'">'+esc((j.project||'Other')+' — '+(j.address||j.job_name))+'</option>').join('');
-  if(possible.some(j=>String(j.id)===previous))startSel.value=previous;
+const startSearch=w.querySelector('#routeStartSearch'),startResults=w.querySelector('#routeStartResults'),startClear=w.querySelector('#routeStartClear');
+let startJobId=null,startLabel='';
+const eligibleStartJobs=()=>routeJobs.filter(j=>hasOpenType(j,kindSel.value)&&j.address&&jobAmount(j,kindSel.value)!=null);
+const closeStartResults=()=>{startResults.hidden=true;startSearch.setAttribute('aria-expanded','false')};
+const startText=j=>(j.project||'Other')+' — '+(j.address||j.job_name);
+const chooseStart=j=>{startJobId=j.id;startLabel=startText(j);startSearch.value=startLabel;startClear.hidden=false;closeStartResults();selected=[];draw()};
+const renderStartSearch=()=>{
+  const term=startSearch.value.trim().toLowerCase();
+  if(!term){closeStartResults();return}
+  const matches=eligibleStartJobs().filter(j=>[j.address,j.project,j.job_name,j.job_number].some(x=>String(x||'').toLowerCase().includes(term))).slice(0,12);
+  startResults.innerHTML=matches.length?matches.map(j=>'<button type="button" role="option" data-start-id="'+j.id+'"><strong>'+esc(j.address||j.job_name)+'</strong><span>'+esc(j.project||'')+'</span></button>').join(''):'<div class="routeStartEmpty">No matching '+esc(routeKinds[kindSel.value].label.toLowerCase())+' jobs</div>';
+  startResults.hidden=false;startSearch.setAttribute('aria-expanded','true');
+  startResults.querySelectorAll('[data-start-id]').forEach(btn=>btn.onmousedown=e=>e.preventDefault());
+  startResults.querySelectorAll('[data-start-id]').forEach(btn=>btn.onclick=()=>{const j=eligibleStartJobs().find(x=>String(x.id)===btn.dataset.startId);if(j)chooseStart(j)});
 };
-startSel.onchange=()=>{selected=[];draw()};
+const syncStartChoices=()=>{if(startJobId&&!eligibleStartJobs().some(j=>j.id===startJobId)){startJobId=null;startLabel='';startSearch.value='';startClear.hidden=true}closeStartResults()};
+startSearch.oninput=()=>{startJobId=null;startLabel='';startClear.hidden=!startSearch.value;renderStartSearch()};
+startSearch.onfocus=renderStartSearch;
+startSearch.onkeydown=e=>{if(e.key==='Escape'){closeStartResults();startSearch.blur()}if(e.key==='Enter'&&!startResults.hidden){e.preventDefault();const first=startResults.querySelector('[data-start-id]');if(first)first.click()}};
+startSearch.onblur=()=>{setTimeout(()=>{closeStartResults();if(!startJobId){startSearch.value='';startClear.hidden=true}},150)};
+startClear.onclick=()=>{startJobId=null;startLabel='';startSearch.value='';startClear.hidden=true;closeStartResults();selected=[];draw();startSearch.focus()};
 const fmtAmount=(v,kind)=>kind==='asphalt'?Number(v).toFixed(1)+' tons':(kind==='seed'||kind==='sod')?Number(v).toFixed(0)+' SF':Number(v).toFixed(1)+' CY';
 const syncKind=()=>{
   const kind=kindSel.value,cfg=routeKinds[kind];
   target.value=cfg.target;targetUnit.textContent=cfg.unit;availableTitle.textContent='Available '+cfg.label.toLowerCase();selected=[];syncStartChoices();w.querySelector('#routeAutoStatus').textContent='';draw()
 };
 const draw=()=>{
-  const kind=kindSel.value,cfg=routeKinds[kind],fixedId=Number(startSel.value)||null;
+  const kind=kindSel.value,cfg=routeKinds[kind],fixedId=startJobId;
   const candidates=routeJobs.filter(j=>hasOpenType(j,kind));
   const pool=candidates.filter(j=>(proj.value==='all'||j.project===proj.value)&&(contractSel.value==='all'||j.contract===contractSel.value)&&!selected.includes(j.id)&&j.id!==fixedId);
   av.innerHTML=pool.map(j=>{const a=jobAmount(j,kind);return '<button type="button" data-add-stop="'+j.id+'"><strong>'+esc(j.job_name)+'</strong><span>'+esc(j.project||'')+' · '+esc(workText(j,kind))+'</span><em>'+(a==null?'⚠ Quantity needed':fmtAmount(a,kind))+'</em></button>'}).join('')||'<div class="restEmpty">No available '+cfg.label.toLowerCase()+' stops.</div>';
@@ -111,12 +124,12 @@ proj.onchange=draw;contractSel.onchange=draw;kindSel.onchange=syncKind;target.on
 if(openRouteId){const r=saved.find(x=>x.id===Number(openRouteId));if(r){selected=(r.restoration_route_stops||[]).sort((a,b)=>a.position-b.position).map(x=>x.restoration_job_id);target.value=r.target_tons||routeKinds[kindSel.value].target;draw()}}
 const autoStatus=w.querySelector('#routeAutoStatus');
 w.querySelector('#routeBuildDay').onclick=async()=>{
-  const btn=w.querySelector('#routeBuildDay'),kind=kindSel.value,cfg=routeKinds[kind],startJobId=Number(startSel.value)||null,pool=routeJobs.filter(j=>hasOpenType(j,kind)&&(contractSel.value==='all'||j.contract===contractSel.value)&&j.address&&jobAmount(j,kind)!=null);
-  if(startJobId&&!pool.some(j=>j.id===startJobId))return alert('The selected starting job is not eligible for this work type.');
+  const btn=w.querySelector('#routeBuildDay'),kind=kindSel.value,cfg=routeKinds[kind],chosenStartId=startJobId,pool=routeJobs.filter(j=>hasOpenType(j,kind)&&(contractSel.value==='all'||j.contract===contractSel.value)&&j.address&&jobAmount(j,kind)!=null);
+  if(chosenStartId&&!pool.some(j=>j.id===chosenStartId))return alert('The selected starting job is not eligible for this work type.');
   if(!pool.some(j=>proj.value==='all'||j.project===proj.value))return alert('No usable '+cfg.label.toLowerCase()+' stops in the selected location.');
   btn.disabled=true;autoStatus.textContent='Building route…';
   try{
-    const res=await fetch('/api/build-asphalt-day',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetTons:Number(target.value)||cfg.target,anchorLocation:proj.value,startJobId,candidates:pool.map(j=>({id:j.id,address:j.address,city:j.city,project:j.project,state:'MI',tons:jobAmount(j,kind),latitude:j.latitude,longitude:j.longitude,geocodedAddress:j.geocoded_address}))})});
+    const res=await fetch('/api/build-asphalt-day',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetTons:Number(target.value)||cfg.target,anchorLocation:proj.value,startJobId:chosenStartId,candidates:pool.map(j=>({id:j.id,address:j.address,city:j.city,project:j.project,state:'MI',tons:jobAmount(j,kind),latitude:j.latitude,longitude:j.longitude,geocodedAddress:j.geocoded_address}))})});
     const out=await res.json();if(!res.ok)throw new Error(out.error||'Could not build route.');
     selected=out.order.map(Number);
     // Nearby-city suggestions become normal removable stops in the route list.
