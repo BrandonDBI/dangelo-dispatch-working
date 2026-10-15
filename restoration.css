@@ -1203,3 +1203,35 @@
     margin:0 12px 12px;
   }
 }
+
+/* Mobile planner actions: balanced sharing row and separate navigation action. */
+@media(max-width:800px){
+  #restModalRoot .routePlannerActions{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    column-gap:12px!important;
+    row-gap:12px!important;
+    align-items:stretch;
+  }
+  #restModalRoot .routePlannerActions #routePrint,
+  #restModalRoot .routePlannerActions #routeShare,
+  #restModalRoot .routePlannerActions #savedPrint,
+  #restModalRoot .routePlannerActions #savedShare{
+    width:100%!important;
+    min-width:0!important;
+    height:46px;
+    min-height:46px;
+    box-sizing:border-box;
+    padding:8px 7px;
+    margin:0!important;
+    font-size:14px;
+    white-space:nowrap;
+  }
+  #restModalRoot .routePlannerActions #routeOpenMaps,
+  #restModalRoot .routePlannerActions #savedMaps{
+    grid-column:1/-1!important;
+    width:100%!important;
+    margin:0!important;
+    min-height:48px!important;
+  }
+}
