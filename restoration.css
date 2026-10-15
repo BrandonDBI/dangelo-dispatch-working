@@ -1235,3 +1235,17 @@
     min-height:48px!important;
   }
 }
+
+/* Work-through-route mode reuses regular field editing and property photo controls. */
+#restModalRoot .fieldRouteHeader{padding:7px 0 12px;font-size:14px}
+#restModalRoot .fieldRouteProgress{height:6px;overflow:hidden;border-radius:8px;background:#e4e7eb;margin-top:10px}
+#restModalRoot .fieldRouteProgress i{display:block;height:100%;background:#252122;border-radius:8px}
+#restModalRoot .fieldRouteActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+#restModalRoot .fieldRouteActions button{min-height:46px;box-sizing:border-box}
+#restModalRoot .fieldRouteAll{margin:12px 0 18px;border:1px solid #dce2e9;border-radius:9px;padding:10px}
+#restModalRoot .fieldRouteAll summary{font-weight:700;cursor:pointer}
+#restModalRoot .fieldRouteAll button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #e6e9ee;background:#fff;padding:11px;font-size:14px}
+@media(max-width:800px){
+ #restModalRoot .fieldRouteActions{position:sticky;bottom:0;z-index:4;background:#fff;padding:10px 0 calc(10px + env(safe-area-inset-bottom));border-top:1px solid #e1e5ea}
+ #restModalRoot .fieldRouteHeader strong{font-size:15px}
+}
