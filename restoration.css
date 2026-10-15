@@ -1252,7 +1252,7 @@
 
 /* Route-only field view: keep editable content clear of the fixed bottom controls. */
 @media(max-width:800px){
-  #restModalRoot .restModal:has(.restRouteMode){
+  #restModalRoot .restModal.restRouteMode{
     scroll-padding-bottom:120px;
     padding-bottom:125px!important;
   }
