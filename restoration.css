@@ -1341,3 +1341,17 @@
   line-height:1.25;
   margin:0;
 }
+
+/* Route photo tile: remove the empty status paragraph that adds space below
+   the disclosure and makes the title appear too high in its outer box. */
+#restModalRoot .restRouteMode .restPropertyPhotos:has(.restRoutePhotoDisclosure) .restPropertyPhotoStatus:empty{
+  display:none!important;
+}
+#restModalRoot .restRouteMode .restPropertyPhotos:has(.restRoutePhotoDisclosure) .restPropertyPhotoStatus:not(:empty){
+  margin:0;
+  padding:0 14px 12px;
+}
+#restModalRoot .restRouteMode .restRoutePhotoDisclosure summary{
+  min-height:68px;
+  padding:14px 16px;
+}
