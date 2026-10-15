@@ -146,18 +146,23 @@ function jobPhotoHtml(j){
  if(!j?.id)return '';
  return '<section class="restPropertyPhotos" data-property-photo-job="'+j.id+'"><h3>Property Photos</h3><div class="restPropertyPhotoGrid">'+['before','after'].map(stage=>'<div class="restPropertyPhotoGroup"><strong>'+ (stage==='before'?'Before':'After')+' Restoration</strong><div class="restPropertyPhotoList" data-stage-list="'+stage+'">Loading photos…</div><button type="button" class="restPropertyPhotoAdd" data-photo-stage="'+stage+'">+ Add '+(stage==='before'?'Before':'After')+' Photo</button><input type="file" accept="image/*" capture="environment" data-photo-input="'+stage+'" hidden multiple></div>').join('')+'</div><p class="restPropertyPhotoStatus" role="status"></p></section>';
 }
+function formatPropertyPhotoStamp(p){
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/Detroit',month:'numeric',day:'numeric',year:'2-digit',hour:'numeric',minute:'2-digit',hour12:true}).formatToParts(new Date(p.created_at));
+ const get=t=>parts.find(x=>x.type===t)?.value||'';
+ return '['+[get('month'),get('day'),get('year')].join('/')+' - '+get('hour')+':'+get('minute')+get('dayPeriod')+' - '+(p.uploader_name||'Employee')+']';
+}
 async function setupJobPhotos(root,j){
  if(!j?.id)return;
  const section=root.querySelector('.restPropertyPhotos');if(!section)return;
  const statusLine=section.querySelector('.restPropertyPhotoStatus');
  const refresh=async()=>{
-  const data=await req('/rest/v1/restoration_job_photos?restoration_job_id=eq.'+j.id+'&select=*&order=created_at.asc');
+  const data=await req('/rest/v1/rpc/get_restoration_property_photos',{method:'POST',body:JSON.stringify({p_job_id:j.id})});
   for(const stage of ['before','after']){
    const list=section.querySelector('[data-stage-list="'+stage+'"]');
    const group=data.filter(p=>p.stage===stage);
    if(!group.length){list.textContent='No photos yet';continue}
    const cards=await Promise.all(group.map(async p=>{
-    try{const url=await photoUrl(p.storage_path);return '<a href="'+esc(url)+'" target="_blank" rel="noopener" class="restPropertyPhotoThumb"><img src="'+esc(url)+'" alt="'+stage+' restoration photo"><small>'+new Date(p.created_at).toLocaleString()+'</small></a>'}catch(e){return '<span>Photo unavailable</span>'}
+    try{const url=await photoUrl(p.storage_path);return '<a href="'+esc(url)+'" target="_blank" rel="noopener" class="restPropertyPhotoThumb"><img src="'+esc(url)+'" alt="'+stage+' restoration photo"><small class="restPhotoStamp">'+esc(formatPropertyPhotoStamp(p))+'</small></a>'}catch(e){return '<span>Photo unavailable</span>'}
    }));
    list.innerHTML=cards.join('');
   }
