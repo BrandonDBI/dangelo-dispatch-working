@@ -1010,3 +1010,12 @@
     margin:0!important;
   }
 }
+
+/* Desktop: compact optional dimensions beneath each individual patch. */
+#restModalRoot .riDimensions{grid-column:1/-1;min-width:0;margin-top:0;padding:2px 4px}
+#restModalRoot .riDimensions[hidden],#restModalRoot .riDimensionFields label[hidden]{display:none!important}
+#restModalRoot .riDimensions summary{width:max-content;cursor:pointer;font-size:12px;font-weight:650;color:#53677c;padding:4px 2px}
+#restModalRoot .riDimensionFields{display:flex;gap:10px;align-items:end;flex-wrap:wrap;padding:7px 0 4px}
+#restModalRoot .riDimensionFields label{display:block;min-width:90px;max-width:145px;flex:1;font-size:11px;font-weight:650}
+#restModalRoot .riDimensionFields input,#restModalRoot .riDimensionFields select{display:block;width:100%;min-height:38px;margin-top:4px;box-sizing:border-box}
+#restModalRoot .riCalculated{font-size:12px;font-weight:700;color:#46566c;padding-bottom:10px}
