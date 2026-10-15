@@ -1249,3 +1249,26 @@
  #restModalRoot .fieldRouteActions{position:sticky;bottom:0;z-index:4;background:#fff;padding:10px 0 calc(10px + env(safe-area-inset-bottom));border-top:1px solid #e1e5ea}
  #restModalRoot .fieldRouteHeader strong{font-size:15px}
 }
+
+/* Route-only field view: keep editable content clear of the fixed bottom controls. */
+@media(max-width:800px){
+  #restModalRoot .restModal:has(.restRouteMode){
+    scroll-padding-bottom:120px;
+    padding-bottom:125px!important;
+  }
+  #restModalRoot .restRouteMode .fieldRouteActions{
+    position:sticky;
+    bottom:0;
+    z-index:6;
+    background:#fff;
+    padding:12px 0 calc(12px + env(safe-area-inset-bottom));
+    border-top:1px solid #dce2e9;
+    box-shadow:0 -8px 14px rgba(255,255,255,.96);
+    margin-top:16px;
+  }
+  #restModalRoot .restRouteMode .fieldJobItem,
+  #restModalRoot .restRouteMode .fieldPatchDimensions,
+  #restModalRoot .restRouteMode .fieldJobNotes{
+    scroll-margin-bottom:125px;
+  }
+}
