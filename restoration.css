@@ -881,3 +881,25 @@
     align-self:end;
   }
 }
+
+/* Mobile: Daily Target and Work Type have matching heights and alignment. */
+@media(max-width:800px){
+  #restModalRoot .routeSetupGeneral .routeTargetField{
+    grid-template-rows:auto 42px!important;
+    align-content:end!important;
+  }
+  #restModalRoot .routeSetupGeneral .routeTargetField input{
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+    margin:4px 0 0!important;
+    box-sizing:border-box!important;
+    align-self:end!important;
+  }
+  #restModalRoot .routeSetupGeneral .routeProjectField select{
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+    box-sizing:border-box!important;
+  }
+}
