@@ -946,3 +946,17 @@
     grid-row:3!important;
   }
 }
+
+/* Job-level before/after photos, shared by field and office. */
+#restModalRoot .restPropertyPhotos{margin:14px 0;padding:12px;border:1px solid #e2e5e9;border-radius:9px;background:#fafafa}
+#restModalRoot .restPropertyPhotos h3{font-size:15px;margin:0 0 12px}
+#restModalRoot .restPropertyPhotoGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#restModalRoot .restPropertyPhotoGroup{min-width:0}
+#restModalRoot .restPropertyPhotoGroup>strong{display:block;font-size:13px;margin-bottom:8px}
+#restModalRoot .restPropertyPhotoList{display:flex;flex-wrap:wrap;gap:8px;align-items:start;min-height:52px;font-size:12px;color:#667085}
+#restModalRoot .restPropertyPhotoThumb{display:block;width:92px;text-decoration:none;color:#475569}
+#restModalRoot .restPropertyPhotoThumb img{display:block;width:92px;height:76px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
+#restModalRoot .restPropertyPhotoThumb small{display:block;font-size:10px;margin-top:3px}
+#restModalRoot .restPropertyPhotoAdd{margin-top:8px;min-height:36px;width:100%;padding:7px 10px;border:1px solid #ccd1d9;border-radius:7px;background:white;font-weight:650}
+#restModalRoot .restPropertyPhotoStatus{font-size:12px;margin:8px 0 0;color:#475569}
+@media(max-width:800px){#restModalRoot .restPropertyPhotoGrid{grid-template-columns:1fr;gap:16px}#restModalRoot .restPropertyPhotoAdd{min-height:44px}}
