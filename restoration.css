@@ -1272,3 +1272,26 @@
     scroll-margin-bottom:125px;
   }
 }
+
+/* Navigation controls stay in document flow, never over photos or work items. */
+@media(max-width:800px){
+  #restModalRoot .restModal.restRouteMode{
+    scroll-padding-bottom:0;
+    padding-bottom:18px!important;
+  }
+  #restModalRoot .restRouteMode .fieldRouteActions{
+    position:static!important;
+    bottom:auto!important;
+    z-index:auto!important;
+    box-shadow:none!important;
+    margin:16px 0 12px!important;
+    padding:12px 0 0!important;
+    background:transparent!important;
+    border-top:1px solid #dce2e9;
+  }
+  #restModalRoot .restRouteMode .fieldJobItem,
+  #restModalRoot .restRouteMode .fieldPatchDimensions,
+  #restModalRoot .restRouteMode .fieldJobNotes{
+    scroll-margin-bottom:0;
+  }
+}
