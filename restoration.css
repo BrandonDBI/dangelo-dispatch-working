@@ -1355,3 +1355,19 @@
   min-height:68px;
   padding:14px 16px;
 }
+
+/* Route field workflow: D'Angelo red actions and quiet notes. */
+#restModalRoot .restRouteMode .fieldNavigate{
+  background:#b20e1a!important;
+  border-color:#b20e1a!important;
+  color:#fff!important;
+}
+#restModalRoot .restRouteMode .fieldAddWorkToggle{
+  color:#b20e1a!important;
+}
+#restModalRoot .restRouteMode .fieldJobNotes .fieldNotesHistory:empty{
+  display:none!important;
+}
+#restModalRoot .restRouteMode .fieldJobNotes .fieldNoteInputLabel{
+  margin-top:10px!important;
+}
