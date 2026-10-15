@@ -1066,3 +1066,10 @@
     grid-column:1/-1;
   }
 }
+
+/* Align the calculated SF/CY box with the measurement input controls. */
+@media(min-width:1051px){
+  #restModalRoot .restItemEdit .riDimensionFields .riCalculated{
+    transform:translateY(-12px);
+  }
+}
