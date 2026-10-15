@@ -1317,3 +1317,27 @@
 #restModalRoot .restRoutePhotoDisclosure .restPropertyPhotoGroup{
   padding:0 14px 14px;
 }
+
+/* Center arrow, label, and photo status on one vertical axis. */
+#restModalRoot .restRoutePhotoDisclosure summary{
+  display:flex!important;
+  align-items:center!important;
+  min-height:58px;
+  box-sizing:border-box;
+  line-height:1.2;
+}
+#restModalRoot .restRoutePhotoDisclosure summary::before{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  align-self:center;
+  line-height:1;
+  width:18px;
+  flex:0 0 18px;
+  margin:0;
+}
+#restModalRoot .restRoutePhotoDisclosure summary span{
+  align-self:center;
+  line-height:1.25;
+  margin:0;
+}
