@@ -784,10 +784,11 @@
 #restModalRoot .routeExtraToggle{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12px;font-weight:500;white-space:nowrap}
 #restModalRoot .routeExtraToggle input[type=checkbox]{display:inline-block;width:16px;height:16px;min-height:0;margin:0;flex:0 0 16px;padding:0}
 #restModalRoot .routeExtraCities[hidden]{display:none!important}
-#restModalRoot .routeExtraCities{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin:0 0 12px;padding:10px;border:1px solid #e2e5e9;border-radius:8px;background:#f9fafb}
-#restModalRoot .routeExtraCities label{font-size:12px;font-weight:700;min-width:180px;flex:1;max-width:340px}
-#restModalRoot .routeExtraCities select{display:block;width:100%;margin-top:4px;min-height:36px}
-#restModalRoot .routeExtraCities #routeAddExtra{min-height:36px}
-#restModalRoot .routeExtraTags{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%}
+#restModalRoot .routeExtraCities{display:grid;grid-template-columns:minmax(0,270px) auto;align-items:end;justify-content:start;column-gap:8px;row-gap:7px;margin:-2px 0 10px;padding:0;border:0;background:transparent}
+#restModalRoot .routeExtraCities label{display:block;font-size:12px;font-weight:600;min-width:0;max-width:none;margin:0}
+#restModalRoot .routeExtraCities select{display:block;width:100%;margin-top:4px;min-height:34px;padding:6px 9px}
+#restModalRoot .routeExtraCities #routeAddExtra{min-height:34px;padding:6px 13px}
+#restModalRoot .routeExtraTags{display:flex;flex-wrap:wrap;gap:5px;grid-column:1/-1;margin-top:0}
 #restModalRoot .routeExtraTags:empty{display:none}
-#restModalRoot .routeExtraTags button{background:white;border:1px solid #ccd3db;border-radius:20px;padding:5px 10px;font-size:12px}
+#restModalRoot .routeExtraTags button{background:#f3f4f6;border:1px solid #d5d9df;border-radius:16px;padding:4px 9px;font-size:12px}
+@media(max-width:520px){#restModalRoot .routeExtraCities{grid-template-columns:minmax(0,1fr) auto}}
