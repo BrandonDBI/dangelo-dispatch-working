@@ -979,3 +979,7 @@
   #restModalRoot .restItemEdit:has(.restItemFieldBadge){position:relative;padding-top:29px}
   #restModalRoot .restItemFieldBadge{position:absolute;top:7px;left:9px;margin:0;display:inline-block;width:auto;max-width:max-content}
 }
+
+/* Photo metadata: one compact line below each thumbnail. */
+#restModalRoot .restPropertyPhotoThumb{width:auto;min-width:92px;max-width:100%;flex:0 0 auto}
+#restModalRoot .restPropertyPhotoThumb .restPhotoStamp{display:block;width:max-content;max-width:100%;white-space:nowrap;font-size:11px;line-height:1.4;margin-top:4px}
