@@ -1019,3 +1019,50 @@
 #restModalRoot .riDimensionFields label{display:block;min-width:90px;max-width:145px;flex:1;font-size:11px;font-weight:650}
 #restModalRoot .riDimensionFields input,#restModalRoot .riDimensionFields select{display:block;width:100%;min-height:38px;margin-top:4px;box-sizing:border-box}
 #restModalRoot .riCalculated{font-size:12px;font-weight:700;color:#46566c;padding-bottom:10px}
+
+/* Expanded desktop patch measurements use the full work-item width. */
+@media(min-width:801px){
+  #restModalRoot .restItemEdit .riDimensions[open]{
+    width:100%;
+    box-sizing:border-box;
+  }
+  #restModalRoot .restItemEdit .riDimensionFields{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr)) minmax(140px,.95fr);
+    align-items:end;
+    gap:12px;
+    width:100%;
+    box-sizing:border-box;
+    padding:10px 2px 8px;
+  }
+  #restModalRoot .restItemEdit .riDimensionFields label{
+    max-width:none;
+    min-width:0;
+    width:100%;
+  }
+  #restModalRoot .restItemEdit .riDimensionFields .riCalculated{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:40px;
+    padding:6px 10px;
+    background:#edf0f3;
+    border:1px solid #d9dfe6;
+    border-radius:7px;
+    box-sizing:border-box;
+    white-space:normal;
+    text-align:center;
+    line-height:1.35;
+  }
+  #restModalRoot .restItemEdit .riDimensionFields label[hidden]{
+    display:none!important;
+  }
+}
+@media(min-width:801px) and (max-width:1050px){
+  #restModalRoot .restItemEdit .riDimensionFields{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  #restModalRoot .restItemEdit .riDimensionFields .riCalculated{
+    grid-column:1/-1;
+  }
+}
