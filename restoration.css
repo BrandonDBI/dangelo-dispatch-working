@@ -791,3 +791,17 @@
 #restModalRoot .routeSetupGeneral .routeLocationOption{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;grid-template-columns:none!important;font-weight:500!important;font-size:13px!important;text-align:left!important;margin:0!important;padding:7px 5px!important;line-height:1.2!important;cursor:pointer}
 #restModalRoot .routeSetupGeneral .routeLocationOption input{display:inline-block!important;position:static!important;flex:0 0 16px!important;width:16px!important;height:16px!important;min-height:0!important;margin:0!important;appearance:auto!important}
 #restModalRoot .routeSetupGeneral .routeLocationOption span{display:inline!important;flex:1!important;text-align:left!important}
+
+/* Separate location selection dialog: does not cover planner while routing. */
+#restModalRoot .routeLocationTrigger{width:100%;min-height:39px;margin-top:4px;background:#fff;border:1px solid #cbd5e1;border-radius:6px;text-align:left;padding:9px 12px;font-size:14px;font-weight:500;cursor:pointer}
+#restModalRoot .routeLocationOverlay[hidden]{display:none!important}
+#restModalRoot .routeLocationOverlay{position:fixed;inset:0;z-index:5000;background:#0005;display:flex;align-items:center;justify-content:center;padding:18px}
+#restModalRoot .routeLocationDialog{background:#fff;width:min(390px,100%);max-height:min(650px,85vh);display:flex;flex-direction:column;box-sizing:border-box;padding:16px;border-radius:12px;box-shadow:0 16px 45px #0003}
+#restModalRoot .routeLocationDialogHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:17px}
+#restModalRoot .routeLocationDialogHead button{border:0;background:transparent;font-size:24px;cursor:pointer;padding:1px 8px}
+#restModalRoot .routeLocationDialog .routeLocationActions{display:flex;gap:8px;margin-bottom:8px}
+#restModalRoot .routeLocationOptions{overflow:auto;min-height:0;flex:1;border-top:1px solid #eee;border-bottom:1px solid #eee}
+#restModalRoot .routeLocationDialog .routeLocationOption{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;text-align:left!important;gap:12px!important;padding:10px 5px!important;line-height:1.25!important;margin:0!important;border-bottom:1px solid #f1f2f4}
+#restModalRoot .routeLocationDialog .routeLocationOption input[type=checkbox]{appearance:auto!important;display:block!important;position:static!important;flex:0 0 18px!important;width:18px!important;height:18px!important;min-height:0!important;margin:0!important;padding:0!important;box-sizing:border-box!important}
+#restModalRoot .routeLocationDialog .routeLocationOption span{display:block!important;text-align:left!important;font-size:14px;font-weight:500}
+#restModalRoot .routeLocationDialog #routeLocationApply{margin-top:12px;width:100%;min-height:40px}
