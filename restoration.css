@@ -866,3 +866,18 @@
   }
   #restModalRoot .routeStartSearchWrap input{min-height:40px;}
 }
+
+/* Align Daily Target input precisely with Work Type dropdown. */
+@media(min-width:801px){
+  #restModalRoot .routeSetupGeneral .routeTargetField{
+    grid-template-rows:auto 40px;
+    align-content:end;
+  }
+  #restModalRoot .routeSetupGeneral .routeTargetField input,
+  #restModalRoot .routeSetupGeneral .routeTargetField>span{
+    margin-top:0;
+  }
+  #restModalRoot .routeSetupGeneral .routeTargetField input{
+    align-self:end;
+  }
+}
