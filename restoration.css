@@ -1295,3 +1295,25 @@
     scroll-margin-bottom:0;
   }
 }
+
+/* Compact collapsible property photos only inside route navigation. */
+#restModalRoot .restRouteMode .restPropertyPhotos:has(.restRoutePhotoDisclosure){
+  padding:0;
+  overflow:hidden;
+}
+#restModalRoot .restRoutePhotoDisclosure summary{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 16px;cursor:pointer;font-weight:800;
+  list-style:none;
+}
+#restModalRoot .restRoutePhotoDisclosure summary::-webkit-details-marker{display:none}
+#restModalRoot .restRoutePhotoDisclosure summary::before{
+  content:'▸';color:#52677b;margin-right:2px;
+}
+#restModalRoot .restRoutePhotoDisclosure[open] summary::before{content:'▾'}
+#restModalRoot .restRoutePhotoDisclosure summary span:first-child{flex:1}
+#restModalRoot .restRoutePhotoCount{font-size:12px;font-weight:650;color:#697789;white-space:nowrap}
+#restModalRoot .restRoutePhotoCount.hasPhotos{color:#237348}
+#restModalRoot .restRoutePhotoDisclosure .restPropertyPhotoGroup{
+  padding:0 14px 14px;
+}
