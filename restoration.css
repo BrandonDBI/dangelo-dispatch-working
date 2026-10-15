@@ -779,3 +779,15 @@
     display:none!important;
   }
 }
+
+/* Compact multi-city location selector inside restoration route planner */
+#restModalRoot .routeSetupGeneral #routeLocationPicker{position:relative;display:block;min-width:0;width:100%;margin-top:4px;font-weight:400}
+#restModalRoot .routeSetupGeneral #routeLocationSummary{display:block;box-sizing:border-box;width:100%;min-height:39px;border:1px solid #cbd5e1;border-radius:6px;padding:9px 32px 9px 11px;background:#fff;color:#111827;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;font-weight:500;list-style:none;position:relative}
+#restModalRoot .routeSetupGeneral #routeLocationSummary::-webkit-details-marker{display:none}
+#restModalRoot .routeSetupGeneral #routeLocationSummary:after{content:'▾';position:absolute;right:11px;top:8px;color:#475569}
+#restModalRoot .routeSetupGeneral .routeLocationPanel{position:absolute;top:calc(100% + 4px);left:0;z-index:100;width:max(100%,240px);max-width:min(330px,90vw);box-sizing:border-box;max-height:280px;overflow-y:auto;overscroll-behavior:contain;background:white;border:1px solid #cbd5e1;border-radius:8px;padding:8px;box-shadow:0 10px 22px #0002}
+#restModalRoot .routeSetupGeneral .routeLocationActions{display:flex;gap:7px;padding-bottom:7px;margin-bottom:3px;border-bottom:1px solid #e5e7eb}
+#restModalRoot .routeSetupGeneral .routeLocationActions button{padding:5px 9px;font-size:12px}
+#restModalRoot .routeSetupGeneral .routeLocationOption{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;grid-template-columns:none!important;font-weight:500!important;font-size:13px!important;text-align:left!important;margin:0!important;padding:7px 5px!important;line-height:1.2!important;cursor:pointer}
+#restModalRoot .routeSetupGeneral .routeLocationOption input{display:inline-block!important;position:static!important;flex:0 0 16px!important;width:16px!important;height:16px!important;min-height:0!important;margin:0!important;appearance:auto!important}
+#restModalRoot .routeSetupGeneral .routeLocationOption span{display:inline!important;flex:1!important;text-align:left!important}
