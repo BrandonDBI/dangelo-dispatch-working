@@ -779,3 +779,9 @@
     display:none!important;
   }
 }
+
+/* Optional fixed first stop, separate from the day's work location. */
+#restModalRoot .routeStartRow{display:flex;align-items:center;gap:12px;margin:0 0 10px;max-width:680px}
+#restModalRoot .routeStartRow label{font-size:12px;font-weight:700;white-space:nowrap}
+#restModalRoot .routeStartRow select{flex:1;min-width:0;width:auto;min-height:37px;padding:7px 10px}
+@media(max-width:800px){#restModalRoot .routeStartRow{display:block}#restModalRoot .routeStartRow select{width:100%;margin-top:5px}}
