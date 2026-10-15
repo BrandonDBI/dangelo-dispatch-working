@@ -903,3 +903,18 @@
     box-sizing:border-box!important;
   }
 }
+
+/* Mobile route planner: Location and Project span the full available row. */
+@media(max-width:800px){
+  #restModalRoot .routeSetupGeneral .routeProjectField{
+    grid-column:1 / -1!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #restModalRoot .routeSetupGeneral .routeProjectField select{
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+}
