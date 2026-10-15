@@ -6,6 +6,7 @@ module.exports = async function handler(req,res){
     const body=typeof req.body==='string'?JSON.parse(req.body):req.body||{};
     const target=Math.max(1,Number(body.targetTons)||36);
     const anchorLocation=String(body.anchorLocation||'all');
+    const startJobId=body.startJobId==null?null:Number(body.startJobId);
     let candidates=Array.isArray(body.candidates)?body.candidates.filter(x=>x&&x.id&&x.address&&Number(x.tons)>0):[];
     if(!candidates.length) return res.status(400).json({error:'No usable restoration stops were supplied.'});
     
@@ -32,9 +33,11 @@ module.exports = async function handler(req,res){
     const anchors=anchorLocation==='all'?located:located.filter(x=>x.project===anchorLocation);
     if(!anchors.length)return res.status(400).json({error:'No located jobs in the selected location.'});
     const nearby=anchorLocation==='all'?located:located.filter(x=>x.project===anchorLocation||anchors.some(a=>miles(a,x)<=12));
+    const fixedStart=startJobId!=null?located.find(x=>Number(x.id)===startJobId):null;
+    if(startJobId!=null&&!fixedStart)return res.status(400).json({error:'Selected starting address could not be located.'});
     let best=null;
     for(const seed of anchors){
-      let route=[seed],tons=Number(seed.tons),remaining=nearby.filter(x=>x.id!==seed.id);
+      let route=fixedStart&&fixedStart.id!==seed.id?[fixedStart,seed]:[seed],tons=route.reduce((v,x)=>v+Number(x.tons),0),remaining=nearby.filter(x=>!route.some(r=>r.id===x.id));
       while(route.length<25&&remaining.length){
         const center={latitude:route.reduce((s,x)=>s+x.latitude,0)/route.length,longitude:route.reduce((s,x)=>s+x.longitude,0)/route.length};
         const fit=remaining.filter(x=>tons+Number(x.tons)<=target*1.02).sort((a,b)=>{const cost=x=>miles(route[route.length-1],x)+(anchorLocation!=='all'&&x.project!==anchorLocation?1.5:0);return cost(a)-cost(b)});
@@ -42,7 +45,7 @@ module.exports = async function handler(req,res){
         const n=fit[0];route.push(n);tons+=Number(n.tons);remaining=remaining.filter(x=>x.id!==n.id);
       }
       const spread=route.reduce((s,x)=>s+miles(seed,x),0)/Math.max(1,route.length);
-      const score=Math.abs(target-tons)+spread*.45+(tons<target*.75?20:0);
+      const score=Math.abs(target-tons)+spread*.45+(tons<target*.75?20:0)+(fixedStart?miles(fixedStart,seed)*.15:0);
       if(!best||score<best.score) best={route,tons,score};
     }
     let route=best.route;
