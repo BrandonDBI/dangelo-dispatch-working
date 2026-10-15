@@ -5,6 +5,7 @@ module.exports = async function handler(req,res){
   try{
     const body=typeof req.body==='string'?JSON.parse(req.body):req.body||{};
     const target=Math.max(1,Number(body.targetTons)||36);
+    const anchorLocation=String(body.anchorLocation||'all');
     let candidates=Array.isArray(body.candidates)?body.candidates.filter(x=>x&&x.id&&x.address&&Number(x.tons)>0):[];
     if(!candidates.length) return res.status(400).json({error:'No usable restoration stops were supplied.'});
     
@@ -25,12 +26,18 @@ module.exports = async function handler(req,res){
     if(!located.length) return res.status(400).json({error:'Google could not locate these addresses.'});
     const rad=x=>x*Math.PI/180;
     const miles=(a,b)=>{const R=3958.8,dLat=rad(b.latitude-a.latitude),dLon=rad(b.longitude-a.longitude),q=Math.sin(dLat/2)**2+Math.cos(rad(a.latitude))*Math.cos(rad(b.latitude))*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(q))};
+    // Treat Location as the day's starting work area, not a municipal boundary.
+    // Other locations are only considered when they are geographically close
+    // to a valid job in the chosen area (12 straight-line miles).
+    const anchors=anchorLocation==='all'?located:located.filter(x=>x.project===anchorLocation);
+    if(!anchors.length)return res.status(400).json({error:'No located jobs in the selected location.'});
+    const nearby=anchorLocation==='all'?located:located.filter(x=>x.project===anchorLocation||anchors.some(a=>miles(a,x)<=12));
     let best=null;
-    for(const seed of located){
-      let route=[seed],tons=Number(seed.tons),remaining=located.filter(x=>x.id!==seed.id);
+    for(const seed of anchors){
+      let route=[seed],tons=Number(seed.tons),remaining=nearby.filter(x=>x.id!==seed.id);
       while(route.length<25&&remaining.length){
         const center={latitude:route.reduce((s,x)=>s+x.latitude,0)/route.length,longitude:route.reduce((s,x)=>s+x.longitude,0)/route.length};
-        const fit=remaining.filter(x=>tons+Number(x.tons)<=target*1.02).sort((a,b)=>miles(center,a)-miles(center,b));
+        const fit=remaining.filter(x=>tons+Number(x.tons)<=target*1.02).sort((a,b)=>{const cost=x=>miles(route[route.length-1],x)+(anchorLocation!=='all'&&x.project!==anchorLocation?1.5:0);return cost(a)-cost(b)});
         if(!fit.length) break;
         const n=fit[0];route.push(n);tons+=Number(n.tons);remaining=remaining.filter(x=>x.id!==n.id);
       }
