@@ -1371,3 +1371,8 @@
 #restModalRoot .restRouteMode .fieldJobNotes .fieldNoteInputLabel{
   margin-top:10px!important;
 }
+
+.restModal .restSawcutFlag{margin:16px 0 20px;padding:12px 14px;border:1px solid #e3e5e9;border-radius:8px;background:#f8f9fa}
+.restModal .restSawcutFlag label{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;margin:0!important;line-height:1.5;font-size:13px;font-weight:700;cursor:pointer}
+.restModal .restSawcutFlag input[type="checkbox"]{appearance:auto!important;-webkit-appearance:checkbox!important;width:18px!important;height:18px!important;min-width:18px!important;flex:0 0 18px!important;margin:0!important;padding:0!important;accent-color:#b42318;cursor:pointer}
+.restModal .restSawcutFlag span{display:inline!important}
