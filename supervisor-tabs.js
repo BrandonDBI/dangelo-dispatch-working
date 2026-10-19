@@ -5,7 +5,7 @@
     const tab=document.getElementById('tabTimeOff');
     if(!tab)return;
     const badge=document.querySelector('.roleBadge');if(!badge||badge.dataset.roleReady!=='1')return;const role=(badge.textContent||'').trim().toLowerCase();
-    const supervisor=role==='supervisor';
+    const supervisor=['supervisor','admin'].includes(role);
     tab.style.display=supervisor?'':'none';
     if(!supervisor && tab.classList.contains('active')){
       document.getElementById('tabSchedule')?.click();
