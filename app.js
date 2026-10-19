@@ -164,7 +164,7 @@
   }
   function bindBoard(){
     document.querySelectorAll('.jobCard').forEach(el=>{
-      el.onclick=()=>openModal({...state.jobs.find(j=>j.id===Number(el.dataset.jobId))});
+      el.onclick=e=>{if(e.button!==0||e.ctrlKey)return;openModal({...state.jobs.find(j=>j.id===Number(el.dataset.jobId))});};
       el.oncontextmenu=e=>showJobContextMenu(e,'copy',el.dataset.jobId);
       el.ondragstart=e=>{ if(['supervisor','admin'].includes(state.role)) e.dataTransfer.setData('job-id',el.dataset.jobId); };
     });
