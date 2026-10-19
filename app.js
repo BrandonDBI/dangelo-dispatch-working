@@ -225,9 +225,13 @@
     menu.style.left=Math.max(4,Math.min(e.clientX,window.innerWidth-bounds.width-4))+'px';
     menu.style.top=Math.max(4,Math.min(e.clientY,window.innerHeight-bounds.height-4))+'px';
   }
-  document.addEventListener('click',dismissJobContextMenu);
+  // Only an outside pointer press closes the menu; releasing the right mouse
+  // button must not dismiss it (Safari can synthesize a click on release).
+  document.addEventListener('pointerdown',e=>{
+    if(jobContextMenu&&!jobContextMenu.contains(e.target))dismissJobContextMenu();
+  });
   document.addEventListener('keydown',e=>{if(e.key==='Escape')dismissJobContextMenu();});
-  document.addEventListener('scroll',dismissJobContextMenu,true);
+
 
   function blankDraft(){ return {job_name:'',address:'',miss_dig_number:'',miss_dig_ready:null,miss_dig_expires:null,job_number:'',notes:'',customer:'',customer_phone:'',job_type:'',permit_number:'',inspector:'',priority:'non_emergency',start_date:null,end_date:null,crew_id:null}; }
   async function moveJob(job,crewId,date){ const duration=job.start_date&&job.end_date?Math.round((parseDate(job.end_date)-parseDate(job.start_date))/86400000):0; await updateJob(job.id,{crew_id:crewId,start_date:date,end_date:iso(addDays(parseDate(date),duration))}); }
