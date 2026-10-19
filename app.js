@@ -165,13 +165,70 @@
   function bindBoard(){
     document.querySelectorAll('.jobCard').forEach(el=>{
       el.onclick=()=>openModal({...state.jobs.find(j=>j.id===Number(el.dataset.jobId))});
+      el.oncontextmenu=e=>showJobContextMenu(e,'copy',el.dataset.jobId);
       el.ondragstart=e=>{ if(['supervisor','admin'].includes(state.role)) e.dataTransfer.setData('job-id',el.dataset.jobId); };
     });
-    document.querySelectorAll('.dropCell').forEach(cell=>{cell.ondragover=e=>{if(['supervisor','admin'].includes(state.role))e.preventDefault()};cell.ondrop=async e=>{e.preventDefault();const job=state.jobs.find(j=>j.id===Number(e.dataTransfer.getData('job-id')));if(job)await moveJob(job,Number(cell.dataset.crew),cell.dataset.date)}});
-    const incoming=document.getElementById('incomingDrop'); incoming.ondragover=e=>{if(['supervisor','admin'].includes(state.role))e.preventDefault()};incoming.ondrop=async e=>{e.preventDefault();const job=state.jobs.find(j=>j.id===Number(e.dataTransfer.getData('job-id')));if(job)await updateJob(job.id,{crew_id:null,start_date:null,end_date:null})};
+    document.querySelectorAll('.dropCell').forEach(cell=>{cell.oncontextmenu=e=>{if(e.target.closest('.jobCard'))return;showJobContextMenu(e,'paste',{crew:Number(cell.dataset.crew),date:cell.dataset.date});};cell.ondragover=e=>{if(['supervisor','admin'].includes(state.role))e.preventDefault()};cell.ondrop=async e=>{e.preventDefault();const job=state.jobs.find(j=>j.id===Number(e.dataTransfer.getData('job-id')));if(job)await moveJob(job,Number(cell.dataset.crew),cell.dataset.date)}});
+    const incoming=document.getElementById('incomingDrop'); incoming.oncontextmenu=e=>{if(e.target.closest('.jobCard'))return;showJobContextMenu(e,'paste',null);}; incoming.ondragover=e=>{if(['supervisor','admin'].includes(state.role))e.preventDefault()};incoming.ondrop=async e=>{e.preventDefault();const job=state.jobs.find(j=>j.id===Number(e.dataTransfer.getData('job-id')));if(job)await updateJob(job.id,{crew_id:null,start_date:null,end_date:null})};
     const ia=document.getElementById('incomingAdd'); if(ia)ia.onclick=()=>openModal(blankDraft());
     document.querySelectorAll('[data-add-crew]').forEach(btn=>btn.onclick=()=>openModal({...blankDraft(),crew_id:Number(btn.dataset.addCrew),start_date:btn.dataset.addDate,end_date:btn.dataset.addDate}));
   }
+  // Custom right-click copy/paste menu for the desktop schedule.
+  let copiedScheduleJob = null;
+  let jobContextMenu = null;
+  function dismissJobContextMenu(){
+    if(jobContextMenu){ jobContextMenu.remove(); jobContextMenu=null; }
+  }
+  function showJobContextMenu(e, kind, destination){
+    if(!['supervisor','admin'].includes(state.role))return;
+    if(kind==='paste'&&!copiedScheduleJob)return;
+    e.preventDefault();
+    e.stopPropagation();
+    dismissJobContextMenu();
+    const menu=document.createElement('div');
+    menu.setAttribute('role','menu');
+    menu.style.cssText='position:fixed;z-index:10000;background:#222;color:#fff;border:1px solid #777;border-radius:7px;min-width:155px;padding:5px;box-shadow:0 6px 18px #0005;';
+    const action=document.createElement('button');
+    action.type='button';
+    action.setAttribute('role','menuitem');
+    action.textContent=kind==='copy'?'Copy Job':'Paste Job';
+    action.style.cssText='display:block;width:100%;text-align:left;color:inherit;background:transparent;border:0;padding:9px 12px;cursor:pointer;font:inherit;';
+    action.onmouseenter=()=>action.style.background='#a4161a';
+    action.onmouseleave=()=>action.style.background='transparent';
+    action.onclick=async ev=>{
+      ev.stopPropagation();
+      dismissJobContextMenu();
+      if(kind==='copy'){
+        const src=state.jobs.find(j=>String(j.id)===String(destination));
+        if(src)copiedScheduleJob=Object.fromEntries(Object.keys(blankDraft()).map(k=>[k,src[k]??null]));
+        return;
+      }
+      if(!copiedScheduleJob)return;
+      const data={...copiedScheduleJob};
+      if(destination){
+        const originalDays=data.start_date&&data.end_date?Math.max(0,Math.round((parseDate(data.end_date)-parseDate(data.start_date))/86400000)):0;
+        data.crew_id=destination.crew;
+        data.start_date=destination.date;
+        data.end_date=iso(addDays(parseDate(destination.date),originalDays));
+      }else{
+        data.crew_id=null; data.start_date=null; data.end_date=null;
+      }
+      try{
+        await request('/rest/v1/jobs',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(data)});
+        await loadData();renderBoardOnly();
+      }catch(err){state.message=err.message;renderBoardOnly();}
+    };
+    menu.appendChild(action);
+    document.body.appendChild(menu);
+    jobContextMenu=menu;
+    const bounds=menu.getBoundingClientRect();
+    menu.style.left=Math.max(4,Math.min(e.clientX,window.innerWidth-bounds.width-4))+'px';
+    menu.style.top=Math.max(4,Math.min(e.clientY,window.innerHeight-bounds.height-4))+'px';
+  }
+  document.addEventListener('click',dismissJobContextMenu);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')dismissJobContextMenu();});
+  document.addEventListener('scroll',dismissJobContextMenu,true);
+
   function blankDraft(){ return {job_name:'',address:'',miss_dig_number:'',miss_dig_ready:null,miss_dig_expires:null,job_number:'',notes:'',customer:'',customer_phone:'',job_type:'',permit_number:'',inspector:'',priority:'non_emergency',start_date:null,end_date:null,crew_id:null}; }
   async function moveJob(job,crewId,date){ const duration=job.start_date&&job.end_date?Math.round((parseDate(job.end_date)-parseDate(job.start_date))/86400000):0; await updateJob(job.id,{crew_id:crewId,start_date:date,end_date:iso(addDays(parseDate(date),duration))}); }
   async function updateJob(id,patch){ try{await request(`/rest/v1/jobs?id=eq.${id}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(patch)});await loadData();renderBoardOnly()}catch(e){state.message=e.message;renderBoardOnly()} }
