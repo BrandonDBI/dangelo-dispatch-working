@@ -1376,3 +1376,7 @@
 .restModal .restSawcutFlag label{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;margin:0!important;line-height:1.5;font-size:13px;font-weight:700;cursor:pointer}
 .restModal .restSawcutFlag input[type="checkbox"]{appearance:auto!important;-webkit-appearance:checkbox!important;width:18px!important;height:18px!important;min-width:18px!important;flex:0 0 18px!important;margin:0!important;padding:0!important;accent-color:#b42318;cursor:pointer}
 .restModal .restSawcutFlag span{display:inline!important}
+
+/* Compact field-verification status badge on Restoration job cards. */
+.restBadges{align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.restBadges .fieldVerifiedBadge{display:inline-flex;align-items:center;justify-content:center;align-self:center;width:auto;height:auto;min-height:0;flex:0 0 auto;box-sizing:border-box;padding:5px 10px;margin:0;border:1px solid #f1cf73;border-radius:999px;background:#fff4ce;color:#9a6700;font-size:10px;font-weight:900;line-height:1.2;letter-spacing:.03em;text-align:center;white-space:nowrap}
