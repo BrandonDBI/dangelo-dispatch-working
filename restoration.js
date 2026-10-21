@@ -171,9 +171,20 @@ async function setupJobPhotos(root,j){
    const group=data.filter(p=>p.stage===stage);const counter=root.querySelector('[data-photo-count="'+stage+'"]');if(counter){counter.textContent=group.length?('✓ '+group.length+' photo'+(group.length===1?'':'s')):'No photos';counter.classList.toggle('hasPhotos',group.length>0)}
    if(!group.length){list.textContent='No photos yet';continue}
    const cards=await Promise.all(group.map(async p=>{
-    try{const url=await photoUrl(p.storage_path);return '<a href="'+esc(url)+'" target="_blank" rel="noopener" class="restPropertyPhotoThumb"><img src="'+esc(url)+'" alt="'+stage+' restoration photo"><small class="restPhotoStamp">'+esc(formatPropertyPhotoStamp(p))+'</small></a>'}catch(e){return '<span>Photo unavailable</span>'}
+    try{const url=await photoUrl(p.storage_path);return '<div class="restPropertyPhotoEntry"><a href="'+esc(url)+'" target="_blank" rel="noopener" class="restPropertyPhotoThumb"><img src="'+esc(url)+'" alt="'+stage+' restoration photo"><small class="restPhotoStamp">'+esc(formatPropertyPhotoStamp(p))+'</small></a>'+(['supervisor','admin'].includes(role)?'<button type="button" class="restPropertyPhotoDelete" data-delete-property-photo="'+esc(String(p.id))+'" aria-label="Delete photo">Delete</button>':'')+'</div>'}catch(e){return '<span>Photo unavailable</span>'}
    }));
    list.innerHTML=cards.join('');
+   if(['supervisor','admin'].includes(role))list.querySelectorAll('[data-delete-property-photo]').forEach(btn=>btn.onclick=async()=>{
+    const photo=group.find(x=>String(x.id)===btn.dataset.deletePropertyPhoto);
+    if(!photo||!window.confirm('Delete this restoration photo? This cannot be undone.'))return;
+    btn.disabled=true;statusLine.textContent='Deleting photo…';
+    try{
+     const response=await fetch(BASE+'/storage/v1/object/restoration-photos/'+photo.storage_path,{method:'DELETE',headers:headers()});
+     if(!response.ok)throw new Error('Could not remove photo file: '+(await response.text()));
+     await req('/rest/v1/restoration_job_photos?id=eq.'+encodeURIComponent(photo.id),{method:'DELETE',headers:{Prefer:'return=minimal'}});
+     statusLine.textContent='Photo deleted.';await refresh();
+    }catch(e){statusLine.textContent='Delete failed: '+e.message;btn.disabled=false}
+   });
   }
  };
  for(const stage of ['before','after']){
