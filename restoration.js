@@ -179,7 +179,7 @@ async function setupJobPhotos(root,j){
     if(!photo||!window.confirm('Delete this restoration photo? This cannot be undone.'))return;
     btn.disabled=true;statusLine.textContent='Deleting photo…';
     try{
-     const response=await fetch(BASE+'/storage/v1/object/restoration-photos/'+photo.storage_path,{method:'DELETE',headers:headers()});
+     const response=await fetch(BASE+'/storage/v1/object/restoration-photos/'+photo.storage_path,{method:'DELETE',headers:headers(),body:JSON.stringify({})});
      if(!response.ok)throw new Error('Could not remove photo file: '+(await response.text()));
      await req('/rest/v1/restoration_job_photos?id=eq.'+encodeURIComponent(photo.id),{method:'DELETE',headers:{Prefer:'return=minimal'}});
      statusLine.textContent='Photo deleted.';await refresh();
