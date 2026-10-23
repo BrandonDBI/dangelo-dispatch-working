@@ -206,7 +206,8 @@ function render(){
     .sort((a,b)=>a.start_date.localeCompare(b.start_date));
 
   if(!allUpcoming.length){
-    p.innerHTML='<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocEmpty"><p>No upcoming on-call periods.</p></div></div>';
+    p.innerHTML='<div class="ocWrap"><div class="ocHead"><div><h2>ON CALL</h2></div></div><div class="ocEmpty"><p>No upcoming on-call periods.</p>'+(['supervisor','admin'].includes(role)?'<button type="button" id="ocAddCoverage">+ Add Days / Break</button>':'')+'</div></div>';
+    p.querySelector('#ocAddCoverage')?.addEventListener('click',periodModal);
     return;
   }
 
