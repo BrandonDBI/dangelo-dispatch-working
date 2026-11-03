@@ -12,8 +12,8 @@
   style.textContent = `
     .undoMoveToast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:12px;background:#231f20;color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);font-size:13px;font-weight:700}
     .undoMoveToast button{border:1px solid rgba(255,255,255,.35);background:#fff;color:#231f20;border-radius:6px;padding:6px 10px;font-weight:800;cursor:pointer}
-    .activityHistoryLink{margin-left:auto;border:0!important;background:transparent!important;color:#777!important;padding:2px 4px!important;font-size:11px!important;font-weight:600!important;cursor:pointer;opacity:.75}
-    .activityHistoryLink:hover{opacity:1;color:#231f20!important}
+    .activityHistoryLink{margin-left:auto;border:1px solid #a8a1a2!important;background:#fff!important;color:#231f20!important;padding:7px 12px!important;border-radius:7px!important;font-size:12px!important;font-weight:800!important;cursor:pointer;opacity:1}
+    .activityHistoryLink:hover{background:#f1eeee!important;border-color:#231f20!important}
     .activityBackdrop{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.18);display:flex;align-items:flex-end;justify-content:flex-end;padding:18px}
     .activityPanel{width:min(470px,calc(100vw - 24px));max-height:min(620px,80vh);overflow:hidden;background:#fff;border:1px solid #ddd;border-radius:10px;box-shadow:0 12px 36px rgba(0,0,0,.22);display:flex;flex-direction:column}
     .activityHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border-bottom:1px solid #eee}
@@ -182,7 +182,7 @@
     const footer=document.querySelector('footer');
     if(!footer||footer.querySelector('.activityHistoryLink'))return;
     const role=(document.querySelector('.roleBadge')?.textContent||'').trim().toLowerCase();
-    if(role!=='supervisor')return;
+    if(role!=='supervisor'&&role!=='admin')return;
     const old=footer.querySelector('.moveHistoryLink'); if(old)old.remove();
     const btn=document.createElement('button');
     btn.type='button';btn.className='activityHistoryLink';btn.textContent='Activity';btn.onclick=openActivity;
