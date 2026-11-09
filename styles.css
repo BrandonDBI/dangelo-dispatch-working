@@ -188,3 +188,11 @@
 .pwQuickSchedule:hover{background:#484244}
 .pwQuickSchedule:disabled{opacity:.55;cursor:wait}
 .pwListCard:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+
+/* Tablet Schedule: show the crew schedule first, Incoming Jobs below. */
+@media (min-width:701px) and (max-width:900px),
+       (min-width:901px) and (max-width:1199px) and (pointer:coarse) {
+  #board .dispatchLayout{display:flex;flex-direction:column;align-items:stretch}
+  #board .dispatchLayout > .scroller{order:1;min-width:0;width:100%}
+  #board .dispatchLayout > .incoming{order:2;width:100%;min-height:0;margin-top:8px}
+}
